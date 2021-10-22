@@ -50,7 +50,8 @@ swap() {
     mv "$1" "$tmpfile" && mv "$2" "$1" && mv "$tmpfile" "$2"
 }
 
-alias ff="git --git-dir=$HOME/Dropbox/cfg/dotfiles/ --work-tree=$HOME"
+#alias ff="git --git-dir=$HOME/Dropbox/cfg/dotfiles/ --work-tree=$HOME"
+alias ff="git -C $(chezmoi source-path)"
 
 # ex - archive extractor
 # usage: ex <file>
