@@ -1,0 +1,287 @@
+" automatically install vim-plug
+if empty(glob('~/.vim/autoload/plug.vim'))
+    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+                \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+call plug#begin()
+Plug 'junegunn/vim-plug'
+command -nargs=? PI PlugInstall <args>
+command PC PlugClean
+command PU PlugUpgrade | PlugUpdate
+
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+command -nargs=1 CI CocInstall <args>
+command -nargs=1 CU CocUninstall <args>
+command CC tabedit <Bar> CocConfig
+let g:coc_global_extensions = ['coc-clangd', 'coc-git', 'coc-java', 'coc-json', 'coc-markdownlint',
+                             \ 'coc-pyright', 'coc-sh', 'coc-vimtex']
+let g:coc_status_warning_sign = '⚠️ '
+let g:coc_status_error_sign = '❗'
+
+inoremap <silent><expr> <C-@> coc#refresh()
+inoremap <expr> <TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
+inoremap <expr> <S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+inoremap <silent><nowait><expr> <C-F> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+inoremap <silent><nowait><expr> <C-B> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+
+nmap [g <Plug>(coc-diagnostic-prev)
+nmap ]g <Plug>(coc-diagnostic-next)
+nmap [c <Plug>(coc-git-prevchunk)
+nmap ]c <Plug>(coc-git-nextchunk)
+nmap gd <Plug>(coc-definition)
+
+nmap <Leader>rn <Plug>(coc-rename)
+nmap <Leader>f <Plug>(coc-fix-current)
+nnoremap <silent> <Leader>h :CocCommand clangd.switchSourceHeader vsplit<CR>
+nnoremap <silent> <Leader>i :call CocActionAsync('doHover')<CR>
+nnoremap <silent> <Leader>gd :CocCommand git.chunkInfo<CR>
+nnoremap <silent> <Leader>ga :CocCommand git.chunkStage<CR>
+nnoremap <silent> <Leader>gu :CocCommand git.chunkUndo<CR>
+nnoremap <silent> <Leader>gt :CocCommand git.toggleGutters<CR>
+command OI :call CocAction('runCommand', 'editor.action.organizeImport')
+
+" highlight the symbol and its references when holding the cursor
+autocmd CursorHold * silent call CocActionAsync('highlight')
+autocmd CursorHold * CocCommand git.refresh
+
+Plug 'tpope/vim-fugitive'
+nnoremap <silent> <Leader>G :Git<CR>
+
+Plug 'lervag/vimtex'
+let g:tex_flavor = 'latex'
+"let g:vimtex_compiler_method = 'generic' | let g:vimtex_compiler_generic = {'cmd': 'make'}
+let g:vimtex_view_method = 'zathura'
+let g:vimtex_quickfix_autoclose_after_keystrokes = 1
+" map ctrl+space to forward search
+nmap <silent> <C-Space> <Plug>(vimtex-view) " gvim
+nmap <silent> <C-@> <Plug>(vimtex-view)     " vim
+nmap <F8> <Plug>(vimtex-compile)
+if empty(v:servername) && exists('*remote_startserver')
+    silent! call remote_startserver('VIM') " necessary for backward search
+endif
+
+Plug 'majutsushi/tagbar'
+nnoremap <silent> <F6> :TagbarToggle<CR>
+Plug 'preservim/nerdtree'
+let g:NERDTreeBookmarksFile = $HOME . '/.vim/NERDTreeBookmarks'
+let g:NERDTreeShowBookmarks = 1
+let g:NERDTreeShowHidden = 1
+let g:NERDTreeMinimalUI = 1
+nnoremap <silent> <C-N> :e .<CR>
+nnoremap <silent> <C-W><C-N> :rightbelow vsplit .<CR>
+Plug 'iamcco/markdown-preview.nvim', {'do': 'cd app & yarn install'}
+let g:mkdp_auto_close = 0
+nmap <C-p> <Plug>MarkdownPreviewToggle
+
+Plug 'tikhomirov/vim-glsl'
+Plug 'sheerun/vim-polyglot'
+let g:polyglot_disabled = [
+            "\ for nullptr
+            \ 'c++11',
+            "\ conflict with vimtex
+            \ 'latex']
+Plug 'jackguo380/vim-lsp-cxx-highlight'
+Plug 'mogelbrod/vim-jsonpath'
+Plug 'google/vim-searchindex'
+let g:searchindex_star_case = 0
+Plug 'bronson/vim-visual-star-search'
+
+Plug 'ntpeters/vim-better-whitespace'
+let g:show_spaces_that_precede_tabs = 1
+Plug 'xilefsensei/vim-sleuth'
+Plug 'Yggdroot/indentLine'
+let g:indentLine_enabled = 0 " use :IndentLines{Enable,Disable,Toggle}
+Plug 'machakann/vim-highlightedyank'
+let g:highlightedyank_highlight_duration = 500
+Plug 'gcavallanti/vim-noscrollbar'
+Plug 'matze/vim-move'
+let g:move_key_modifier = 'C'
+Plug 'farmergreg/vim-lastplace'
+
+Plug 'itchyny/lightline.vim'
+let g:lightline = {
+    \ 'colorscheme': 'one',
+    \ 'active': {
+    \   'left': [['mode', 'paste'],
+    \            ['cocstatus', 'readonly', 'filename', 'modified', 'scrollbar']],
+    \   'right': [['lineinfo'],
+    "\            ['percent'],
+    \            ['fileformat', 'fileencoding', 'filetype']]
+    \ },
+    \ 'component_function': {
+    \     'cocstatus': 'coc#status',
+    \     'scrollbar': 'noscrollbar#statusline'
+    \ }
+\ }
+autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
+
+Plug 'xilefsensei/papercolor-theme'
+
+call plug#end()
+
+" for insert-mode-abbreviations
+function Eatchar(pat)
+    let c = nr2char(getchar(0))
+    return (c =~ a:pat) ? '' : c
+endfunction
+
+"" bindings
+" set themes
+nnoremap <silent> <F2> :let &background = (&background == "dark" ? "light" : "dark")<CR>
+tnoremap <silent> <F2> <C-W>:let &background = (&background == "dark" ? "light" : "dark")<CR>
+nnoremap <silent> <F5> :source $MYVIMRC<CR>:redraw!<CR>
+
+" miscellaneous
+nnoremap <silent> <F7> :set spell!<CR>
+nnoremap <silent> <Space> :nohlsearch<CR>
+nnoremap Y y$
+" 'competitive programming'
+nnoremap <F9> :write <Bar> !g++ -O3 -o %:r %<CR>
+" allow writing as sudo
+command W write !sudo tee > /dev/null %
+
+" movements
+" use map instead of noremap for vim-smoothie
+map <C-S> <C-U>
+map <C-Q> <C-Y>
+
+inoremap <C-Q> <Up>
+inoremap <C-E> <Down>
+inoremap <C-C> <ESC>
+
+noremap j gj
+ounmap j
+noremap k gk
+ounmap k
+
+" sessions
+command -nargs=1 CS execute 'mksession! ' . $HOME . '/.vim/sessions/' . '<args>.vim'
+command SS execute 'mksession! ' . v:this_session
+command XS execute 'mksession! ' . v:this_session <Bar> wall <Bar> qall!
+command DS execute 'silent !rm ' . v:this_session <Bar> redraw!
+command QQ qall!
+
+" shortcuts for opening stuff
+command -nargs=1 -complete=file LS leftabove vsplit <args>
+command -nargs=1 -complete=file RS rightbelow vsplit <args>
+
+" open terminal in various ways
+nmap <silent> <C-W>t :vertical term<CR>
+tmap <silent> <C-W>t <C-W>:vertical term<CR>
+nmap <silent> <C-W><C-T> :term ++curwin<CR>
+
+" open new, empty tab
+nnoremap <silent> <C-T> :tabedit<CR>
+tnoremap <silent> <C-T> <C-W>:tabedit<CR>
+
+" map alt+<i> to switch to tab <i>
+nnoremap 1 1gt
+nnoremap 2 2gt
+nnoremap 3 3gt
+nnoremap 4 4gt
+nnoremap 5 5gt
+nnoremap 6 6gt
+nnoremap 7 7gt
+nnoremap 8 8gt
+nnoremap 9 9gt
+nnoremap 0 10gt
+nnoremap - 11gt
+nnoremap = 12gt
+" move tabs with ctrl-shift-page{up,down}
+nnoremap <silent> <C-PageUp> :silent! tabm -<CR>
+nnoremap <silent> <C-PageDown> :silent! tabm +<CR>
+
+" same as above, but for terminal windows
+tnoremap <silent> 1 <C-W>:1tabnext<CR>
+tnoremap <silent> 2 <C-W>:2tabnext<CR>
+tnoremap <silent> 3 <C-W>:3tabnext<CR>
+tnoremap <silent> 4 <C-W>:4tabnext<CR>
+tnoremap <silent> 5 <C-W>:5tabnext<CR>
+tnoremap <silent> 6 <C-W>:6tabnext<CR>
+tnoremap <silent> 7 <C-W>:7tabnext<CR>
+tnoremap <silent> 8 <C-W>:8tabnext<CR>
+tnoremap <silent> 9 <C-W>:9tabnext<CR>
+tnoremap <silent> 0 <C-W>:10tabnext<CR>
+tnoremap <silent> - <C-W>:11tabnext<CR>
+tnoremap <silent> = <C-W>:12tabnext<CR>
+tnoremap <silent> <C-PageUp> <C-W>:silent! tabm -<CR>
+tnoremap <silent> <C-PageDown> <C-W>:silent! tabm +<CR>
+
+"" theme
+set t_Co=256
+set t_ut=
+set background=dark
+"set termguicolors
+" darker background, value is 'blackgravel' from 'sjl/badwolf'. (232 is even darker)
+let g:PaperColor_Theme_Options = {
+            \   'theme': {
+            \       'default.dark': {
+            \           'override': {
+            \               'color00' : ['#1c1b1a', '233']
+            \           }
+            \       }
+            \   }
+            \ }
+colorscheme PaperColor
+
+"" miscellaneous
+syntax enable               " enable syntax highlighting
+set scrolloff=5             " lines above/below cursor when scrolling
+set number                  " show line numbers
+set title                   " window title is set reasonably
+set noshowmode              " do not show mode in last line
+set ignorecase              " ignore case when searching
+set fileignorecase          " ignore case for :b, :e etc.
+set smartcase               " override ignorecase when searching for upper case pattern
+set incsearch               " highlight search results while typing
+set hlsearch                " highlight search results after hitting enter
+"set shortmess-=S            " show number of search results
+set wildmenu                " show command-line matches
+set showcmd                 " show size of selection in visual mode
+set noerrorbells            " nothing annoying on errors
+set novisualbell            " ^
+set wrap                    " wrap lines longer than the window
+set linebreak               " wrap lines at word boundaries
+set showbreak=>\            " wrapped lines start with '> '
+set breakindent             " wrapped lines are visually indented
+set laststatus=2            " always show statusline
+set tabstop=4               " 1 tab == 4 spaces
+set shiftwidth=0            " use tabstop-value
+set textwidth=99            " max 99 characters per line
+set expandtab               " use spaces instead of tabs
+set smarttab                " smart shit, idk
+set autoindent              " copy indent from adjacent line
+set smartindent             " smart, language-based indenting
+set signcolumn=number       " show signs (from ycm/coc) in place of line numbers
+set splitright              " new windows open on the right
+
+set encoding=utf8
+set backspace=indent,eol,start
+set autochdir               " automatically cd to directory of file in buffer
+set clipboard=unnamedplus   " share vim-clipboard with system-clipboard
+set cryptmethod=blowfish2   " encryption (:X)
+set spelllang=de,en         " for use with spellchecking
+set viminfofile=$HOME/.vim/viminfo
+set viminfo='30,<10000,s1000
+"           |   |      + 1000 kb maximum size for registers
+"           |   + 10000 lines maximum for registers
+"           + remember marks for last 30 files
+set sessionoptions-=buffers " do not save hidden/unloaded buffers in sessions
+set sessionoptions-=options " do not save options/mappings in sessions
+set sessionoptions+=localoptions " do save local options (e.g. for spelling)
+set termwinscroll=100000    " more terminal scrollback
+set updatetime=100          " delay (e.g. for tagbar auto-refresh)
+set ttimeoutlen=100         " less delay for <S-O>
+
+" do not display line numbers for terminals (when in normal mode)
+if exists('##TerminalWinOpen')
+    autocmd TerminalWinOpen * setlocal nonumber
+endif
+
+" use powershell on windows
+if has('win32') || has('win64')
+    set shell=powershell
+endif

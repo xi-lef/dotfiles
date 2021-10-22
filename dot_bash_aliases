@@ -1,0 +1,76 @@
+r() {
+    unalias -a
+    source ~/.bashrc
+    history -n
+}
+
+alias l='ls'
+alias ll='ls -aFhl'
+alias la='ls -A'
+alias laa='ls -a'
+
+alias c='cd'
+alias ..='cd ..'
+alias ...='cd ../..'
+cdp() {
+    cd -P ${1:-.}
+}
+alias cdd='cd ~/downloads/'
+alias bd='. bd -si' # si: case-insensitive, s: case-sensitive
+
+alias ev='evince'
+alias ok='okular'
+alias g='git'
+
+alias gdb='gdb -q'
+alias gdb32='gdb -ex 32bit'
+alias odi='objdump -M intel'
+alias xclip='xclip -selection c'
+alias fd='fd -HIL'
+alias df='df -h'
+
+alias invert="printf '\e[?5h'"
+alias uninvert="printf '\e[?5l'"
+
+alias vio='vim -O'
+alias vip='vim -p'
+alias vir='vim --cmd "let g:coc_start_at_startup = 0"'
+# the session-name ($1) must be appended without a space, so alias does not work.
+vis() {
+    vim -S $HOME/.vim/sessions/$1
+}
+
+if [[ $TERM == 'xterm-kitty' ]]; then
+    alias icat='kitty +kitten icat'
+    alias kssh='kitty +kitten ssh use-python'
+fi
+
+swap() {
+    local tmpfile=$(mktemp $(dirname "$1")/XXXXXX)
+    mv "$1" "$tmpfile" && mv "$2" "$1" && mv "$tmpfile" "$2"
+}
+
+alias ff="git --git-dir=$HOME/Dropbox/cfg/dotfiles/ --work-tree=$HOME"
+
+# ex - archive extractor
+# usage: ex <file>
+ex() {
+    if [ -f $1 ] ; then
+        case $1 in
+            *.tar.bz2)   tar xjf $1   ;;
+            *.tar.gz)    tar xzf $1   ;;
+            *.bz2)       bunzip2 $1   ;;
+            *.rar)       unrar x $1   ;;
+            *.gz)        gunzip $1    ;;
+            *.tar)       tar xf $1    ;;
+            *.tbz2)      tar xjf $1   ;;
+            *.tgz)       tar xzf $1   ;;
+            *.zip)       unzip $1     ;;
+            *.Z)         uncompress $1;;
+            *.7z)        7z x $1      ;;
+            *)           echo "'$1' cannot be extracted via ex()" ;;
+        esac
+    else
+        echo "'$1' is not a valid file"
+    fi
+}

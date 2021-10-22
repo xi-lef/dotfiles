@@ -1,0 +1,12 @@
+Host fau
+Hostname cip4e2.cip.cs.fau.de
+User jo15xyfy
+#ForwardX11 yes
+
+Host irc
+Hostname ircbox.cs.fau.de
+User jo15xyfy
+
+Host man
+Hostname faui49man3.cs.fau.de
+User jo15xyfy

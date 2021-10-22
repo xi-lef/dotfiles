@@ -1,0 +1,30 @@
+[user]
+    email = felix.windsheimer@fau.de
+    name = Felix Windsheimer
+[alias]
+    a = add
+    ap = add -p
+    ci = commit -v
+    c = commit -m
+    ca = commit -a
+    cam = commit -a -m
+    ame = commit --amend --no-edit
+    amee = commit --amend
+    p = push
+    pl = pull
+    cl = clone
+
+    s = status
+    sa = status --ignored --untracked-files
+    sr = !git remote show origin | tail -n 1 | sed 's/.*(\\(.*\\))/\\1/'
+    l = log
+    d = diff
+    dc = diff --cached
+    sh = show
+
+    br = branch
+    co = checkout
+    un = reset HEAD --
+    ri = rebase --interactive
+    rc = rebase --continue
+    st = stash

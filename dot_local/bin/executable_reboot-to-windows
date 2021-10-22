@@ -1,0 +1,11 @@
+#!/bin/bash
+set -euo pipefail
+
+if [ "$USER" != 'root' ]; then
+    exec sudo $0
+fi
+
+WINDOWS_ENTRY=$(grep -i windows /boot/grub/grub.cfg | head -n 1 | cut -d"'" -f2)
+
+! grub-reboot "$WINDOWS_ENTRY" 2>&1 | grep 'Permission denied'
+reboot

@@ -1,0 +1,15 @@
+".*[gG]wenview.*"
+    None, Up, Button4, 1
+    None, Down, Button5, 1
+
+".*[vV][lL][cC].*"
+    None, Up, Button4, 1
+    None, Down, Button5, 1
+
+".*[oO]kular.*"
+    None, Up, Button4, 3
+    None, Down, Button5, 3
+
+".*"
+    None, Up, Button4, 3
+    None, Down, Button5, 3

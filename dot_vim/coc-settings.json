@@ -1,0 +1,13 @@
+{
+    "coc.preferences.extensionUpdateCheck": "daily",
+    "clangd.fallbackFlags": ["-Wall, -Wextra"],
+    "clangd.semanticHighlighting": true,
+    "git.removedSign.text": "–",
+    "git.topRemovedSign.text": "–",
+    //"python.analysis.typeCheckingMode": "strict",
+    "python.linting.enabled": true,
+    "python.linting.mypyEnabled": true,
+    "markdownlint.config": {
+        "line-length": false
+    }
+}

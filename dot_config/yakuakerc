@@ -1,0 +1,22 @@
+[Animation]
+Frames=0
+
+[Appearance]
+Skin=breath2_dark
+
+[Favorite Profiles]
+Favorites=
+
+[Shortcuts]
+decrease-window-height=Ctrl+Shift+Up
+file_quit=none
+increase-window-height=Ctrl+Shift+Down
+next-terminal=none
+previous-terminal=none
+toggle-window-state=Esc
+
+[Window]
+Height=32
+ShowOnAllDesktops=false
+ShowSystrayIcon=false
+Width=80
