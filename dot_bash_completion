@@ -3,7 +3,8 @@
 # autocompletion for 'vis', which restores a session in vim.
 _vis_completion() {
     local cur=$2 # word being completed
-    local names=($(ls ~/.vim/sessions))
+    local dir="$HOME/.vim/sessions"
+    local names=($(test -d $dir && ls $dir))
 
     local completions=${names[@]}
 
