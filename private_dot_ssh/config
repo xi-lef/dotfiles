@@ -10,3 +10,8 @@ User jo15xyfy
 Host man
 Hostname faui49man3.cs.fau.de
 User jo15xyfy
+
+Host hpc
+User hpcv416h
+#User hpcv482h
+Hostname cshpc.rrze.fau.de
