@@ -40,7 +40,6 @@ display=Display\tMeta+P,Display\tMeta+P,Switch Display
 
 [khotkeys]
 _k_friendly_name=Custom Shortcuts Service
-{66b8f508-1df1-4eaa-ac16-5ed4b433a7af}=none,none,Launch Konsole
 {d03619b6-9b3c-48cc-9d9c-a2aadb485550}=,none,Search
 
 [kitty.desktop]
