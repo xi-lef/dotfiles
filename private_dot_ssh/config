@@ -11,7 +11,14 @@ Host man
 Hostname faui49man3.cs.fau.de
 User jo15xyfy
 
-Host hpc
+Host cshpc
+Hostname cshpc.rrze.fau.de
 User hpcv416h
 #User hpcv482h
-Hostname cshpc.rrze.fau.de
+ForwardX11 yes
+
+Host hpc
+Hostname emmy
+ProxyJump cshpc
+User hpcv416h
+ForwardX11 yes
