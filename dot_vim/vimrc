@@ -1,16 +1,19 @@
-" automatically install vim-plug
+" Automatically install vim-plug {{{
 if empty(glob('~/.vim/autoload/plug.vim'))
     silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
                 \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
+" }}}
 
+" Plugins {{{
 call plug#begin()
 Plug 'junegunn/vim-plug'
 command -nargs=? PI PlugInstall <args>
 command PC PlugClean
 command PU PlugUpgrade | PlugUpdate
 
+" CoC {{{
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 command -nargs=1 CI CocInstall <args>
 command -nargs=1 CU CocUninstall <args>
@@ -20,19 +23,25 @@ let g:coc_global_extensions = ['coc-clangd', 'coc-git', 'coc-java', 'coc-json', 
 let g:coc_status_warning_sign = '⚠️ '
 let g:coc_status_error_sign = '❗'
 
+" Insert-mappings for auto-completion {{{
 inoremap <silent><expr> <C-@> coc#refresh()
 inoremap <expr> <TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
 inoremap <expr> <S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 inoremap <silent><nowait><expr> <C-F> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
 inoremap <silent><nowait><expr> <C-B> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+" }}}
 
+" Movement-mappings {{{
 nmap [g <Plug>(coc-diagnostic-prev)
 nmap ]g <Plug>(coc-diagnostic-next)
 nmap [c <Plug>(coc-git-prevchunk)
 nmap ]c <Plug>(coc-git-nextchunk)
 nmap gd <Plug>(coc-definition)
+nmap <C-W>gd <C-W>v <Plug>(coc-definition)
+" }}}
 
+" Complex actions {{{
 nmap <Leader>rn <Plug>(coc-rename)
 nmap <Leader>f <Plug>(coc-fix-current)
 nnoremap <silent> <Leader>h :CocCommand clangd.switchSourceHeader vsplit<CR>
@@ -43,35 +52,28 @@ nnoremap <silent> <Leader>gu :CocCommand git.chunkUndo<CR>
 nnoremap <silent> <Leader>gt :CocCommand git.toggleGutters<CR>
 command OI :call CocAction('runCommand', 'editor.action.organizeImport')
 
-" highlight the symbol and its references when holding the cursor
+" Highlight the symbol and its references when holding the cursor
 autocmd CursorHold * silent call CocActionAsync('highlight')
 autocmd CursorHold * CocCommand git.refresh
+" }}}
+" }}}
 
-Plug 'tpope/vim-fugitive'
-nnoremap <silent> <Leader>G :Git<CR>
-
+" VimTeX {{{
 Plug 'lervag/vimtex'
 let g:tex_flavor = 'latex'
 "let g:vimtex_compiler_method = 'generic' | let g:vimtex_compiler_generic = {'cmd': 'make'}
 let g:vimtex_view_method = 'zathura'
 let g:vimtex_quickfix_autoclose_after_keystrokes = 1
-" map ctrl+space to forward search
+" Map ctrl+space to forward search
 nmap <silent> <C-Space> <Plug>(vimtex-view) " gvim
 nmap <silent> <C-@> <Plug>(vimtex-view)     " vim
 nmap <F8> <Plug>(vimtex-compile)
 if empty(v:servername) && exists('*remote_startserver')
     silent! call remote_startserver('VIM') " necessary for backward search
 endif
+" }}}
 
-Plug 'majutsushi/tagbar'
-nnoremap <silent> <F6> :TagbarToggle<CR>
-Plug 'preservim/nerdtree'
-let g:NERDTreeBookmarksFile = $HOME . '/.vim/NERDTreeBookmarks'
-let g:NERDTreeShowBookmarks = 1
-let g:NERDTreeShowHidden = 1
-let g:NERDTreeMinimalUI = 1
-nnoremap <silent> <C-N> :e .<CR>
-nnoremap <silent> <C-W><C-N> :rightbelow vsplit .<CR>
+" Filetype-specific plugins {{{
 Plug 'iamcco/markdown-preview.nvim', {'do': 'cd app & yarn install'}
 let g:mkdp_auto_close = 0
 nmap <C-p> <Plug>MarkdownPreviewToggle
@@ -83,8 +85,27 @@ let g:polyglot_disabled = [
             \ 'c++11',
             "\ conflict with vimtex
             \ 'latex']
+
 Plug 'jackguo380/vim-lsp-cxx-highlight'
 Plug 'mogelbrod/vim-jsonpath'
+" }}}
+
+" 'Graphical' plugins {{{
+Plug 'majutsushi/tagbar'
+nnoremap <silent> <F6> :TagbarToggle<CR>
+Plug 'preservim/nerdtree'
+let g:NERDTreeBookmarksFile = $HOME . '/.vim/NERDTreeBookmarks'
+let g:NERDTreeShowBookmarks = 1
+let g:NERDTreeShowHidden = 1
+let g:NERDTreeMinimalUI = 1
+nnoremap <silent> <C-N> :e .<CR>
+nnoremap <silent> <C-W><C-N> :rightbelow vsplit .<CR>
+" }}}
+
+" Miscellaneous plugins {{{
+Plug 'tpope/vim-fugitive'
+nnoremap <silent> <Leader>G :Git<CR>
+
 Plug 'google/vim-searchindex'
 let g:searchindex_star_case = 0
 Plug 'bronson/vim-visual-star-search'
@@ -93,14 +114,17 @@ Plug 'ntpeters/vim-better-whitespace'
 let g:show_spaces_that_precede_tabs = 1
 Plug 'xilefsensei/vim-sleuth'
 Plug 'Yggdroot/indentLine'
-let g:indentLine_enabled = 0 " use :IndentLines{Enable,Disable,Toggle}
+let g:indentLine_enabled = 0 " Use :IndentLines{Enable,Disable,Toggle}
+
 Plug 'machakann/vim-highlightedyank'
 let g:highlightedyank_highlight_duration = 500
 Plug 'gcavallanti/vim-noscrollbar'
 Plug 'matze/vim-move'
 let g:move_key_modifier = 'C'
 Plug 'farmergreg/vim-lastplace'
+" }}}
 
+" Statusline {{{
 Plug 'itchyny/lightline.vim'
 let g:lightline = {
     \ 'colorscheme': 'one',
@@ -117,34 +141,36 @@ let g:lightline = {
     \ }
 \ }
 autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
+" }}}
 
 Plug 'xilefsensei/papercolor-theme'
 
 call plug#end()
+" }}}
 
-" for insert-mode-abbreviations
+" Functions {{{
+" For insert-mode-abbreviations
 function Eatchar(pat)
     let c = nr2char(getchar(0))
     return (c =~ a:pat) ? '' : c
 endfunction
+" }}}
 
-"" bindings
-" set themes
+" Mappings {{{
+" Set colors
 nnoremap <silent> <F2> :let &background = (&background == "dark" ? "light" : "dark")<CR>
 tnoremap <silent> <F2> <C-W>:let &background = (&background == "dark" ? "light" : "dark")<CR>
-nnoremap <silent> <F5> :source $MYVIMRC<CR>:redraw!<CR>
 
-" miscellaneous
+" Miscellaneous
+nnoremap <silent> <F5> :source $MYVIMRC<CR>:redraw!<CR>
 nnoremap <silent> <F7> :set spell!<CR>
 nnoremap <silent> <Space> :nohlsearch<CR>
 nnoremap Y y$
-" 'competitive programming'
+" 'Competitive Programming'
 nnoremap <F9> :write <Bar> !g++ -O3 -o %:r %<CR>
-" allow writing as sudo
-command W write !sudo tee > /dev/null %
 
-" movements
-" use map instead of noremap for vim-smoothie
+" Movements {{{
+" Use map instead of noremap for vim-smoothie
 map <C-S> <C-U>
 map <C-Q> <C-Y>
 
@@ -156,23 +182,14 @@ noremap j gj
 ounmap j
 noremap k gk
 ounmap k
+" }}}
 
-" sessions
-command -nargs=1 CS execute 'mksession! ' . $HOME . '/.vim/sessions/' . '<args>.vim'
-command SS execute 'mksession! ' . v:this_session
-command XS execute 'mksession! ' . v:this_session <Bar> wall <Bar> qall!
-command DS execute 'silent !rm ' . v:this_session <Bar> redraw!
-command QQ qall!
-
-" shortcuts for opening stuff
-command -nargs=1 -complete=file LS leftabove vsplit <args>
-command -nargs=1 -complete=file RS rightbelow vsplit <args>
-
-" open terminal in various ways
+" Open terminal in various ways
 nmap <silent> <C-W>t :vertical term<CR>
 tmap <silent> <C-W>t <C-W>:vertical term<CR>
 nmap <silent> <C-W><C-T> :term ++curwin<CR>
 
+" Tabs {{{
 " open new, empty tab
 nnoremap <silent> <C-T> :tabedit<CR>
 tnoremap <silent> <C-T> <C-W>:tabedit<CR>
@@ -209,13 +226,31 @@ tnoremap <silent> - <C-W>:11tabnext<CR>
 tnoremap <silent> = <C-W>:12tabnext<CR>
 tnoremap <silent> <C-PageUp> <C-W>:silent! tabm -<CR>
 tnoremap <silent> <C-PageDown> <C-W>:silent! tabm +<CR>
+" }}}
+" }}}
 
-"" theme
+" Commands {{{
+" Sessions
+command -nargs=1 CS execute 'mksession! ' . $HOME . '/.vim/sessions/' . '<args>.vim'
+command SS execute 'mksession! ' . v:this_session
+command XS execute 'mksession! ' . v:this_session <Bar> wall <Bar> qall!
+command DS execute 'silent !rm ' . v:this_session <Bar> redraw!
+command QQ qall!
+
+" Shortcuts for opening vsplits
+command -nargs=1 -complete=file LS leftabove vsplit <args>
+command -nargs=1 -complete=file RS rightbelow vsplit <args>
+
+" Facilitate writing as sudo
+command W write !sudo tee > /dev/null %
+" }}}
+
+" Theme {{{
 set t_Co=256
 set t_ut=
 set background=dark
 "set termguicolors
-" darker background, value is 'blackgravel' from 'sjl/badwolf'. (232 is even darker)
+" Darker background: value 233 is 'blackgravel' from 'sjl/badwolf' (232 is even darker)
 let g:PaperColor_Theme_Options = {
             \   'theme': {
             \       'default.dark': {
@@ -226,8 +261,16 @@ let g:PaperColor_Theme_Options = {
             \   }
             \ }
 colorscheme PaperColor
+" }}}
 
-"" miscellaneous
+" Filetype-specific {{{
+augroup filetype_vim
+    autocmd!
+    autocmd FileType vim setlocal foldmethod=marker
+augroup END
+" }}}
+
+" Options {{{
 syntax enable               " enable syntax highlighting
 set scrolloff=5             " lines above/below cursor when scrolling
 set number                  " show line numbers
@@ -275,13 +318,16 @@ set sessionoptions+=localoptions " do save local options (e.g. for spelling)
 set termwinscroll=100000    " more terminal scrollback
 set updatetime=100          " delay (e.g. for tagbar auto-refresh)
 set ttimeoutlen=100         " less delay for <S-O>
+" }}}
 
-" do not display line numbers for terminals (when in normal mode)
+" Miscellaneous {{{
+" Do not display line numbers for terminals (when in normal mode)
 if exists('##TerminalWinOpen')
     autocmd TerminalWinOpen * setlocal nonumber
 endif
 
-" use powershell on windows
+" Use powershell on windows
 if has('win32') || has('win64')
     set shell=powershell
 endif
+" }}}
