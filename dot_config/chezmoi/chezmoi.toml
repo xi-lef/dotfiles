@@ -1,3 +1,4 @@
+sourceDir = "~/Dropbox/cfg/chezmoi"
 encryption = "age"
 [age]
     passphrase = true
