@@ -275,9 +275,37 @@ colorscheme PaperColor
 " }}}
 
 " Filetype-specific {{{
+augroup filetype_e2
+    autocmd!
+    autocmd BufRead,BufNewFile *.e2 setlocal filetype=e2
+    autocmd BufRead,BufNewFile *.ir setlocal filetype=e2ir
+augroup END
+
+augroup filetype_java
+    autocmd!
+    autocmd FileType java inoreabbrev <silent> <buffer> sysout System.out.println("");
+        \<Left><Left><Left><C-R>=Eatchar('\s')<CR>
+augroup END
+
+augroup filetype_json
+    autocmd!
+    autocmd FileType json,jsonc setlocal foldmethod=syntax
+    autocmd FileType json,jsonc nnoremap <silent> <buffer> <localleader>j :call jsonpath#echo()<CR>
+augroup END
+
+augroup filetype_python
+    autocmd!
+    autocmd FileType python IndentLinesEnable
+augroup END
+
 augroup filetype_vim
     autocmd!
     autocmd FileType vim setlocal foldmethod=marker
+augroup END
+
+augroup filetype_vsfs
+    autocmd!
+    autocmd BufNewFile,BufRead *.vs,*.fs set filetype=glsl
 augroup END
 " }}}
 
