@@ -46,10 +46,11 @@ nmap <Leader>rn <Plug>(coc-rename)
 nmap <Leader>f <Plug>(coc-fix-current)
 nnoremap <silent> <Leader>h :CocCommand clangd.switchSourceHeader vsplit<CR>
 nnoremap <silent> <Leader>i :call CocActionAsync('doHover')<CR>
-nnoremap <silent> <Leader>gd :CocCommand git.chunkInfo<CR>
 nnoremap <silent> <Leader>ga :CocCommand git.chunkStage<CR>
-nnoremap <silent> <Leader>gu :CocCommand git.chunkUndo<CR>
+nnoremap <silent> <Leader>gd :CocCommand git.chunkInfo<CR>
+nnoremap <silent> <Leader>gl :CocCommand git.showCommit<CR>
 nnoremap <silent> <Leader>gt :CocCommand git.toggleGutters<CR>
+nnoremap <silent> <Leader>gu :CocCommand git.chunkUndo<CR>
 command OI :call CocAction('runCommand', 'editor.action.organizeImport')
 
 " Highlight the symbol and its references when holding the cursor
@@ -154,12 +155,26 @@ function Eatchar(pat)
     return (c =~ a:pat) ? '' : c
 endfunction
 
-function SPComment()
+function SPComment(print_arrow = 1)
+    if &filetype ==# 'c'
+        let start = '/*'
+        let middle = ' *'
+        let end = '/'
+    elseif &filetype ==# 'make'
+        let start = '##'
+        let middle = '#'
+        let end = '#/'
+    else
+        echoerr 'Unrecognized filetype'
+        return
+    endif
+
     " 'sp-comments' is bugged, so we have to limit the '^' to column 80 (lol)
     let target = min([80, charcol('.')])
-    execute "normal! o\<ESC>i/*K" . repeat(" ", target - 4) . "^\<CR>/\<ESC>O "
-    " Two spaces are inserted for whatever reason, so we delete one of them
-    normal! x
+    let arrow = a:print_arrow ? repeat(" ", target - 4) . '^' : ''
+
+    execute "normal! o\<ESC>i" . start . "K" . arrow . "\<CR>"
+                \ . end . "\<ESC>O\<ESC>0\"_Di" . middle . " "
     startinsert!
 endfunction
 " }}}
@@ -175,6 +190,7 @@ nnoremap <silent> <F7> :set spell!<CR>
 nnoremap <silent> <Space> :nohlsearch<CR>
 nnoremap Y y$
 nnoremap <silent> <Leader>c :call SPComment()<CR>
+nnoremap <silent> <Leader>C :call SPComment(0)<CR>
 
 " 'Competitive Programming'
 nnoremap <F9> :write <Bar> !g++ -O3 -o %:r %<CR>
