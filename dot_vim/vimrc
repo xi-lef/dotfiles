@@ -65,8 +65,7 @@ let g:tex_flavor = 'latex'
 let g:vimtex_view_method = 'zathura'
 let g:vimtex_quickfix_autoclose_after_keystrokes = 1
 " Map ctrl+space to forward search
-nmap <silent> <C-Space> <Plug>(vimtex-view) " gvim
-nmap <silent> <C-@> <Plug>(vimtex-view)     " vim
+nmap <silent> <C-@> <Plug>(vimtex-view)
 nmap <F8> <Plug>(vimtex-compile)
 if empty(v:servername) && exists('*remote_startserver')
     silent! call remote_startserver('VIM') " necessary for backward search
@@ -257,7 +256,7 @@ command W write !sudo tee > /dev/null %
 " }}}
 
 " Theme {{{
-set t_Co=256
+"set t_Co=256
 set t_ut=
 set background=dark
 "set termguicolors
