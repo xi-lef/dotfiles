@@ -170,10 +170,10 @@ function SPComment(print_arrow = 1)
     endif
 
     " 'sp-comments' is bugged, so we have to limit the '^' to column 80 (lol)
-    let target = min([80, charcol('.')])
+    let target = min([80, virtcol('.')])
     let arrow = a:print_arrow ? repeat(" ", target - 4) . '^' : ''
 
-    execute "normal! o\<ESC>i" . start . "K" . arrow . "\<CR>"
+    execute "normal! o\<ESC>0\"_Di" . start . "K" . arrow . "\<CR>"
                 \ . end . "\<ESC>O\<ESC>0\"_Di" . middle . " "
     startinsert!
 endfunction
