@@ -9,5 +9,6 @@
     "python.linting.mypyEnabled": true,
     "markdownlint.config": {
         "line-length": false
-    }
+    },
+    "snippets.ultisnips.directories": ["snips"]
 }

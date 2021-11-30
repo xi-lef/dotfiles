@@ -19,7 +19,7 @@ command -nargs=1 CI CocInstall <args>
 command -nargs=1 CU CocUninstall <args>
 command CC tabedit <Bar> CocConfig
 let g:coc_global_extensions = ['coc-clangd', 'coc-git', 'coc-java', 'coc-json', 'coc-markdownlint',
-                             \ 'coc-pyright', 'coc-sh', 'coc-vimlsp', 'coc-vimtex']
+                             \ 'coc-pyright', 'coc-sh', 'coc-snippets', 'coc-vimlsp', 'coc-vimtex']
 let g:coc_status_warning_sign = '⚠️ '
 let g:coc_status_error_sign = '❗'
 
@@ -80,11 +80,7 @@ nmap <C-p> <Plug>MarkdownPreviewToggle
 
 Plug 'tikhomirov/vim-glsl'
 Plug 'sheerun/vim-polyglot'
-let g:polyglot_disabled = [
-            "\ for nullptr
-            \ 'c++11',
-            "\ conflict with vimtex
-            \ 'latex']
+let g:polyglot_disabled = ['autoindent', 'latex'] " conflict with vimtex
 
 Plug 'jackguo380/vim-lsp-cxx-highlight'
 Plug 'mogelbrod/vim-jsonpath'
@@ -132,8 +128,8 @@ let g:lightline = {
     \   'left': [['mode', 'paste'],
     \            ['cocstatus', 'readonly', 'filename', 'modified', 'scrollbar']],
     \   'right': [['lineinfo'],
-    "\            ['percent'],
-    \            ['fileformat', 'fileencoding', 'filetype']]
+    \             ['percent'],
+    \             ['fileformat', 'fileencoding', 'filetype']]
     \ },
     \ 'component_function': {
     \     'cocstatus': 'coc#status',
@@ -158,11 +154,11 @@ endfunction
 function SPComment(print_arrow = 1)
     if &filetype ==# 'c'
         let start = '/*'
-        let middle = ' *'
-        let end = '/'
+        let middle = ''
+        let end = '*/'
     elseif &filetype ==# 'make'
         let start = '##'
-        let middle = '#'
+        let middle = '# '
         let end = '#/'
     else
         echoerr 'Unrecognized filetype'
@@ -171,10 +167,11 @@ function SPComment(print_arrow = 1)
 
     " 'sp-comments' is bugged, so we have to limit the '^' to column 80 (lol)
     let target = min([80, virtcol('.')])
-    let arrow = a:print_arrow ? repeat(" ", target - 4) . '^' : ''
+    let arrow = !a:print_arrow ? '' : repeat(" ", target - 4) . '^'
+    let clear = "\<ESC>0\"_Di" " helper-'function' to clear a line
 
-    execute "normal! o\<ESC>0\"_Di" . start . "K" . arrow . "\<CR>"
-                \ . end . "\<ESC>O\<ESC>0\"_Di" . middle . " "
+    execute "normal! o" . clear . start . "K" . arrow . "\<CR>"
+                \ . clear . end . "\<ESC>O" . clear . middle
     startinsert!
 endfunction
 " }}}

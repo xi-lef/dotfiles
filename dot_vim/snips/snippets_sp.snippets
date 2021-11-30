@@ -1,0 +1,7 @@
+# vim: fdm=marker tw=99 et
+snippet "snip" "Snippet for SP" b
+context "`!p snip.rv = 'c' if fn.startswith('c_') else 'm'`() and ${1:task}()"
+snippet "$1 ${2:trigger}" "${3:desc}"
+$0
+`echo endsnippet`
+endsnippet

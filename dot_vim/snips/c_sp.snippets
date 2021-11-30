@@ -1,0 +1,383 @@
+# vim: fdm=marker tw=99 et
+# Global {{{
+global !p
+def c():
+    for l in reversed(snip.buffer[: snip.line]):
+        if re.match('^\*/$', l):
+            return False
+        elif re.match('^/\*K\s*\^$', l):
+            return True
+    return False
+
+def in_task(name: str):
+    return name in snip.buffer.name
+
+def lilo(): return in_task('lilo')
+def wsort(): return in_task('wsort')
+def halde(): return in_task('halde')
+def clash(): return in_task('clash')
+def mach(): return in_task('mach')
+def creeper(): return in_task('creeper')
+def snail(): return in_task('snail')
+def sister(): return in_task('sister')
+def rush(): return in_task('rush')
+def jbuffer(): return in_task('jbuffer')
+def mother(): return in_task('mother')
+endglobal
+# }}}
+
+# General {{{
+context "c()"
+snippet "atoi" "atoi() statt strtol()"
+atoi(3) darf nicht  verwendt werden, da man damit keine Fehler abfangen kann: es kann z.B. nicht
+unterschieden werden, ob die Eingabe eine 0 war, oder ein Fehler aufgetreten ist. Stattdessen muss
+strtol(3) verwendet werden. (-2.0)
+endsnippet
+
+context "c()"
+snippet "char array sizeof" "kein sizeof() fuer char-Array"
+Da "${1:array}" als char-Array definiert ist, kannst du hier "sizeof($1)" verwenden. Dadurch muss
+die Groesse nicht explizit doppelt angegeben werden, und es koennen nicht versehentlich
+unterschiedliche Werte genutzt werden. ;)
+endsnippet
+
+context "c()"
+snippet "debug output" "Debug-Ausgaben enthalten"
+Solche Debug-Ausgaben bitte vor der Abgabe entfernen, so was gehoert nicht in ein fertiges Programm
+(was eure Abgabe darstellen sollte ;)).${1: (-0.5)}
+endsnippet
+
+context "c()"
+snippet "errno perror" "kein perror() trotz errno"
+In diesem Fall ist die "errno" gesetzt (durch "${1:func(3)}"), weswegen hier perror(3) verwendet
+werden kann, um eine passende Fehlermeldung auszugeben. Als Argument fuer perror(3) uebergibt man
+dann einfach den Namen der fehlgeschlagenen Funktion, also z.B. "perror($1)".
+endsnippet
+
+context "c()"
+snippet "errno undefined" "errno im Erfolgsfall verwendet"
+Wenn eine Bibliotheksfunktion erfolgreich war, ist der Wert der "errno" undefiniert (siehe auch
+Manpage errno(3)). Hier darf also nicht der Wert der "errno" zur Fehlerbehandlung verwendet werden;
+stattdessen muss der Rueckgabewert von "${1:func(3)}" genutzt werden. (-0.5)
+endsnippet
+
+context "c()"
+snippet "fb" "Fehlerbehandlung fehlt"
+Fehlerbehandlung fehlt. (-${1|1.0,0.5,1.5,2.0|})
+endsnippet
+
+context "c()"
+snippet "fclose" "fclose() fehlt"
+Das muss mit fclose(3) wieder geschlossen werden. (-1.0)
+endsnippet
+
+context "c()"
+snippet "ferror/feof" "ferror()/feof() fehlt"
+Fuer eine korrekte Fehlerbehandlung muss hier noch ferror(3) oder feof(3) betrachtet werden, um zu
+wissen, ob ein Fehler aufgetreten ist, oder lediglich EOF erreicht wurde. (-0.5)
+endsnippet
+
+context "c()"
+snippet "fgetc" "[f]getc() char als return type"
+[f]getc returnt einen "int", d.h. das muss auch in einem "int" gespeichert werden, damit die
+Fehlerbehandlung (konkret: der Vergleich mit "EOF") korrekt funktionieren kann. (-1.0)
+endsnippet
+
+context "c()"
+snippet "format string attack" "Format-String Angriff moeglich"
+Das ist problematisch, da "${1:var}" ein String vom Benutzer ist, aber von printf als Format-String
+interpretiert wird. Wenn der Benutzer hier also z.B. ein "%d" reinschreibt, wird das, was als
+naechstes auf dem Stack liegt, als Dezimalzahl ausgegeben. Hier muss deswegen immer "%s" als
+Format-String verwendet werden. (-1.0)
+endsnippet
+
+context "c()"
+snippet "free" "free() fehlt"
+Das muss mit free(3) wieder freigegeben werden. (-1.0)
+endsnippet
+
+context "c()"
+snippet "free in error-case" "Ressourcen im Fehlerfall freigegeben"
+Im Fehlerfall muessen keine Ressourcen freigegeben werden, wenn das Programm im Rahmen der
+Fehlerbehandlung beendet wird. Dadurch kann der Code etwas uebersichtlicher bleiben. ;)
+endsnippet
+
+context "c()"
+snippet "freeaddrinfo" "freeaddrinfo() fehlt"
+Das muss mit freeaddrinfo(3) wieder freigegeben werden. (-1.0)
+endsnippet
+
+context "c()"
+snippet "global" "unnoetig globale Variable"
+Diese Variable ist unnoetig global und koennte genauso gut eine lokale Variable in "${1:func}"
+sein. (-0.5)
+endsnippet
+
+context "c()"
+snippet "malloc instead of stack" "malloc() statt Stack-Allokation"
+Das haette man auch auf dem Stack machen koennen. Das spart die Fehlerbehandlung und das free(3)
+spaeter, was deutlich angenehmer zu schreiben ist. ;)
+endsnippet
+
+context "c()"
+snippet "nullbyte" "Platz fuer '\0' fehlt"
+Hier fehlt ein Byte fuer das '\0'. (-0.5)
+endsnippet
+
+context "c()"
+snippet "static" "Hilfsfunktion nicht static"
+Hilfsfunktionen muessen static sein, damit diese nicht fuer andere Module sichtbar sind.
+(-${1|0.5,1.0|})
+endsnippet
+
+context "c()"
+snippet "stderr" "Fehlerausgaben auf stdout"
+Fehlermeldungen gehoeren auf stderr. Das geht am einfachsten mit fprintf(3). (-0.5)
+endsnippet
+
+context "c()"
+snippet "strtol endptr" "endptr bei strtol() nicht verwendet"
+Hier muss "endptr" verwendet werden, um zwei Fehler abpruefen zu koennen: erstens kann der String
+leer sein, in welchem Fall einfach 0 returnt wird. Zweitens koennen nach der eigentlich Zahl noch
+Buchstaben enthalten sein (z.B. "123a"), was ja auch nicht sein soll. Siehe auch Manpage strtol(3).
+(-0.5)
+endsnippet
+
+context "c()"
+snippet "variablen c89" "alle Variablen am Anfang deklariert"
+Es gibt keinen Grund, alle Variablen am Anfang zu deklarieren. Wenn sie erst kurz vor der
+Verwendung deklariert werden, ist das deutlich uebersichtlicher. :)
+endsnippet
+# }}}
+
+# SP1 {{{
+
+# lilo {{{
+# }}}
+
+# wsort {{{
+# }}}
+
+# halde {{{
+# }}}
+
+# clash {{{
+# }}}
+
+# mach {{{
+# }}}
+
+# creeper {{{
+# }}}
+
+# }}}
+
+# SP2 {{{
+
+# snail {{{
+context "c() and snail()"
+snippet "snail ai_addrconfig" "kein AI_ADDRCONFIG in Flags"
+Wenn in "ai_flags" das "AI_ADDRCONFIG" fehlt, kann es passieren, dass im späteren Verlauf eine
+Verbindungsart gewählt wird, die weder vom Kernel noch der Hardware unterstützt wird; der Fehler
+wird erst beim Aufruf von socket(2) geschehen. Da eine entsprechende Fehlermeldung den Nutzer nur
+unnötig verunsichert, ist es hier angebracht, mit AI_ADDRCONFIG nach unterstützten Verbindungen zu
+filtern.
+endsnippet
+
+context "c() and snail()"
+snippet "snail doubled \r" "doppeltes \r bei Benutzereingabe"
+Die Eingabe kann bereits ein '\r' enthalten (je nach Benutzersystem). In diesem Fall wird hier
+faelschlicherweise ein zusaetzliches '\r' eingefuegt. (-0.5)
+endsnippet
+
+context "c() and snail()"
+snippet "snail expected status code" "erwarteter Status-Code als int"
+Wenn du den erwarteten Status-Code direkt als String (d.h. "char *") uebergibst, sparst du dir die
+Umwandlung zwischen String und Zahl. Dann kannst du den eingelesenen Status-Code direkt mittels
+strcmp(3) vergleichen. ;)
+endsnippet
+
+context "c() and snail()"
+snippet "snail gethostname length" "namelen bei gethostname() anders als bei Definition"
+Hier muss der gleiche Wert verwendet werden wie oben bei der Definition von "${1:hostname}". (-0.5)
+endsnippet
+
+context "c() and snail()"
+snippet "snail getpwuid"
+Es ist nicht erlaubt, in den von getpwuid(3) zurückgegebenen Speicher zu schreiben. Stattdessen
+muss eine Kopie der Daten angelegt werden, wenn diese verändert werden sollen.
+"The application shall not modify the structure to which the return value points, nor any storage
+areas pointed to by pointers within the structure." (Manpage getpwuid(3p)) (-1.0)
+endsnippet
+
+context "c() and snail()"
+snippet "snail last answer" "letzte Serverantwort nicht ausgegeben"
+Im Fehlerfall soll die letzte Antwort des Servers (auf stderr) ausgegeben werden. (-1.0)
+endsnippet
+
+context "c() and snail()"
+snippet "snail length response" "Annahme ueber Laenge der Antwort getroffen"
+Es duerfen keine Annahmen ueber die maximale Laenge einer Antwortzeile, die vom Server kommt,
+getroffen werden. Der einfachste Weg, mit solchen Zeilen unbekannter Laenge umzugehen, ist
+ein zeichenweises Vorgehen, z.B. mit fgetc(3). (-2.0)
+endsnippet
+
+context "c() and snail()"
+snippet "snail line endings" "Zeilen enden nicht auf \r\n"
+Alle an den Server uebertragenen Zeilen muessen auf "\r\n" (DOS-Format) enden. (-1.0)
+endsnippet
+
+context "c() and snail()"
+snippet "snail mailbody" "Mail-Body am Anfang eingelesen"
+Es ist ziemlich schade, wenn der Benutzer seine gesamte Mail eintippt, nur damit dann z.B. beim
+Herstellen der Verbindung ein Fehler auftritt, der zum Programmabbruch fuehrt. Ein anderer Aufbau
+waere hier schlauer gewesen.
+endsnippet
+
+context "c() and snail()"
+snippet "snail socket exit" "exit() bei socket()"
+In diesem Fall sollte das Programm nicht beendet werden. Der Punkt der for-Schleife ist ja, dass
+verschiedene Moeglichkeiten (d.h. verschiedene Arten von Sockets) ausprobiert werden; wenn also
+eine davon nicht funktioniert, soll hier einfach die naechste versucht werden. Nur wenn keine
+einzige Moeglichkeit geklappt hat, muss das Programm tatsaechlich beendet werden, weil natuerlich
+nicht sinnvoll weiter gemacht werden kann. (-1.0)
+endsnippet
+# }}}
+
+# sister {{{
+context "c() and sister()"
+snippet "sister accept" "exit() bei accept"
+In diesem Fall sollte das Programm nicht beendet werden, nur weil die Verbindung nicht hergestellt
+werden konnte. Der Server kann in dieser Situation durchaus weiter laufen, denn mindestens die
+folgenden Fehler sind keine Schwerwiegenden und sollten ein Retry zur Folge haben:
+"For reliable operation the application should detect the network errors defined for the protocol
+after accept() and treat them like EAGAIN by retrying. In the case of TCP/IP, these are ENETDOWN,
+EPROTO, ENOPROTOOPT, EHOSTDOWN, ENONET, EHOSTUNREACH, EOPNOTSUPP, and ENETUNREACH." (Manpage
+accept(2))
+Die Fehlermeldung kann ja trotzdem mit perror() ausgeben werden. (-0.5)
+endsnippet
+
+context "c() and sister()"
+snippet "sister child return" "return im Kind"
+Im Kind darf auf keinen Fall returnt werden: der Kind-Prozess muss sich mittels exit(3) beenden.
+Sonst kehrt er in die accept(2)-Schleife in "main" zurueck, und man hat auf einmal mehrere
+Prozesse, die auf dem gleichen Socket auf Anfragen warten. (-1.0)
+endsnippet
+
+context "c() and sister()"
+snippet "sister fork" "exit() bei fork()"
+fork(2) kann auch aufgrund von Ressourcen-Knappheit scheitern, was im späteren Verlauf wieder
+gelingen kann. Zum Beispiel kann es sein, dass gerade sehr viele Kinder existieren, und erst
+gewartet werden muss, bis sich eins von ihnen beendet hat.
+Deshalb sollte hier im Fehlerfall das Program nicht beendet werden. (-0.5)
+endsnippet
+
+context "c() and sister()"
+snippet "sister clientSock close" "kein close() auf clientSock im Elter"
+Im Elter muss noch "clientSock" geschlossen werden, da dieser beim fork(2) auch dupliziert wurde
+(siehe auch Foliensatz zur rush, 3.5). Damit am Ende keine Ressourcen geleakt werden, muss er hier
+geschlossen werden, sobald er nicht mehr gebraucht wird (was eigentlich sofort ist). (-0.5)
+endsnippet
+
+context "c() and sister()"
+snippet "sister listenSock close" "kein close() auf listenSock im Kind"
+Im Kind muss noch "listenSock" geschlossen werden, da dieser beim fork(2) auch dupliziert wurde
+(siehe auch Foliensatz zur rush, 3.5). Das steht uebrigens auch in connection.h explizit drin. ;)
+(-0.5)
+endsnippet
+
+context "c() and sister()"
+snippet "sister multiple answers" "mehrere http*()-Aufrufe"
+Es wurde bereits eine Antwort mit "${1:httpOk}" gesendet. Hier nochmal eine (andere) Antwort zu
+schicken ist schlecht, da der Browser das nicht erwartet und dementsprechend kaputt anzeigt. (-0.5)
+endsnippet
+
+context "c() and sister()"
+snippet "sister regular file" "nicht auf regulaere Datei geprueft"
+Es sollen lediglich regulaere Dateien ausgeliefert werden, wofuer man stat(2) verwenden muss.
+(-1.0)
+endsnippet
+
+context "c() and sister()"
+snippet "sister wwwpath" "wwwpath Laenge nicht geprueft"
+Es waere schoen, noch zu pruefen, ob der wwwpath ein leerer String ist, was dann mit einer
+Fehlermeldung abgehandelt werden kann.
+endsnippet
+# }}}
+
+# rush {{{
+context "c() and rush()"
+snippet "rush fork sigchld unblocked" "SIGCHLD vor fork() nicht blockiert"
+Vor dem fork(2) muss SIGCHLD blockiert werden, damit das SIGCHLD eines sterbenden Kindprozesses
+nicht verarbeitet werden kann, bevor die PID des neuen Kindes in die plist eingetragen wird. (-2.0)
+endsnippet
+
+context "c() and rush()"
+snippet "rush kill exit" "exit() bei kill()"
+Hier lieber nicht sterben, denn: "ESRCH  The process or process group does not
+exist. Note that an existing process might be a zombie, a process that has
+terminated execution, but has not yet been wait(2)ed for" (Manpage kill(2)). Und das ist
+moeglich, da hier SIGCHLD blockiert ist, und deswegen der Kindprozess, der hier gerade getoetet
+werden soll, noch ein Zombie sein kann. (-0.5)
+endsnippet
+
+context "c() and rush()"
+snippet "rush kill not-child" "kill() moeglicherweise fuer nicht-Kindprozess"
+Es muss noch geprueft werden, ob der zu toetende Prozess ueberhaupt ein eigener Kindprozess ist.
+Dafuer muss man in der plist nachschauen. (0.5)
+endsnippet
+
+context "c() and rush()"
+snippet "rush open flags" "open() flags falsch"
+Hier muessen die korrekten "flags" angegeben werden, oder einfacher: creat(2) genutzt werden.
+(-0.5)
+endsnippet
+
+context "c() and rush()"
+snippet "rush open mode" "open() mode falsch"
+Laut Aufgabenstellung soll die erstellte Datei Leserechte fuer alle und Schreibrechte fuer den
+Besitzer haben. Dafuer kann man eine Veroderung der in der Manpage angegeben Makros nutzen:
+"S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH". (-0.5)
+endsnippet
+
+context "c() and rush()"
+snippet "rush plist unsynchronized access" "ungeschuetzter Zugriff auf plist"
+Um hier auf der plist zu arbeiten, muss sichergestellt werden, dass der Signalhandler nicht
+gleichzeitig auf die plist zugreift, da sonst der interne Zustand kaputt gehen kann. Um das zu
+erreichen, muss hier voruebergehend die Zustellung von "SIGCHLD" blockiert werden. (-2.0)
+endsnippet
+
+context "c() and rush()"
+snippet "rush sa_restart" "SA_RESTART fehlt bei Signalhandler"
+Hier muss "SA_RESTART" in den Flags angegeben werden, damit Systemaufrufe, die von einem Signal
+unterbrochen wurden, einfach neugestartet werden. Alternativ muessten bei allen Systemaufrufen der
+Fehler "EINTR" entsprechend behandelt werden, was aber sehr viel komplizierter ist. ;) (-1.0)
+endsnippet
+
+context "c() and rush()"
+snippet "rush signal handler errno" "errno im Signalhandler nicht gesichert"
+Im Signalhandler muss die errno(3) am Anfang gesichert und am Ende wiederhergestellt werden, wenn
+sie durch den Signalhandler veraendert werden kann. In diesem Fall kann die errno durch waitpid(2)
+gesetzt werden. (-0.5)
+endsnippet
+
+context "c() and rush()"
+snippet "rush signal handler stdio" "Ausgaben im Signalhandler mit stdio"
+In einem Signalhandler duerfen nur async-signal-safe Funktionen aufgerufen werden; siehe Manpage
+signal-safety(7). "${1:func(3)}" ist keine solche Funktion. (-1.0)
+endsnippet
+
+context "c() and rush()"
+snippet "rush sleep signals unblocked" "Signale waehrend sleep() nicht blockiert"
+Waehrend sleep(3) ausgefuehrt wird, muss sichergestellt sein, dass "kein Signal dafuer sorgen kann,
+dass sleep(3) vorzeitig zurueckkehrt" (siehe Aufgabenstellung). (-1.0)
+endsnippet
+# }}}
+
+# jbuffer {{{
+
+# }}}
+# mother {{{
+# }}}
+
+# }}}
