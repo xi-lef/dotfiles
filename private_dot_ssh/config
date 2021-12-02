@@ -23,3 +23,6 @@ ProxyJump cshpc
 User hpcv416h
 #User hpcv482h
 ForwardX11 yes
+ControlPath ~/.ssh/cm-%r@%h:%p
+ControlMaster auto
+ControlPersist 15m
