@@ -3,11 +3,12 @@
 # comments.
 # TODO how to handle # in first line? :/
 global !p
-# TODO doc
+# Check if we are in a multline-grading-comment.
 def m():
-    return (re.match('^##K\s*\^?$', snip.buffer[snip.line - 1])
+    return (re.match('^##K\s*\^?$', snip.buffer[snip.line - 1])  # ##K ^
             and snip.buffer[snip.line].startswith('# '))
-            #and re.match('^#\s', snip.buffer[snip.line]))
+
+# For jbuffer-specific snippets.
 def jbuffer(): return 'jbuffer' in snip.buffer.name
 endglobal
 
@@ -70,7 +71,40 @@ context "m()"
 snippet "rm multiple" "mehrfache rm-Aufrufe"
 rm(1) nimmt auch mehrere Argumente in einem Aufruf entgegen. ;)
 endsnippet
+
+context "m()"
+snippet "var name" "Variable anders benannt"
+Das nennt man per Konvention normal "${1:CFLAGS}". ;)
+endsnippet
+
+context "m()"
+snippet "var use" "Variable nicht verwendet"
+Normal packt man ${1:das hier} in eine Variable, damit man das nicht mehrmals tippen (bzw.
+# copy-pasten) muss. ;)
+endsnippet
 # }}}
 
 # jbuffer {{{
+context "m() and jbuffer()"
+snippet "jbuffer header dep for lib" "Header ist Abhaengigkeit fuer Library"
+Die Header braucht es hier nicht mehr als Abhaengigkeit, da die Informationen ja schon in der
+# .o-Datei stecken. Dementsprechend hast du die Header auch als Abhaengigkeit bei den jeweiligen
+# .o-Dateien (und dadurch ist dann letztendlich auch die Library von den Headern abhaengig, da die
+# Abhaengigkeiten ja rekursiv aufgeloest werden - dafuer muessen die Header nicht nochmal extra
+# angegeben werden).
+endsnippet
+
+context "m() and jbuffer()"
+snippet "jbuffer -L missing" "-L. fehlt beim Linken"
+Du musst hier noch angeben, in welchem Pfad nach der Library (die mit "-l${1:jbuffer}" angegeben
+# ist) gesucht werden soll. Dafuer brauchst du das "-L" gefolgt vom Pfad; da die Library im
+# aktuellen Ordner liegt, funktioniert also einfach "-L.". (-0.5)
+endsnippet
+
+context "m() and jbuffer()"
+snippet "jbuffer pic" "PIC zu viel verwendet"
+Nachdem dieses Modul nicht Teil der Bibliothek ist, muss es auch nicht positionsunabhaengig sein.
+# Das war auch in der Aufgabenstellung so gefordert: "Die beiden Module der dynamischen Bibliothek
+# (und nur diese) sollen als Position-Independent Code übersetzt werden". (-0.5)
+endsnippet
 # }}}
