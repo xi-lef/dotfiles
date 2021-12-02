@@ -42,7 +42,7 @@ nmap <C-W>gd <C-W>v <Plug>(coc-definition)
 " }}}
 
 " Complex actions {{{
-nmap <Leader>rn <Plug>(coc-rename)
+nmap <Leader>r <Plug>(coc-rename)
 nmap <Leader>f <Plug>(coc-fix-current)
 nnoremap <silent> <Leader>h :CocCommand clangd.switchSourceHeader vsplit<CR>
 nnoremap <silent> <Leader>i :call CocActionAsync('doHover')<CR>
