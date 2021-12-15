@@ -2,7 +2,13 @@
 Frames=0
 
 [Appearance]
-Skin=breath2_dark
+Skin=breath-dark
+
+[Desktop Entry]
+DefaultProfile=Breath2.profile
+
+[Dialogs]
+FirstRun=false
 
 [Favorite Profiles]
 Favorites=
