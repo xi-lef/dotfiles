@@ -14,71 +14,71 @@ endglobal
 
 # General {{{
 context "m()"
-snippet "all" "all nicht erstes Target"
+snippet all "all nicht erstes Target"
 "all" muss das erste Target im Makefile sein (mit Ausnahme von ".PHONY"), da ein Aufruf von
 # "make" in der Kommandozeile standardmaessig das erste Target erstellt. (-0.5)
 endsnippet
 
 context "m()"
-snippet "clean .o" "clean loescht nicht alle Zwischenprodukte"
+snippet clean_.o "clean loescht nicht alle Zwischenprodukte"
 Das "clean"-Target muss auch alle Zwischenprodukte (d.h. alle erzeugten .o-Dateien) loeschen.
 # (-0.5)
 endsnippet
 
 context "m()"
-snippet "dependency" "Abhaengigkeit fehlt"
+snippet dependency "Abhaengigkeit fehlt"
 Abhaengigkeit fuer "${1:header.h}" fehlt. (-0.5)
 endsnippet
 
 context "m()"
-snippet "dollar^" "$^"
+snippet dollar^ "$^"
 Hier kann man auch "$^" verwenden, was zu allen Abhaengigkeiten expandiert. Dann spart man sich
 # das Abtippen, und kann dort keine Leichtsinnsfehler mehr machen. ;)
 endsnippet
 
 context "m()"
-snippet "dollar@" "$@"
+snippet dollar@ "$@"
 Hier kann man auch "$@" verwenden, was zum Namen des Targets expandiert. Das spart ein bisschen
 # Tipparbeit. ;)
 endsnippet
 
 context "m()"
-snippet "flags" "Compilerflags fehlen"
+snippet flags "Compilerflags fehlen"
 Beim Compilen muessen die Compileroptionen, die auf der Webseite angegeben sind, genutzt werden.
 # (-0.5)
 endsnippet
 
 context "m()"
-snippet "pattern" "keine Pattern-Regeln"
+snippet pattern "keine Pattern-Regeln"
 Hier sollen (so weit moeglich) Pattern-Regeln verwendet werden, z.B. fuer "%.o: %.c". (-1.0)
 endsnippet
 
 context "m()"
-snippet "phony" ".PHONY fehlt"
+snippet phony ".PHONY fehlt"
 Pseudo-Targets (= erzeugen keine Datei mit dem Namen des Targets) muessen als Abhaengigkeit des
 # Spezial-Targets ".PHONY" angegeben werden, damit diese immer gebaut werden. In SP betrifft
 # das die Targets "all" und "clean". (-0.5)
 endsnippet
 
 context "m()"
-snippet "rm -f" "-f fehlt bei rm"
+snippet rm_-f "-f fehlt bei rm"
 Beim Aufruf von "rm" sollte die Option "-f" verwendet werden. Das sorgt dafuer, dass kein Fehler
 # auftritt, wenn eine der angegebenen Dateien nicht existiert (z.B. weil mehrmals hintereinander
 # "make clean" aufgerufen wird).
 endsnippet
 
 context "m()"
-snippet "rm multiple" "mehrfache rm-Aufrufe"
+snippet rm_multiple "mehrfache rm-Aufrufe"
 rm(1) nimmt auch mehrere Argumente in einem Aufruf entgegen. ;)
 endsnippet
 
 context "m()"
-snippet "var name" "Variable anders benannt"
+snippet var_name "Variable anders benannt"
 Das nennt man per Konvention normal "${1:CFLAGS}". ;)
 endsnippet
 
 context "m()"
-snippet "var use" "Variable nicht verwendet"
+snippet var_use "Variable nicht verwendet"
 Normal packt man ${1:das hier} in eine Variable, damit man das nicht mehrmals tippen (bzw.
 # copy-pasten) muss. ;)
 endsnippet
@@ -86,7 +86,7 @@ endsnippet
 
 # jbuffer {{{
 context "m() and jbuffer()"
-snippet "jbuffer header dep for lib" "Header ist Abhaengigkeit fuer Library"
+snippet jbuffer_header_dep_for_lib "Header ist Abhaengigkeit fuer Library"
 Die Header braucht es hier nicht mehr als Abhaengigkeit, da die Informationen ja schon in der
 # .o-Datei stecken. Dementsprechend hast du die Header auch als Abhaengigkeit bei den jeweiligen
 # .o-Dateien (und dadurch ist dann letztendlich auch die Library von den Headern abhaengig, da die
@@ -95,14 +95,14 @@ Die Header braucht es hier nicht mehr als Abhaengigkeit, da die Informationen ja
 endsnippet
 
 context "m() and jbuffer()"
-snippet "jbuffer -L missing" "-L. fehlt beim Linken"
-Du musst hier noch angeben, in welchem Pfad nach der Library (die mit "-l${1:jbuffer}" angegeben
-# ist) gesucht werden soll. Dafuer brauchst du das "-L" gefolgt vom Pfad; da die Library im
-# aktuellen Ordner liegt, funktioniert also einfach "-L.". (-0.5)
+snippet jbuffer_-L_missing "-L. fehlt beim Linken"
+Hier muss noch angegeben werden, in welchem Pfad nach der Library (die mit "-l${1:jbuffer}"
+# angegeben ist) gesucht werden soll. Dafuer braucht man das "-L" gefolgt vom Pfad; da die Library
+# im aktuellen Ordner liegt, funktioniert also einfach "-L.". (-0.5)
 endsnippet
 
 context "m() and jbuffer()"
-snippet "jbuffer pic" "PIC zu viel verwendet"
+snippet jbuffer_pic "PIC zu viel verwendet"
 Nachdem dieses Modul nicht Teil der Bibliothek ist, muss es auch nicht positionsunabhaengig sein.
 # Das war auch in der Aufgabenstellung so gefordert: "Die beiden Module der dynamischen Bibliothek
 # (und nur diese) sollen als Position-Independent Code übersetzt werden". (-0.5)
