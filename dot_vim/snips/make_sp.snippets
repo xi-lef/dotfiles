@@ -5,10 +5,11 @@
 global !p
 # Check if we are in a multline-grading-comment.
 def m():
-    return (re.match('^##K\s*\^?$', snip.buffer[snip.line - 1])  # ##K ^
-            and snip.buffer[snip.line].startswith('# '))
+    return (snip.buffer[snip.line].startswith('# ')
+            and re.match(r'^##K\s*\^?$', snip.buffer[snip.line - 1]))  # ##K ^
 
-# For jbuffer-specific snippets.
+# For jbuffer-specific snippets. (Technically unnecessary because the virtually identical function
+# exists for the C-snippets, and these functions are shared.)
 def jbuffer(): return 'jbuffer' in snip.buffer.name
 endglobal
 
