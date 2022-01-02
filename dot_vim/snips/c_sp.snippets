@@ -4,9 +4,9 @@ global !p
 # Check if we are in a multline-grading-comment.
 def c():
     for l in reversed(snip.buffer[: snip.line]):
-        if re.match('^\*/$', l):  # */
+        if re.match(r'^\*/$', l):  # */
             return False
-        elif re.match('^/\*K\s*\^?$', l):  # /*K ^
+        elif re.match(r'^/\*K\s*\^?$', l):  # /*K ^
             return True
     return False
 
@@ -33,12 +33,12 @@ context "c()"
 snippet atoi "atoi() statt strtol()"
 atoi(3) darf nicht  verwendt werden, da man damit keine Fehler abfangen kann: es kann z.B. nicht
 unterschieden werden, ob die Eingabe eine 0 war, oder ein Fehler aufgetreten ist. Stattdessen muss
-strtol(3) verwendet werden. (-2.0)
+strtol(3) verwendet werden (siehe auch Korrekturhinweise auf der Webseite). (-2.0)
 endsnippet
 
 context "c()"
 snippet char_array_sizeof "kein sizeof() fuer char-Array"
-Da "${1:array}" als char-Array definiert ist, kannst du hier "sizeof($1)" verwenden. Dadurch muss
+Da "${1:array}" als char-Array definiert ist, kann man hier "sizeof($1)" verwenden. Dadurch muss
 die Groesse nicht explizit doppelt angegeben werden, und es koennen nicht versehentlich
 unterschiedliche Werte genutzt werden. ;)
 endsnippet
@@ -70,7 +70,7 @@ stattdessen muss der Rueckgabewert von "${1:func(3)}" genutzt werden. (-0.5)
 endsnippet
 
 context "c()"
-snippet fb "Fehlerbehandlung fehlt"
+snippet error_handling "Fehlerbehandlung fehlt"
 Fehlerbehandlung fehlt. (-${1|1.0,0.5,1.5,2.0|})
 endsnippet
 
@@ -83,6 +83,13 @@ context "c()"
 snippet ferror_feof "ferror()/feof() fehlt"
 Fuer eine korrekte Fehlerbehandlung muss hier noch ferror(3) oder feof(3) betrachtet werden, um zu
 wissen, ob ein Fehler aufgetreten ist, oder lediglich EOF erreicht wurde. (-0.5)
+endsnippet
+
+context "c()"
+snippet fflush "fflush() fehlt"
+Hier muss noch ein fflush(3) samt Fehlerbehandlung stehen, um sicherzugehen, dass die Ausgabe
+auch wirklich rausgeschrieben wird. Sonst kann es sein, dass die Ausgabe bis jetzt nur in einem
+Puffer gespeichert, aber noch nicht tatsaechlich rausgeschrieben wurde. (-1.5)
 endsnippet
 
 context "c()"
@@ -139,6 +146,16 @@ unnoetig, hier alle IDs in einem Array abzuspeichern. ;)
 endsnippet
 
 context "c()"
+snippet semdestroy "semDestroy() fehlt"
+Das muss mit semDestroy() wieder freigegeben werden. (-1.0)
+endsnippet
+
+context "c()"
+snippet sizeof_char "sizeof(char) statt 1"
+"sizeof(char)" ist in C immer 1; man kann sich das also sparen. ;)
+endsnippet
+
+context "c()"
 snippet static "Hilfsfunktion/-variable nicht static"
 Hilfsfunktionen/-variablen muessen static sein, damit diese nicht fuer andere Module sichtbar sind.
 (-${1|0.5,1.0|})
@@ -183,7 +200,7 @@ der Aufrufer entscheiden, ob er eine Fehlermeldung ausgeben will, oder nicht. (-
 endsnippet
 
 context "c() and lilo()"
-snippet lilo_fb "Fehlerbehandlung fehlt"
+snippet lilo_error_handling "Fehlerbehandlung fehlt"
 Fehlerbehandlung fehlt. Wenn Funktionen (wie z.B. malloc(3)) mit einem Fehler zurueckkehren, dieser
 aber nicht behandelt wird, fuehrt dies zum Programmabsturz. Deshalb muss man immer
 Fehlerueberpruefungen durchfuehren, und auftretende Fehler entsprechend behandeln. (-0.5)
@@ -242,18 +259,252 @@ endsnippet
 # }}}
 
 # wsort {{{
+context "c() and wsort()"
+snippet wsort_102 "Puffer fuer Zeilen zu klein"
+Laut Aufgabenstellung ist ein Wort maximal 100 Zeichen lang. Damit wird ein Puffer der Groesse 102
+benoetigt, da zusaetzlich zum eigentlichen Wort noch ein '\n' (das laut Aufgabenstellung nicht zum
+Wort gehoert) sowie ein '\0' dazu kommen. (-1)
+endsnippet
+
+context "c() and wsort()"
+snippet wsort_compare_pointer "Pointer in compare() inkorrekt verwendet"
+Diese Funktion wird von qsort(3) aufgerufen, und bekommt dabei *Pointer* auf die zu sortierenden
+Elemente uebergeben. Diese Elemente sind hier Strings, also "char *"; diese Funktion bekommt also
+Pointer auf Strings, also "char **" uebergeben. Hier werden nun die Pointer sortiert, es muessen
+aber die Strings "dahinter" sortiert werden. Dafuer muessen die Argumente korrekt gecasted werden,
+bevor sie verwendet werden. (-1.0)
+endsnippet
+
+context "c() and wsort()"
+snippet wsort_empty_lines "leere Zeilen nicht ignoriert"
+Laut Aufgabenstellung sollen leere Zeilen ignoriert werden. (-1.0)
+endsnippet
+
+context "c() and wsort()"
+snippet wsort_fgets_size "falsche size bei fgets()"
+fgets(3) muss hier die Groesse des uebergebenen Puffers ("${1:buf}") uebergeben werden; das
+beinhaltet also auch den Platz fuer das '\0'.${2: Da hier "$1" ein char-Array ist, kann auch direkt
+"sizeof($1)" verwendet werden - dann kann dieser Fehler gar nicht passieren.} (-0.5)
+endsnippet
+
+context "c() and wsort()"
+snippet wsort_fgets_err "Fehlerbehandlung fgets() fehlt"
+Fehlerbehandlung fuer fgets(3) fehlt: sobald fgets(3) NULL zurueckgibt muss noch geprueft werden,
+ob ein Fehler aufgetreten ist. Dafuer gibt es dann feof(3) bzw. ferror(3) (siehe auch
+Korrekturhinweise auf der Webseite). (-1.5)
+endsnippet
+
+context "c() and wsort()"
+snippet wsort_LF_last_line "letzte Zeile ohne '\n' falsch behandelt"
+Laut Aufgabenstellung muss die letzte Zeile nicht zwangslaeufig ein '\n' enthalten - das geht hier
+kaputt, da ${1:...}
+endsnippet
+
+context "c() and wsort()"
+snippet wsort_LF_not_removed "\n ist Teil des Wortes"
+Laut Aufgabenstellung ist das '\n' am Ende einer Zeile nicht Teil des Wortes. Hier werden diese nie
+entfernt und dadurch mitsortiert, was zu einer falschen Sortierreihenfolge fuehrt. (-1.0)
+endsnippet
+
+context "c() and wsort()"
+snippet wsort_overlong_condition "unerfuellbare Bedingung zur Erkennung von ueberlangen Zeilen"
+Diese Bedingung kann nie erfuellt sein, da fgets(3) nur ${1:101} Zeichen (exklusive '\0') einliest.
+strlen(3) gibt die Laenge des Strings (also die Anzahl an Zeichen vor dem '\0') zurueck, was
+niemals groesser sein kann. (-1.0)
+endsnippet
+
+context "c() and wsort()"
+snippet wsort_overlong_missing "Behandlung von ueberlangen Zeilen fehlt"
+Hier fehlt ${1:das Erkennen (-3.0) sowie }das Ignorieren (-2.0) von ueberlangen Zeilen.
+endsnippet
+
+context "c() and wsort()"
+snippet wsort_static "static (bei Hilfsfunktion) vergessen"
+Hier fehlt "static". Alle Schnittstellen, die nicht in der Aufgabenstellung verlangt sind, sollen
+nach aussen hin nicht sichtbar sein. Ohne das "static" ist es anderen Modulen (mit denen dieses
+Modul womoeglich zusammen gelinkt wird) erlaubt, ebenfalls diese Funktion zu verwenden. Das
+verhindert einen erfolgreichen Link-Vorgang. (-0.5)
+endsnippet
 # }}}
 
 # halde {{{
+context "c() and halde()"
+snippet halde_free_magic "free: MAGIC nicht geprueft"
+Fuer "${1:ptr}" muss noch geprueft werden, ob im dazugehoerigen "mblock->next" wirklich "MAGIC"
+steht. Dazu soll sichergestellt werden, dass der uebergebene Pointer wirklich von "malloc" kommt,
+und nicht einfach ein zufaelliger Pointer uebergeben wurde. (-1.0)
+endsnippet
+
+context "c() and halde()"
+snippet halde_function_local_static "keine funktionslokale static Variable"
+Eine *funktionslokale* static Variable waere hier schoener, da das ja nur in "malloc" verwendet
+wird. ;)
+endsnippet
+
+context "c() and halde()"
+snippet halde_realloc_size "realloc: zu viel kopiert"
+Hier duerfen maximal "min(size, mblock->size)" viele Bytes kopiert werden, da sonst ueber den
+verwalteten Speicherplatz hinausgeschrieben wird, wobei die Daten in anderen mblocks ueberschrieben
+werden koennten. (-1.0)
+endsnippet
+
+context "c() and halde()"
+snippet halde_size_modified "malloc: size faelschlicherweise verkleinert"
+Die Groesse des vergebenen mblocks darf nur veraendert (also verkleinert) werden, wenn ein neuer
+mblock dahinter angelegt wird. Sonst geht der Speicher, der vom vergebenen mblock nicht verwendet
+wird, dauerhaft verloren. (-1.0)
+endsnippet
+
+context "c() and halde()"
+snippet halde_test_edge_case "test: kein Randfall abgeprueft"
+Laut Aufgabenstellung soll mindestens einer der in der Manpage beschriebenen Randfaelle abgeprueft
+werden. (-0.5) Ideal waere sogar, alle Randfaelle abzupruefen. ;)
+endsnippet
 # }}}
 
 # clash {{{
+context "c() and clash()"
+snippet clash_cd_exit "exit() bei cd"
+Das ist ein Fall, wo es sinnvoll ist, das exit(3) wegzulassen: wenn man sich einfach nur beim
+Pfadnamen vertippt, will man ja nicht, dass sich die ganze Shell beendet. ;)
+endsnippet
+
+context "c() and clash()"
+snippet clash_fflush "fflush() beim Prompt fehlt"
+Hier fehlt ein fflush(3), da sonst die Ausgabe nicht sicher auf das Terminal geschrieben wird, da
+stdout standardmaessig zeilenweise gepuffert ist. Da nach dem Prompt (korrekterweise) kein '\n'
+geschrieben wird, ist also ein fflush(3) noetig. (-0.5)
+endsnippet
+
+context "c() and clash()"
+snippet clash_getcwd_err "Fehlerbehandlung getcwd() fehlt"
+Fehlerbehandlung fuer getcwd() mit Vergroesserung des Puffers fehlt. (-3.0)
+endsnippet
+
+context "c() and clash()"
+snippet clash_getcwd_errno "errno im getcwd()-Fehlerfall nicht geprueft"
+Der Puffer darf hier nur vergroessert werden, wenn die errno "ERANGE" lautet, da ja auch andere
+Fehler auftreten koennen, als dass der Puffer zu klein war (siehe Manpage). In anderen Faellen
+braucht man noch eine normale Fehlerbehandlung. (-1.0)
+endsnippet
+
+context "c() and clash()"
+snippet clash_getcwd_path_max "PATH_MAX fuer getcwd() verwendet"
+"PATH_MAX" zu verwenden ist hier nicht korrekt: es muss das in der Manpage von getcwd(3)
+beschriebene Vorgehen verwendet werden. Im Internet gibt es viele Erklaerungen, warum "PATH_MAX"
+quasi nie verwendet werden sollte; eine gute und kompakte Erklaerung gibt es auch in der Manpage
+von der aehnlichen Funktion realpath(3) in der Sektion 'BUGS'. (-2.0)
+endsnippet
+
+context "c() and clash()"
+snippet clash_overlong "ueberlange Zeilen nicht ignoriert"
+Zu lange Zeilen muessen hier noch erkannt und mit einer Warnung verworfen werden (wie auch in der
+wsort). (-3.0)
+endsnippet
+
+context "c() and clash()"
+snippet clash_plist_walklist "walkList: kein fruehzeitiges Abbrechen des Durchlaufens"
+Hier fehlt die Beachtung der Abbruchbedingung, wenn "callback" 0 zurueckgibt (siehe plist.h).
+Selbst wenn das in clash.c nie verwendet wird, muss das hier implementiert werden, da die plist
+quasi als Bibliothek zu betrachten ist, und andere Nutzer der plist dieses Feature vielleicht
+verwenden wollen. (-0.5)
+endsnippet
+
+context "c() and clash()"
+snippet clash_wexitstatus_wifexited "WEXITSTATUS() ohne vorheriges WIFEXITED()"
+"WEXITSTATUS" darf laut der Manpage nur verwendet werden, wenn "WIFEXITED" true zurueckgibt. (-1.0)
+endsnippet
+
+context "c() and clash()"
+snippet clash_wexitstatus "kein WEXITSTATUS() verwendet"
+Das hier ist nicht der Exitstatus, dort stehen auch noch andere Informationen drin. Um an den
+eigentlichen Exitstatus zu kommen, muss das Makro "WEXITSTATUS" verwendet werden (siehe Manpage).
+(-1.0)
+endsnippet
 # }}}
 
 # mach {{{
+context "c() and mach()"
+snippet mach_buffer_overwrite "Puffer fuer Befehlszeile wird ueberschrieben"
+Dieser Puffer wird von jedem fgets(3)-Aufruf wiederverwendet, d.h. der Pufferinhalt wird bei jedem
+Schleifendurchlauf ueberschrieben. Da dieser Puffer dann direkt an den Arbeiterthread uebergeben
+wird, verwenden letztendlich alle Arbeiterthreads den selben Puffer, was natuerlich nicht
+funktionieren kann. Jeder Arbeiterthread braucht seinen eigenen Puffer, was am leichtesten mit
+strdup(3) erreicht werden kann. (-1.0)
+endsnippet
+
+context "c() and mach()"
+snippet mach_detach_worker "Arbeiterthreads nicht detached"
+Die Arbeiterthreads sollen mittels pthread_detach(3) detached werden, damit die Ressourcen beim
+Beenden automatisch freigegeben werden. (-1.0)
+endsnippet
+
+context "c() and mach()"
+snippet mach_join_detached_thread "pthread_join() auf detached Thread"
+Wenn ein Thread mittels pthread_detach(3) detached wurde, kann auf diesen nicht mehr mit
+pthread_join(3) gewartet werden. Hier braucht man Semaphoren zum Warten. (-1.0)
+endsnippet
+
+context "c() and mach()"
+snippet mach_output_thread_join "nicht auf Ausgabethread gewartet"
+Es muss noch gewartet werden, bis der Ausgabethread sich beendet hat, damit sicher alle Ausgaben
+rausgeschrieben werden. Das geht am leichtesten mit pthread_join(3). (-1.0)
+endsnippet
+
+context "c() and mach()"
+snippet mach_slow_critical "langsame Funktion in kritischem Abschnitt"
+Langsame Funktionen (wie ${1:printf(3)}) duerfen laut Aufgabenstellung nicht in kritischen
+Abschnitten ausgefuehrt werden. (-1.0)
+endsnippet
 # }}}
 
 # creeper {{{
+context "c() and creeper()"
+snippet creeper_basename "basename() auf Original-String"
+basename(3) kann den Inhalt des uebergebenen Strings veraendern. Daher muss man eine Kopie anlegen,
+wenn man den Inhalt danach nochmal benutzen will. (-1.0)
+endsnippet
+
+context "c() and creeper()"
+snippet creeper_dir_assumption "Annahme, dass etwas ein Verzeichnis ist"
+Man darf nicht davon ausgehen, dass das hier ein Verzeichnis ist, da auf der Kommandozeile auch
+regulaere Dateien uebergeben werden duerfen. Man muss also zuerst pruefen, um was fuer eine Art von
+Verzeichniseintrag es sich hierbei handelt. (-1.0)
+endsnippet
+
+context "c() and creeper()"
+snippet creeper_exit "exit() in Rekursion"
+Hier zu sterben ist keine gute Idee, da Fehler wie z.B. "EACCES" (fehlende Berechtigung) haeufiger
+auftreten werden. Stattdessen einfach mit dem naechsten Verzeichniseintrag weiterzumachen ist
+besser. (-0.5)
+endsnippet
+
+context "c() and creeper()"
+snippet creeper_fnm_period "kein FNM_PERIOD"
+Die Pruefung soll gemaess Shell-Wildcards erfolgen. Damit fuehrende Punkte in "${1:pattern}"
+explizit angegeben werden muessen (so wie es bei Shell-Wildcards ist, siehe Manpage glob(7)), muss
+"FNM_PERIOD" in den Flags enthalten sein. (-0.5)
+endsnippet
+
+context "c() and creeper()"
+snippet creeper_lstat_stat "stat() statt lstat() verwendet"
+Hier muss lstat(2) verwendet werden, da laut Aufgabenstellung symbolische Links ignoriert werden
+sollen. Um das zu erreichen, muss man bei einem symbolischen Link Informationen ueber den Link
+selbst bekommen, und nicht ueber das, worauf der Link verweist. Das geht nur mit lstat(2), da
+stat(2) den symbolischen Link quasi dereferenziert (siehe Manpage). (-1.0)
+endsnippet
+
+context "c() and creeper()"
+snippet creeper_readdir_errno "errno vor readdir() nicht auf 0 gesetzt"
+Die errno muss vor jedem readdir(3)-Aufruf auf 0 gesetzt werden, um zwischen Fehler und
+end-of-directory-stream zu unterscheiden (siehe auch Manpage). (-0.5)
+endsnippet
+
+context "c() and creeper()"
+snippet creeper_skip_dot ". und .. nicht uebersprungen"
+Die Verzeichniseintraege "." und ".." muessen uebersprungen werden, da es sonst zu einer
+Endlosrekursion kommt. (-1.0)
+endsnippet
 # }}}
 
 # }}}
@@ -278,9 +529,9 @@ endsnippet
 
 context "c() and snail()"
 snippet snail_expected_status_code "erwarteter Status-Code als int"
-Wenn du den erwarteten Status-Code direkt als String (d.h. "char *") uebergibst, sparst du dir die
-Umwandlung zwischen String und Zahl. Dann kannst du den eingelesenen Status-Code direkt mittels
-strcmp(3) vergleichen. ;)
+Wenn man den erwarteten Status-Code direkt als String uebergibt, spart man sich die Umwandlung
+zwischen String und Zahl. Dann kann man den eingelesenen Status-Code direkt mittels strcmp(3)
+vergleichen. ;)
 endsnippet
 
 context "c() and snail()"
