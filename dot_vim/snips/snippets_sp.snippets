@@ -2,7 +2,7 @@
 global !p
 def get_task():
     w = vim.current.window
-    for l in reversed(w.buffer[: w.cursor[0]]):
+    for l in reversed(w.buffer[: w.cursor[0] - 1]):
         if l == '# }}}': return None
         if l.startswith('#') and l.endswith('{{{'):
             return l.split()[1]

@@ -3,7 +3,7 @@
 # comments.
 # TODO how to handle # in first line? :/
 global !p
-# Check if we are in a multline-grading-comment.
+# Check if we are in a multiline-grading-comment.
 def m():
     return (snip.buffer[snip.line].startswith('# ')
             and re.match(r'^##K\s*\^?$', snip.buffer[snip.line - 1]))  # ##K ^

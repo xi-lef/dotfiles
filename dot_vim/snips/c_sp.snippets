@@ -1,12 +1,15 @@
 # vim: fdm=marker tw=99 et
 # Global {{{
 global !p
-# Check if we are in a multline-grading-comment.
+re_start = r'^/\*K\s*\^?$'  # /*K ^
+re_end = r'^\*/$'  # */
+
+# Check if we are in a multiline-grading-comment.
 def c():
     for l in reversed(snip.buffer[: snip.line]):
-        if re.match(r'^\*/$', l):  # */
+        if re.match(re_end, l):
             return False
-        elif re.match(r'^/\*K\s*\^?$', l):  # /*K ^
+        elif re.match(re_start, l):
             return True
     return False
 
@@ -25,6 +28,19 @@ def sister(): return in_task('sister')
 def rush(): return in_task('rush')
 def jbuffer(): return in_task('jbuffer')
 def mother(): return in_task('mother')
+
+# Get the name of the variable that the '^' at the start of the current grading-comment points to.
+def var():
+    w = vim.current.window
+    y = w.cursor[0] - 1
+
+    y_arrow = next(i for i, l in reversed(list(enumerate(w.buffer[: y])))
+                                 if re.match(re_start, l))
+    x_arrow = w.buffer[y_arrow].find('^')
+    if x_arrow == -1: return 'var'
+    m = re.search(r'\w+', w.buffer[y_arrow - 1][x_arrow :])
+    if not m: return 'var'
+    return m[0]
 endglobal
 # }}}
 
@@ -38,9 +54,9 @@ endsnippet
 
 context "c()"
 snippet char_array_sizeof "kein sizeof() fuer char-Array"
-Da "${1:array}" als char-Array definiert ist, kann man hier "sizeof($1)" verwenden. Dadurch muss
-die Groesse nicht explizit doppelt angegeben werden, und es koennen nicht versehentlich
-unterschiedliche Werte genutzt werden. ;)
+Da "${1:`!p snip.rv = var()`}" als char-Array definiert ist, kann man hier "sizeof($1)" verwenden.
+Dadurch muss die Groesse nicht explizit doppelt angegeben werden, und es koennen nicht
+versehentlich unterschiedliche Werte genutzt werden. ;)
 endsnippet
 
 context "c()"
@@ -100,10 +116,10 @@ endsnippet
 
 context "c()"
 snippet format_string_attack "Format-String Angriff moeglich"
-Das ist problematisch, da "${1:var}" ein String vom Benutzer ist, aber von printf als Format-String
-interpretiert wird. Wenn der Benutzer hier also z.B. ein "%d" reinschreibt, wird das, was als
-naechstes auf dem Stack liegt, als Dezimalzahl ausgegeben. In solchen Faellen muss deswegen immer
-"%s" als Format-String verwendet werden. (-1.0)
+Das ist problematisch, da "${1:`!p snip.rv = var()`}" ein String vom Benutzer ist, aber von printf
+als Format-String interpretiert wird. Wenn der Benutzer hier also z.B. ein "%d" reinschreibt, wird
+das, was als naechstes auf dem Stack liegt, als Dezimalzahl ausgegeben. In solchen Faellen muss
+deswegen immer "%s" als Format-String verwendet werden. (-1.0)
 endsnippet
 
 context "c()"
@@ -186,10 +202,10 @@ endsnippet
 # lilo {{{
 context "c() and lilo()"
 snippet lilo_access_freed_memory "Zugriff auf bereits freigegebenen Speicher"
-Der Speicherbereich, auf den der Zeiger "${1:head}" zeigt, ist zu diesem Zeitpunkt bereits
-freigegeben. Der Zugriff auf einen freigegebenen Speicherbereich ist undefiniertes Verhalten; "$1"
-darf also erst danach freigegeben werden. Hier muss der zurueckzugebende Wert demnach in einer
-Variable zwischengespeichert werden. (-0.5)
+Der Speicherbereich, auf den der Zeiger "${1:`!p snip.rv = var()`}" zeigt, ist zu diesem Zeitpunkt
+bereits freigegeben. Der Zugriff auf einen freigegebenen Speicherbereich ist undefiniertes
+Verhalten; "$1" darf also erst danach freigegeben werden. Hier muss der zurueckzugebende Wert
+demnach in einer Variable zwischengespeichert werden. (-0.5)
 endsnippet
 
 context "c() and lilo()"
@@ -330,9 +346,9 @@ endsnippet
 # halde {{{
 context "c() and halde()"
 snippet halde_free_magic "free: MAGIC nicht geprueft"
-Fuer "${1:ptr}" muss noch geprueft werden, ob im dazugehoerigen "mblock->next" wirklich "MAGIC"
-steht. Dazu soll sichergestellt werden, dass der uebergebene Pointer wirklich von "malloc" kommt,
-und nicht einfach ein zufaelliger Pointer uebergeben wurde. (-1.0)
+Fuer "${1:`!p snip.rv = var()`}" muss noch geprueft werden, ob im dazugehoerigen "mblock->next"
+wirklich "MAGIC" steht. Dazu soll sichergestellt werden, dass der uebergebene Pointer wirklich von
+"malloc" kommt, und nicht einfach ein zufaelliger Pointer uebergeben wurde. (-1.0)
 endsnippet
 
 context "c() and halde()"
@@ -453,7 +469,7 @@ endsnippet
 
 context "c() and mach()"
 snippet mach_slow_critical "langsame Funktion in kritischem Abschnitt"
-Langsame Funktionen (wie ${1:printf(3)}) duerfen laut Aufgabenstellung nicht in kritischen
+Langsame Funktionen (wie ${1:`!p snip.rv = var()`(3)}) duerfen laut Aufgabenstellung nicht in kritischen
 Abschnitten ausgefuehrt werden. (-1.0)
 endsnippet
 # }}}
@@ -697,9 +713,9 @@ endsnippet
 
 context "c() and rush()"
 snippet rush_redirection_close "close() fehlt bei Ein-/Ausgabeumleitung"
-Der Dateideskriptor "${1:fd}" muss hier noch geschlossen werden. Nach dem dup2(2) existieren
-erstmal zwei Dateideskriptoren, die auf die gleiche Datei zeigen ("$1" und "STDIN_FILENO");
-dementsprechend muss hier close(2) verwendet werden. (-1.0)
+Der Dateideskriptor "${1:`!p snip.rv = var()`}" muss hier noch geschlossen werden. Nach dem dup2(2)
+existieren erstmal zwei Dateideskriptoren, die auf die gleiche Datei zeigen ("$1" und
+"STDIN_FILENO"); dementsprechend muss hier close(2) verwendet werden. (-1.0)
 endsnippet
 
 context "c() and rush()"
@@ -735,7 +751,7 @@ endsnippet
 context "c() and rush()"
 snippet rush_signal_handler_stdio "Ausgaben im Signalhandler mit stdio"
 In einem Signalhandler duerfen nur async-signal-safe Funktionen aufgerufen werden; siehe Manpage
-signal-safety(7). ${1:fprintf}(3) ist keine solche Funktion. (-1.0)
+signal-safety(7). ${1:`!p snip.rv = var()`}(3) ist keine solche Funktion. (-1.0)
 endsnippet
 
 context "c() and rush()"
