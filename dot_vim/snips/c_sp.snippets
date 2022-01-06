@@ -30,6 +30,7 @@ def jbuffer(): return in_task('jbuffer')
 def mother(): return in_task('mother')
 
 # Get the name of the variable that the '^' at the start of the current grading-comment points to.
+# The '^' can point to any character that is part of the variable; it does not need to be precise.
 def var():
     w = vim.current.window
     y = w.cursor[0] - 1
@@ -38,7 +39,14 @@ def var():
                                  if re.match(re_start, l))
     x_arrow = w.buffer[y_arrow].find('^')
     if x_arrow == -1: return 'var'
-    m = re.search(r'\w+', w.buffer[y_arrow - 1][x_arrow :])
+
+    # Search for the first invalid character to the left of the '^' to find the beginning of the
+    # variable name.
+    l = w.buffer[y_arrow - 1]
+    m = re.search(r'\W', l[x_arrow :: -1])
+    offset = 0 if not m else (m.start(0) - 1)
+
+    m = re.search(r'\w+', l[x_arrow - offset :])
     if not m: return 'var'
     return m[0]
 endglobal
