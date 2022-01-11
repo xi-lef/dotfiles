@@ -554,11 +554,11 @@ endsnippet
 # snail {{{
 context "c() and snail()"
 snippet snail_ai_addrconfig "kein AI_ADDRCONFIG in Flags"
-Wenn in "ai_flags" das "AI_ADDRCONFIG" fehlt, kann es passieren, dass im späteren Verlauf eine
-Verbindungsart gewählt wird, die weder vom Kernel noch der Hardware unterstützt wird; der Fehler
+Wenn in "ai_flags" das "AI_ADDRCONFIG" fehlt, kann es passieren, dass im spaeteren Verlauf eine
+Verbindungsart gewaehlt wird, die weder vom Kernel noch der Hardware unterstuetzt wird; der Fehler
 wird erst beim Aufruf von socket(2) geschehen. Da eine entsprechende Fehlermeldung den Nutzer nur
-unnötig verunsichert, ist es hier angebracht, mit AI_ADDRCONFIG nach unterstützten Verbindungen zu
-filtern.
+unnoetig verunsichert, ist es hier angebracht, mit AI_ADDRCONFIG nach unterstuetzten Verbindungen
+zu filtern.
 endsnippet
 
 context "c() and snail()"
@@ -581,8 +581,8 @@ endsnippet
 
 context "c() and snail()"
 snippet snail_getpwuid
-Es ist nicht erlaubt, in den von getpwuid(3) zurückgegebenen Speicher zu schreiben. Stattdessen
-muss eine Kopie der Daten angelegt werden, wenn diese verändert werden sollen.
+Es ist nicht erlaubt, in den von getpwuid(3) zurueckgegebenen Speicher zu schreiben. Stattdessen
+muss eine Kopie der Daten angelegt werden, wenn diese veraendert werden sollen.
 "The application shall not modify the structure to which the return value points, nor any storage
 areas pointed to by pointers within the structure." (Manpage getpwuid(3p)) (-1.0)
 endsnippet
@@ -643,7 +643,7 @@ endsnippet
 
 context "c() and sister()"
 snippet sister_fork "exit() bei fork()"
-fork(2) kann auch aufgrund von Ressourcen-Knappheit scheitern, was im späteren Verlauf wieder
+fork(2) kann auch aufgrund von Ressourcen-Knappheit scheitern, was im spaeteren Verlauf wieder
 gelingen kann. Zum Beispiel kann es sein, dass gerade sehr viele Kinder existieren, und erst
 gewartet werden muss, bis sich eins von ihnen beendet hat.
 Deshalb sollte hier im Fehlerfall das Program nicht beendet werden. (-0.5)
@@ -898,7 +898,7 @@ context "c() and mother()"
 snippet mother_dup_cloexec "Kein FD_CLOEXEC nach dup()"
 Unmittelbar nach dem dup(2) muss der neue Deskriptor ebenfalls mit dem Close-on-Exec-Flag versehen
 werden. Dies geschieht am besten, indem man anstelle von dup(2) einfach fcntl(2) mit dem Kommando
-"F_DUPFD_CLOEXEC" aufruft, um das Duplizieren und Setzen des FD_CLOEXEC-Bits in einem (für den
+"F_DUPFD_CLOEXEC" aufruft, um das Duplizieren und Setzen des FD_CLOEXEC-Bits in einem (fuer den
 Prozess) atomaren Schritt auszufuehren. (-1.0)
 endsnippet
 
@@ -906,7 +906,7 @@ context "c() and mother()"
 snippet mother_file_cloexec "FD_CLOEXEC nicht bei geoeffneten Dateien gesetzt"
 Es waere schoen, wenn auch die geoeffneten Dateien das Close-on-Exec-Flag bekommen wuerden, selbst
 wenn es in der Aufgabenstellung nicht explizit gefordert ist. Damit dies ohne Wettlaufsituation
-gelingt, muss zunaechst open(2) mit dem O_CLOEXEC aufrufen. Wenn man anschließend die auf FILE*
+gelingt, muss zunaechst open(2) mit dem O_CLOEXEC aufrufen. Wenn man anschliessend die auf FILE*
 arbeitenden Funktionen (wie z.B. fgets(3)) nutzen moechte, muss noch ein fdopen(3) verwendet
 werden.
 endsnippet
@@ -914,7 +914,7 @@ endsnippet
 context "c() and mother()"
 snippet mother_late_cloexec_clientSock "clientSock FD_CLOEXEC zu spaet gesetzt"
 Es ist zwingend notwendig, das Close-on-Exec-Flag auf "clientSock" bereits *vor* dem Hinzufuegen
-zum Puffer vorzunehmen. Sonst ist es bei einem sehr großen Puffer, schnell hintereinander
+zum Puffer vorzunehmen. Sonst ist es bei einem sehr grossen Puffer, schnell hintereinander
 eintreffender Anfragen und wenig Threads mit steigender Wahrscheinlichkeit moeglich, dass ein
 anderer Thread ein exec(2) ausfuehrt, bevor dieser Dateideskriptor mit dem Flag versehen wird.
 Dadurch dass sich alle Threads einen Adressraum teilen, koennen auch ueber Threads hinweg die
@@ -929,7 +929,7 @@ Hier existiert eine kleine Race Condition: zwischen dem dup(2) und dem fcntl(2) 
 Close-on-Exec-Flag nicht gesetzt. Wenn also genau hier ein fork(2) in einem anderen Thread
 aufgerufen wird, wird der Dateideskriptor hier auch nach dem exec(2) offen bleiben. Deswegen ist es
 am besten, hier einfach fnctl(2) mit dem Kommando "F_DUPFD_CLOEXEC" aufruft, um das Duplizieren und
-Setzen des FD_CLOEXEC-Bits in einem (für den Prozess) atomaren Schritt auszufuehren.
+Setzen des FD_CLOEXEC-Bits in einem (fuer den Prozess) atomaren Schritt auszufuehren.
 endsnippet
 
 context "c() and mother()"
