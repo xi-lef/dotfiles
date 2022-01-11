@@ -81,7 +81,7 @@ endsnippet
 context "c()"
 snippet errno_overwritten "errno durch Funktionsaufruf ueberschrieben"
 Durch diesen Funktionsaufruf wird potentiell die errno ueberschrieben, wodurch das perror(3)
-danach eine falsche Fehlermeldung ausgeben wuerde.${1: (-0.5)}
+danach eine falsche Fehlermeldung ausgeben koennte.${1: (-0.5)}
 endsnippet
 
 context "c()"
@@ -807,14 +807,22 @@ verwendet und veraendert werden darf. ;)
 endsnippet
 
 context "c() and jbuffer()"
-snippet jbuffer_CAS_r_loaded_late "Leseindex bei CAS zu spaet ausgelesen"
-Man darf sich hier auf keinen Fall den Wert vom Leseindex ("${1:bb->read}") erst bei dem CAS holen:
+snippet jbuffer_CAS_r_late_read "Leseindex bei CAS zu spaet ausgelesen"
+Man darf sich hier auf keinen Fall den Wert vom Leseindex ("bb->${1:read}") erst bei dem CAS holen:
 die Idee hinter der Schleife ist, dass man sich den Wert holt, Berechnungen durchfuehrt, und am
 Ende vergleicht, ob noch der selbe Wert drin steht, wie zuvor. Dadurch soll ja erkannt werden, ob
 ein anderer Thread in der Zwischenzeit "bbGet" aufgerufen hat, in welchem Fall das ganze dann
 wiederholt werden muss. Hier wird der Wert zwei mal direkt nacheinander ausgelesen, und diese
 miteinander verglichen, wobei diese in den allermeisten Faellen identisch sind. Deswegen wird hier
 nicht korrekt erkannt, ob ein anderer Thread dazwischen kam, und das CAS ist hier kaputt. (-1.0)
+endsnippet
+
+context "c() and jbuffer()"
+snippet jbuffer_CAS_date_late_read "Datum erst nach CAS ausgelesen"
+Das Datum muss zwingend innerhalb der CAS-Schleife entnommen werden. Sonst kann es (vor allem bei
+einem vollen Ringpuffer) vorkommen, dass zwischen dem CAS und dem Entnehmen des Datums ein anderer
+Thread den Wert ueberschreibt. Ein ausfuehrliches Beispiel dazu gibt es auch im Foliensatz, der in
+der Besprechungsuebung gezeigt wird (Kapitel 7.1). (-1.0)
 endsnippet
 
 context "c() and jbuffer()"
@@ -842,9 +850,26 @@ allocated by then and sets @c errno to an appropriate value." (-1.0)
 endsnippet
 
 context "c() and jbuffer()"
+snippet jbuffer_int "int statt size_t fuer Leseindex (und Kopie davon)"
+"`!p snip.rv = var()`" und der Leseindex ("bb->${1:read}") sind "int"s. Das ist problematisch, da
+"`!p snip.rv = var()` + 1" bereits ausserhalb des gueltigen Wertebereichs (d.h. groesser als
+"INT_MAX") sein kann - naemlich genau dann, wenn "bb->${2:size}" exakt "INT_MAX" betraegt. Um
+dieses Problem zu loesen, muessen sowohl "`!p snip.rv = var()`" als auch "$1" vom Typ "size_t"
+sein. (-1.0)
+endsnippet
+
+context "c() and jbuffer()"
 snippet jbuffer_NULL_check "Vergleich mit NULL fehlt fuer Argument"
 "`!p snip.rv = var()`" muss hier noch auf NULL geprueft werden, in welchem Fall die Funktion
 gar nichts machen soll. (-0.5)
+endsnippet
+
+context "c() and jbuffer()"
+snippet jbuffer_p_null_return "return bei NULL-Argument in P() bzw. V()"
+Das ist nicht so spezifiziert, und in vielen Faellen ist hier ein Segmentation Fault wahrscheinlich
+wirklich sinnvoller: dadurch merkt der Benutzer immerhin, dass er etwas falsch macht. So ein
+stilles Fehlschlagen bzw. Nichtstun ist nicht so schlau, da ${1:P}() ja erwartungsgemaess auch
+blockieren kann.
 endsnippet
 
 context "c() and jbuffer()"
@@ -855,10 +880,10 @@ endsnippet
 
 context "c() and jbuffer()"
 snippet jbuffer_size_int_max "size nicht auf > INT_MAX geprueft"
-Wenn "size" groeßer als "INT_MAX" ist, dann wird in der Semaphoren-Implementierung
+Wenn "`!p snip.rv = var()`" groesser als "INT_MAX" ist, dann wird in der Semaphoren-Implementierung
 der Wert abgeschnitten, da "semCreate" ja nur einen "int" als Parameter nimmt. Eine Abfrage
-diesbezueglich sollte immer dann erfolgen, wenn man in einen kleineren Datentypen umwandelt. Das
-Umwandeln geschieht hier implizit mit "semCreate(size)". (-0.5)
+diesbezueglich sollte immer dann erfolgen, wenn man in einen kleineren Datentypen umwandelt, was
+hier implizit passiert. (-0.5)
 endsnippet
 # }}}
 
