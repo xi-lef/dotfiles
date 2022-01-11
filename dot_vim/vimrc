@@ -74,7 +74,7 @@ endif
 " }}}
 
 " Filetype-specific plugins {{{
-Plug 'iamcco/markdown-preview.nvim', {'do': 'cd app & yarn install'}
+Plug 'iamcco/markdown-preview.nvim', {'do': 'cd app && yarn install'}
 let g:mkdp_auto_close = 0
 nmap <C-p> <Plug>MarkdownPreviewToggle
 
