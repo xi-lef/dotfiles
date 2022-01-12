@@ -7,10 +7,6 @@ global !p
 def m():
     return (snip.buffer[snip.line].startswith('# ')
             and re.match(r'^##K\s*\^?$', snip.buffer[snip.line - 1]))  # ##K ^
-
-# For jbuffer-specific snippets. (Technically unnecessary because the virtually identical function
-# exists for the C-snippets, and these functions are shared.)
-def jbuffer(): return 'jbuffer' in snip.buffer.name
 endglobal
 
 # General {{{
@@ -85,6 +81,7 @@ Normal packt man ${1:das hier} in eine Variable, damit man das nicht mehrmals ti
 endsnippet
 # }}}
 
+# The jbuffer-function for the "context" is found in the C-snippets.
 # jbuffer {{{
 context "m() and jbuffer()"
 snippet jbuffer_header_dep_for_lib "Header ist Abhaengigkeit fuer Library"

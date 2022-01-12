@@ -14,20 +14,20 @@ def c():
     return False
 
 # Used for task-specific snippets.
-def in_task(name: str):
-    return name in snip.buffer.name
+def in_task(*names: str):
+    return all(name in snip.buffer.name for name in names)
 
 def lilo(): return in_task('lilo')
 def wsort(): return in_task('wsort')
-def halde(): return in_task('halde')
-def clash(): return in_task('clash')
-def mach(): return in_task('mach')
+def halde(file = 'halde.c'): return in_task('halde', file)
+def clash(file = 'clash.c'): return in_task('clash', file)
+def mach(file = 'mach.c'): return in_task('mach', file)
 def creeper(): return in_task('creeper')
 def snail(): return in_task('snail')
-def sister(): return in_task('sister')
+def sister(file = ''): return in_task('sister', file)
 def rush(): return in_task('rush')
-def jbuffer(): return in_task('jbuffer')
-def mother(): return in_task('mother')
+def jbuffer(file = ''): return in_task('jbuffer', file)
+def mother(file = ''): return in_task('mother', file)
 
 # Get the name of the variable that the '^' at the start of the current grading-comment points to.
 # The '^' can point to any character that is part of the variable; it does not need to be precise.
@@ -158,6 +158,13 @@ sein. (-0.5)
 endsnippet
 
 context "c()"
+snippet library_perror_exit "perror() oder exit() in Bibliotheksfunktion"
+Diese Funktion ist als Bibliotheksfunktion zu betrachten, deswegen darf hier weder perror(3) noch
+exit(3) verwendet werden. Die Ausgabe einer Fehlermeldung bzw. das Beenden des Programmes soll die
+Entscheidung des Aufrufers sein. (-${1|0.5,1.0|})
+endsnippet
+
+context "c()"
 snippet malloc_instead_of_stack "malloc() statt Stack-Allokation"
 Das haette man auch auf dem Stack machen koennen. Das spart die Fehlerbehandlung und das free(3)
 spaeter, was deutlich angenehmer zu schreiben ist. ;)
@@ -227,7 +234,7 @@ Verwendung deklariert werden, ist das deutlich uebersichtlicher. :)
 endsnippet
 # }}}
 
-# SP1 {{{
+
 
 # lilo {{{
 context "c() and lilo()"
@@ -401,11 +408,13 @@ mblock dahinter angelegt wird. Sonst geht der Speicher, der vom vergebenen mbloc
 wird, dauerhaft verloren. (-1.0)
 endsnippet
 
-context "c() and halde()"
+# test.c {{{
+context "c() and halde('test.c')"
 snippet halde_test_edge_case "test: kein Randfall abgeprueft"
 Laut Aufgabenstellung soll mindestens einer der in der Manpage beschriebenen Randfaelle abgeprueft
 werden. (-0.5) Ideal waere sogar, alle Randfaelle abzupruefen. ;)
 endsnippet
+# }}}
 # }}}
 
 # clash {{{
@@ -449,14 +458,6 @@ wsort). (-3.0)
 endsnippet
 
 context "c() and clash()"
-snippet clash_plist_walklist "walkList: kein fruehzeitiges Abbrechen des Durchlaufens"
-Hier fehlt die Beachtung der Abbruchbedingung, wenn "callback" 0 zurueckgibt (siehe plist.h).
-Selbst wenn das in clash.c nie verwendet wird, muss das hier implementiert werden, da die plist
-quasi als Bibliothek zu betrachten ist, und andere Nutzer der plist dieses Feature vielleicht
-verwenden wollen. (-0.5)
-endsnippet
-
-context "c() and clash()"
 snippet clash_wexitstatus_wifexited "WEXITSTATUS() ohne vorheriges WIFEXITED()"
 "WEXITSTATUS" darf laut der Manpage nur verwendet werden, wenn "WIFEXITED" true zurueckgibt. (-1.0)
 endsnippet
@@ -467,6 +468,16 @@ Das hier ist nicht der Exitstatus, dort stehen auch noch andere Informationen dr
 eigentlichen Exitstatus zu kommen, muss das Makro "WEXITSTATUS" verwendet werden (siehe Manpage).
 (-1.0)
 endsnippet
+
+# plist.c {{{
+context "c() and clash('plist.c')"
+snippet clash_walklist "kein fruehzeitiges Abbrechen des Durchlaufens"
+Hier fehlt die Beachtung der Abbruchbedingung, wenn "callback" 0 zurueckgibt (siehe plist.h).
+Selbst wenn das in clash.c nie verwendet wird, muss das hier implementiert werden, da die plist
+quasi als Bibliothek zu betrachten ist, und andere Nutzer der plist dieses Feature vielleicht
+verwenden wollen. (-0.5)
+endsnippet
+# }}}
 # }}}
 
 # mach {{{
@@ -502,6 +513,27 @@ snippet mach_slow_critical "langsame Funktion in kritischem Abschnitt"
 Langsame Funktionen (wie ${1:`!p snip.rv = var()`(3)}) duerfen laut Aufgabenstellung nicht in
 kritischen Abschnitten ausgefuehrt werden. (-1.0)
 endsnippet
+
+# queue.c {{{
+context "c() and mach('queue.c')"
+snippet mach_early_lock "fruehes locken durch P() in queue_put()"
+Es waere besser, das erst zu machen, wenn es wirklich notwendig ist, d.h. erst vor dem Zugriff auf
+"${1:head}". malloc(3) ist vergleichsweise langsam, deswegen sollte das eher nicht Teil des
+kritischen Abschnitts werden.
+endsnippet
+
+context "c() and mach('queue.c')"
+snippet mach_free "Belegte Ressourcen im Fehlerfall nicht freigegeben"
+"If an error occurs during initialization, all already allocated resources must be freed before
+returning an error." (-1.0)
+endsnippet
+
+context "c() and mach('queue.c')"
+snippet mach_return_no_unlock "kein unlocken des Mutex in fruehzeitigem return"
+Hier wird die Funktion verlassen, aber das Mutex "${1:lock}" wird nicht (mit V()) freigegeben; die
+queue kann danach quasi nicht mehr verwendet werden. (-1.0)
+endsnippet
+# }}}
 # }}}
 
 # creeper {{{
@@ -547,9 +579,7 @@ Endlosrekursion kommt. (-1.0)
 endsnippet
 # }}}
 
-# }}}
 
-# SP2 {{{
 
 # snail {{{
 context "c() and snail()"
@@ -622,7 +652,8 @@ endsnippet
 # }}}
 
 # sister {{{
-context "c() and sister()"
+# sister.c {{{
+context "c() and sister('sister.c')"
 snippet sister_accept "exit() bei accept"
 In diesem Fall sollte das Programm nicht beendet werden, nur weil die Verbindung nicht hergestellt
 werden konnte. Der Server kann in dieser Situation durchaus weiter laufen, denn mindestens die
@@ -633,15 +664,17 @@ EPROTO, ENOPROTOOPT, EHOSTDOWN, ENONET, EHOSTUNREACH, EOPNOTSUPP, and ENETUNREAC
 accept(2))
 Die Fehlermeldung kann ja trotzdem mit perror() ausgeben werden. (-0.5)
 endsnippet
+# }}}
 
-context "c() and sister()"
+# connection-fork.c {{{
+context "c() and sister('connection-fork.c')"
 snippet sister_child_return "return im Kind"
 Im Kind darf auf keinen Fall returnt werden: der Kind-Prozess muss sich mittels exit(3) beenden.
 Sonst kehrt er in die accept(2)-Schleife in "main" zurueck, und man hat auf einmal mehrere
 Prozesse, die auf dem gleichen Socket auf Anfragen warten. (-1.0)
 endsnippet
 
-context "c() and sister()"
+context "c() and sister('connection-fork.c')"
 snippet sister_fork "exit() bei fork()"
 fork(2) kann auch aufgrund von Ressourcen-Knappheit scheitern, was im spaeteren Verlauf wieder
 gelingen kann. Zum Beispiel kann es sein, dass gerade sehr viele Kinder existieren, und erst
@@ -649,37 +682,40 @@ gewartet werden muss, bis sich eins von ihnen beendet hat.
 Deshalb sollte hier im Fehlerfall das Program nicht beendet werden. (-0.5)
 endsnippet
 
-context "c() and sister()"
+context "c() and sister('connection-fork.c')"
 snippet sister_clientSock_close "kein close() auf clientSock im Elternprozess"
 Im Elternprozess muss noch "clientSock" geschlossen werden, da dieser beim fork(2) auch dupliziert
 wurde (siehe auch Foliensatz zur rush, 3.5). Damit am Ende keine Ressourcen geleakt werden, muss er
 hier geschlossen werden, sobald er nicht mehr gebraucht wird (was eigentlich sofort ist). (-0.5)
 endsnippet
 
-context "c() and sister()"
+context "c() and sister('connection-fork.c')"
 snippet sister_listenSock_close "kein close() auf listenSock im Kind"
 Im Kind muss noch "listenSock" geschlossen werden, da dieser beim fork(2) auch dupliziert wurde
 (siehe auch Foliensatz zur rush, 3.5). Das steht uebrigens auch in connection.h explizit drin. ;)
 (-0.5)
 endsnippet
+# }}}
 
-context "c() and (sister() or mother())"
-snippet sister_multiple_answers "mehrere http*()-Aufrufe"
+# request-http.c {{{
+context "c() and (sister('request-http.c') or mother('request-httpx.c'))"
+snippet sister_mother_multiple_answers "mehrere http*()-Aufrufe"
 Es wurde bereits eine Antwort mit "${1:httpOk}" gesendet. Hier nochmal eine (andere) Antwort zu
 schicken ist schlecht, da der Browser das nicht erwartet und dementsprechend kaputt anzeigt. (-0.5)
 endsnippet
 
-context "c() and sister()"
+context "c() and sister('request-http.c')"
 snippet sister_regular_file "nicht auf regulaere Datei geprueft"
 Es sollen lediglich regulaere Dateien ausgeliefert werden, wofuer man stat(2) verwenden muss.
 (-1.0)
 endsnippet
 
-context "c() and sister()"
+context "c() and sister('request-http.c')"
 snippet sister_wwwpath "wwwpath Laenge nicht geprueft"
 Es waere schoen, noch zu pruefen, ob der wwwpath ein leerer String ist, was dann mit einer
 Fehlermeldung abgehandelt werden kann.
 endsnippet
+# }}}
 # }}}
 
 # rush {{{
@@ -795,18 +831,32 @@ endsnippet
 
 # jbuffer {{{
 context "c() and jbuffer()"
+snippet jbuffer_errno_set_to_0 "errno wird auf 0 gesetzt"
+Die errno darf von Bibliotheksfunktionen niemals auf den Wert 0 gesetzt werden. POSIX gibt zwar nur
+die Garantie, dass keine POSIX-Funktion die errno auf 0 setzt, aber im C11-Standard heisst es:
+"[errno] is never set to zero by any library function". (C11 §7.5 Abs. 3)
+endsnippet
+
+context "c() and jbuffer()"
+snippet jbuffer_NULL_check "Vergleich mit NULL fehlt fuer Argument"
+"`!p snip.rv = var()`" muss hier noch auf NULL geprueft werden, in welchem Fall die Funktion
+gar nichts machen soll. (-0.5)
+endsnippet
+
+# jbuffer.c {{{
+context "c() and jbuffer('jbuffer.c')"
 snippet jbuffer_atomic "Leseindex nicht atomic"
 Der Leseindex muss als atomic deklariert werden (z.B. mittels "_Atomic"), da dieser mit
 atomic-Funktionen (z.B. dem CAS) verwendet wird. (-0.5)
 endsnippet
 
-context "c() and jbuffer()"
+context "c() and jbuffer('jbuffer.c')"
 snippet jbuffer_atomic_unneeded "unnoetiges atomic"
 Das muss nicht atomic sein. Dann wird der restliche Code etwas schoener, da der Wert dann ja direkt
 verwendet und veraendert werden darf. ;)
 endsnippet
 
-context "c() and jbuffer()"
+context "c() and jbuffer('jbuffer.c')"
 snippet jbuffer_CAS_r_late_read "Leseindex bei CAS zu spaet ausgelesen"
 Man darf sich hier auf keinen Fall den Wert vom Leseindex ("bb->${1:read}") erst bei dem CAS holen:
 die Idee hinter der Schleife ist, dass man sich den Wert holt, Berechnungen durchfuehrt, und am
@@ -817,7 +867,7 @@ miteinander verglichen, wobei diese in den allermeisten Faellen identisch sind. 
 nicht korrekt erkannt, ob ein anderer Thread dazwischen kam, und das CAS ist hier kaputt. (-1.0)
 endsnippet
 
-context "c() and jbuffer()"
+context "c() and jbuffer('jbuffer.c')"
 snippet jbuffer_CAS_date_late_read "Datum erst nach CAS ausgelesen"
 Das Datum muss zwingend innerhalb der CAS-Schleife entnommen werden. Sonst kann es (vor allem bei
 einem vollen Ringpuffer) vorkommen, dass zwischen dem CAS und dem Entnehmen des Datums ein anderer
@@ -825,31 +875,18 @@ Thread den Wert ueberschreibt. Ein ausfuehrliches Beispiel dazu gibt es auch im 
 der Besprechungsuebung gezeigt wird (Kapitel 7.1). (-1.0)
 endsnippet
 
-context "c() and jbuffer()"
-snippet jbuffer_errno_set_to_0 "errno wird auf 0 gesetzt"
-Die errno darf von Bibliotheksfunktionen niemals auf den Wert 0 gesetzt werden. POSIX gibt zwar nur
-die Garantie, dass keine POSIX-Funktion die errno auf 0 setzt, aber im C11-Standard heisst es:
-"[errno] is never set to zero by any library function". (C11 §7.5 Abs. 3)
-endsnippet
-
-context "c() and jbuffer()"
+context "c() and jbuffer('jbuffer.c')"
 snippet jbuffer_fam "kein FAM verwendet"
 Hier kann man auch einen Flexible Array Member (siehe halde) verwenden. ;)
 endsnippet
 
-context "c() and jbuffer()"
-snippet jbuffer_free_jbuffer_c "Belegte Ressourcen im Fehlerfall nicht freigegeben (jbuffer.c)"
+context "c() and jbuffer('jbuffer.c')"
+snippet jbuffer_free "Belegte Ressourcen im Fehlerfall nicht freigegeben"
 "If an error occurs during the initialization, the implementation frees all resources already
 allocated by then." (-1.0)
 endsnippet
 
-context "c() and jbuffer()"
-snippet jbuffer_free_sem_c "Belegte Ressourcen im Fehlerfall nicht freigegeben (sem.c)"
-"If an error occurs during the initialization, the implementation frees all resources already
-allocated by then and sets @c errno to an appropriate value." (-1.0)
-endsnippet
-
-context "c() and jbuffer()"
+context "c() and jbuffer('jbuffer.c')"
 snippet jbuffer_int "int statt size_t fuer Leseindex (und Kopie davon)"
 "`!p snip.rv = var()`" und der Leseindex ("bb->${1:read}") sind "int"s. Das ist problematisch, da
 "`!p snip.rv = var()` + 1" bereits ausserhalb des gueltigen Wertebereichs (d.h. groesser als
@@ -858,27 +895,7 @@ dieses Problem zu loesen, muessen sowohl "`!p snip.rv = var()`" als auch "$1" vo
 sein. (-1.0)
 endsnippet
 
-context "c() and jbuffer()"
-snippet jbuffer_NULL_check "Vergleich mit NULL fehlt fuer Argument"
-"`!p snip.rv = var()`" muss hier noch auf NULL geprueft werden, in welchem Fall die Funktion
-gar nichts machen soll. (-0.5)
-endsnippet
-
-context "c() and jbuffer()"
-snippet jbuffer_p_null_return "return bei NULL-Argument in P() bzw. V()"
-Das ist nicht so spezifiziert, und in vielen Faellen ist hier ein Segmentation Fault wahrscheinlich
-wirklich sinnvoller: dadurch merkt der Benutzer immerhin, dass er etwas falsch macht. So ein
-stilles Fehlschlagen bzw. Nichtstun ist nicht so schlau, da ${1:P}() ja erwartungsgemaess auch
-blockieren kann.
-endsnippet
-
-context "c() and jbuffer()"
-snippet jbuffer_sem_negative_counter "Negativer Counter nicht beruecksichtigt"
-Eine Semaphore kann auch mit einem negativen Wert initialisiert werden, um Signalisierung zu
-implementieren. Das wird hier nicht beruecksichtigt. (-1.0)
-endsnippet
-
-context "c() and jbuffer()"
+context "c() and jbuffer('jbuffer.c')"
 snippet jbuffer_size_int_max "size nicht auf > INT_MAX geprueft"
 Wenn "`!p snip.rv = var()`" groesser als "INT_MAX" ist, dann wird in der Semaphoren-Implementierung
 der Wert abgeschnitten, da "semCreate" ja nur einen "int" als Parameter nimmt. Eine Abfrage
@@ -887,14 +904,46 @@ hier implizit passiert. (-0.5)
 endsnippet
 # }}}
 
+# sem.c {{{
+context "c() and jbuffer('sem.c')"
+snippet jbuffer_free "Belegte Ressourcen im Fehlerfall nicht freigegeben"
+"If an error occurs during the initialization, the implementation frees all resources already
+allocated by then and sets @c errno to an appropriate value." (-1.0)
+endsnippet
+
+context "c() and jbuffer('sem.c')"
+snippet jbuffer_negative_counter "Negativer Counter nicht beruecksichtigt"
+Eine Semaphore kann auch mit einem negativen Wert initialisiert werden, um Signalisierung zu
+implementieren. Das wird hier nicht beruecksichtigt. (-1.0)
+endsnippet
+
+context "c() and jbuffer('sem.c')"
+snippet jbuffer_p_null_return "return bei NULL-Argument in P() bzw. V()"
+Das ist nicht so spezifiziert, und in vielen Faellen ist hier ein Segmentation Fault wahrscheinlich
+wirklich sinnvoller: dadurch merkt der Benutzer immerhin, dass er etwas falsch macht. So ein
+stilles Fehlschlagen bzw. Nichtstun ist nicht so schlau, da ${1:P}() ja erwartungsgemaess auch
+blockieren kann.
+endsnippet
+
+context "c() and jbuffer('sem.c')"
+snippet jbuffer_return_error "return in Fehlerfall"
+Wenn `!p snip.rv = var()`(3) fehlschlaegt, haelt man trotzdem noch das Mutex. Prinzipiell ist es
+also sinnvoller, das vor einem Zurueckkehren noch freizugeben. Allerdings ist wahrscheinlich eh
+schon alles kaputt, wenn `!p snip.rv = var()`(3) fehlschlaegt, weswegen das auch nicht gerade
+eine perfekte Loesung ist. ;)
+endsnippet
+# }}}
+# }}}
+
 # mother {{{
-context "c() and mother()"
+# connection-mt.c {{{
+context "c() and mother('connection-mt.c')"
 snippet mother_cloexec_clientSock "clientSock FD_CLOEXEC nicht gesetzt"
 "clientSock" muss noch mit dem Close-on-Exec-Flag versehen werden, damit dieser nicht an
 aufgerufene Perl-Skripte vererbt werden. Das geht mittels fcntl(2). (-1.0)
 endsnippet
 
-context "c() and mother()"
+context "c() and mother('connection-mt.c')"
 snippet mother_dup_cloexec "Kein FD_CLOEXEC nach dup()"
 Unmittelbar nach dem dup(2) muss der neue Deskriptor ebenfalls mit dem Close-on-Exec-Flag versehen
 werden. Dies geschieht am besten, indem man anstelle von dup(2) einfach fcntl(2) mit dem Kommando
@@ -902,16 +951,7 @@ werden. Dies geschieht am besten, indem man anstelle von dup(2) einfach fcntl(2)
 Prozess) atomaren Schritt auszufuehren. (-1.0)
 endsnippet
 
-context "c() and mother()"
-snippet mother_file_cloexec "FD_CLOEXEC nicht bei geoeffneten Dateien gesetzt"
-Es waere schoen, wenn auch die geoeffneten Dateien das Close-on-Exec-Flag bekommen wuerden, selbst
-wenn es in der Aufgabenstellung nicht explizit gefordert ist. Damit dies ohne Wettlaufsituation
-gelingt, muss zunaechst open(2) mit dem O_CLOEXEC aufrufen. Wenn man anschliessend die auf FILE*
-arbeitenden Funktionen (wie z.B. fgets(3)) nutzen moechte, muss noch ein fdopen(3) verwendet
-werden.
-endsnippet
-
-context "c() and mother()"
+context "c() and mother('connection-mt.c')"
 snippet mother_late_cloexec_clientSock "clientSock FD_CLOEXEC zu spaet gesetzt"
 Es ist zwingend notwendig, das Close-on-Exec-Flag auf "clientSock" bereits *vor* dem Hinzufuegen
 zum Puffer vorzunehmen. Sonst ist es bei einem sehr grossen Puffer, schnell hintereinander
@@ -923,7 +963,7 @@ laesst, aber den Dateideskriptor hier womoeglich lange ungeschuetzt in der Queue
 keine gute Idee. (-0.5)
 endsnippet
 
-context "c() and mother()"
+context "c() and mother('connection-mt.c')"
 snippet mother_race_dup_cloexec "Race Condition durch dup() + fcntl()"
 Hier existiert eine kleine Race Condition: zwischen dem dup(2) und dem fcntl(2) ist das
 Close-on-Exec-Flag nicht gesetzt. Wenn also genau hier ein fork(2) in einem anderen Thread
@@ -931,12 +971,22 @@ aufgerufen wird, wird der Dateideskriptor hier auch nach dem exec(2) offen bleib
 am besten, hier einfach fnctl(2) mit dem Kommando "F_DUPFD_CLOEXEC" aufruft, um das Duplizieren und
 Setzen des FD_CLOEXEC-Bits in einem (fuer den Prozess) atomaren Schritt auszufuehren.
 endsnippet
+# }}}
 
-context "c() and mother()"
+# request-httpx.c {{{
+context "c() and mother('request-httpx.c')"
+snippet mother_file_cloexec "FD_CLOEXEC nicht bei geoeffneten Dateien gesetzt"
+Es waere schoen, wenn auch die geoeffneten Dateien das Close-on-Exec-Flag bekommen wuerden, selbst
+wenn es in der Aufgabenstellung nicht explizit gefordert ist. Damit dies ohne Wettlaufsituation
+gelingt, muss zunaechst open(2) mit dem O_CLOEXEC aufrufen. Wenn man anschliessend die auf FILE*
+arbeitenden Funktionen (wie z.B. fgets(3)) nutzen moechte, muss noch ein fdopen(3) verwendet
+werden.
+endsnippet
+
+context "c() and mother('request-httpx.c')"
 snippet mother_scandir "scandir() nicht verwendet"
 Statt opendir(3) + readdir(3) sollte man lieber scandir(3) verwenden, da das den Code deutlich
 simpler macht. ;)
 endsnippet
 # }}}
-
 # }}}

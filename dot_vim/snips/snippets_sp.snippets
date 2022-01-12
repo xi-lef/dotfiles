@@ -1,15 +1,24 @@
 # vim: fdm=marker tw=99 et
 global !p
+# Return the task and subtask. Examples: ('wsort', None), ('clash', 'plist.c'), (None, None)
 def get_task():
     w = vim.current.window
+    task = subtask = None
     for l in reversed(w.buffer[: w.cursor[0] - 1]):
-        if l == '# }}}': return None
+        if l == '# }}}' and not subtask:
+            break
         if l.startswith('#') and l.endswith('{{{'):
-            return l.split()[1]
-    return None
+            n = l.split()[1]
+            if n.endswith('.c'):
+                if not subtask:
+                    subtask = n
+            else:
+                task = n
+                break
+    return task, subtask
 endglobal
 
-context "get_task() in ('General', None)"
+context "get_task()[0] in ('General', None)"
 snippet snip "Snippet for SP (general)" b
 context "`!p snip.rv = 'c' if fn.startswith('c_') else 'm'`()"
 snippet ${1:trigger} "${2:desc}"
@@ -17,10 +26,13 @@ $0
 `echo endsnippet`
 endsnippet
 
-context "get_task()"
+context "get_task()[0]"
 snippet snip "Snippet for SP (task-specific)" b
-context "`!p snip.rv = 'c' if fn.startswith('c_') else 'm'`() and `!p snip.rv = get_task()`()"
-snippet `!p snip.rv = get_task()`_${2:trigger} "${3:desc}"
+context "`!p snip.rv = 'c' if fn.startswith('c_') else 'm'`() and `!p
+task, subtask = get_task()
+subtask = f"'{subtask}'" if subtask else ''
+snip.rv = f"{task}({subtask})"`"
+snippet `!p snip.rv = get_task()[0]`_${2:trigger} "${3:desc}"
 $0
 `echo endsnippet`
 endsnippet
