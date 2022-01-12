@@ -891,7 +891,7 @@ snippet jbuffer_int "int statt size_t fuer Leseindex (und Kopie davon)"
 "`!p snip.rv = var()`" und der Leseindex ("bb->${1:read}") sind "int"s. Das ist problematisch, da
 "`!p snip.rv = var()` + 1" bereits ausserhalb des gueltigen Wertebereichs (d.h. groesser als
 "INT_MAX") sein kann - naemlich genau dann, wenn "bb->${2:size}" exakt "INT_MAX" betraegt. Um
-dieses Problem zu loesen, muessen sowohl "`!p snip.rv = var()`" als auch "$1" vom Typ "size_t"
+dieses Problem zu loesen, muessen sowohl "`!p snip.rv = var()`" als auch "bb->$1" vom Typ "size_t"
 sein. (-1.0)
 endsnippet
 
