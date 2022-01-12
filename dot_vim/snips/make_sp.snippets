@@ -1,7 +1,4 @@
 # vim: fdm=marker tw=99 et
-# These snippets must include the '#' at the start of each line, as make does not support multiline
-# comments.
-# TODO how to handle # in first line? :/
 global !p
 # Check if we are in a multiline-grading-comment.
 def m():
@@ -9,6 +6,9 @@ def m():
             and re.match(r'^##K\s*\^?$', snip.buffer[snip.line - 1]))  # ##K ^
 endglobal
 
+# These snippets must include the '#' at the start of each line, as make does not support multiline
+# comments.
+# TODO Is there a better way to handle the '#' in the first line? :/
 # General {{{
 context "m()"
 snippet all "all nicht erstes Target"

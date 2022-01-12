@@ -17,6 +17,8 @@ def c():
 def in_task(*names: str):
     return all(name in snip.buffer.name for name in names)
 
+# Tasks with more than one .c-file have a "file"-parameter; a default value is given if the task
+# focuses on one specific file, while other files have a minor role.
 def lilo(): return in_task('lilo')
 def wsort(): return in_task('wsort')
 def halde(file = 'halde.c'): return in_task('halde', file)
@@ -47,8 +49,7 @@ def var():
     offset = 0 if not m else (m.start(0) - 1)
 
     m = re.search(r'\w+', l[x_arrow - offset :])
-    if not m: return 'var'
-    return m[0]
+    return m[0] if m else 'var'
 endglobal
 # }}}
 

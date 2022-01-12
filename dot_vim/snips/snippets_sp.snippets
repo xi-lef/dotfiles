@@ -16,11 +16,21 @@ def get_task():
                 task = n
                 break
     return task, subtask
+
+# Return a string suiting the task-specific functions for the C-snippets.
+def get_taskstr():
+    task, subtask = get_task()
+    subtask = f"'{subtask}'" if subtask else ''
+    return f"{task}({subtask})"
+
+# Return 'c' for C-snippets and 'm' for make-snippets.
+def get_filetype():
+    return 'c' if fn.startswith('c_') else 'm'
 endglobal
 
 context "get_task()[0] in ('General', None)"
 snippet snip "Snippet for SP (general)" b
-context "`!p snip.rv = 'c' if fn.startswith('c_') else 'm'`()"
+context "`!p snip.rv = get_filetype()`()"
 snippet ${1:trigger} "${2:desc}"
 $0
 `echo endsnippet`
@@ -28,10 +38,7 @@ endsnippet
 
 context "get_task()[0]"
 snippet snip "Snippet for SP (task-specific)" b
-context "`!p snip.rv = 'c' if fn.startswith('c_') else 'm'`() and `!p
-task, subtask = get_task()
-subtask = f"'{subtask}'" if subtask else ''
-snip.rv = f"{task}({subtask})"`"
+context "`!p snip.rv = get_filetype()`() and `!p snip.rv = get_taskstr()`"
 snippet `!p snip.rv = get_task()[0]`_${2:trigger} "${3:desc}"
 $0
 `echo endsnippet`
