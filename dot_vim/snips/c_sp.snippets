@@ -195,6 +195,21 @@ zwischen einem Fehler und end-of-directory-stream zu unterscheiden (siehe auch M
 endsnippet
 
 context "c()"
+snippet same "Gleiches wie oben"
+Gleiches wie ${1:oben}. (-${2:`!p
+w = vim.current.window
+y = w.cursor[0] - 1
+
+y_end = next(i for i, l in reversed(list(enumerate(w.buffer[: y])))
+                           if re.match(re_end, l))
+y_start = next(i for i, l in reversed(list(enumerate(w.buffer[: y_end])))
+                             if re.match(re_start, l))
+m = re.search(r'\(-([0-9.]+)\)', ''.join(w.buffer[y_start : y_end]))
+snip.rv = m[1] if m else '0.5'
+`})
+endsnippet
+
+context "c()"
 snippet semdestroy "semDestroy() fehlt"
 Das muss mit semDestroy() wieder freigegeben werden. (-1.0)
 endsnippet
