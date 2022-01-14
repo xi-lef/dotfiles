@@ -1,0 +1,6 @@
+use IO::Prompt;
+%config = (
+    username => 'jo15xyfy',
+    password => prompt('Waffel Passwort: ', -e => ''),
+);
+1;
