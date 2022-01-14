@@ -1,4 +1,5 @@
 sourceDir = "~/Dropbox/cfg/chezmoi"
+mode = "symlink"
 encryption = "age"
 [age]
     passphrase = true
