@@ -196,7 +196,7 @@ endsnippet
 
 context "c()"
 snippet same "Gleiches wie oben"
-Gleiches wie ${1:oben}. (-${2:`!p
+Gleiches wie ${1:oben}.${2:`!p
 w = vim.current.window
 y = w.cursor[0] - 1
 
@@ -205,8 +205,8 @@ y_end = next(i for i, l in reversed(list(enumerate(w.buffer[: y])))
 y_start = next(i for i, l in reversed(list(enumerate(w.buffer[: y_end])))
                              if re.match(re_start, l))
 m = re.search(r'\(-([0-9.]+)\)', ''.join(w.buffer[y_start : y_end]))
-snip.rv = m[1] if m else '0.5'
-`})
+snip.rv = f' (-{m[1]})' if m else ''
+`}
 endsnippet
 
 context "c()"
@@ -947,6 +947,15 @@ Wenn `!p snip.rv = var()`(3) fehlschlaegt, haelt man trotzdem noch das Mutex. Pr
 also sinnvoller, das vor einem Zurueckkehren noch freizugeben. Allerdings ist wahrscheinlich eh
 schon alles kaputt, wenn `!p snip.rv = var()`(3) fehlschlaegt, weswegen das auch nicht gerade
 eine perfekte Loesung ist. ;)
+endsnippet
+
+context "c() and jbuffer('sem.c')"
+snippet jbuffer_signal_after_unlock "signal()/broadcast() ausserhalb des kritischen Abschnitts"
+Das `!p snip.rv = var()`(3) muss noch innerhalb des kritischen Abschnitts erfolgen, da man sonst
+Probleme bzgl. Race Conditions bekommen kann. Siehe auch Manpage: "Thus, if all threads always
+acquire the mutex before signaling the condition, this guarantees that the condition cannot be
+signaled (and thus ignored) between the time a thread locks the mutex and the time it waits on the
+condition variable." (-1.0)
 endsnippet
 # }}}
 # }}}

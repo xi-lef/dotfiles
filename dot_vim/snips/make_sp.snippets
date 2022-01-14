@@ -47,7 +47,7 @@ endsnippet
 
 context "m()"
 snippet pattern "keine Pattern-Regeln"
-Hier sollen (so weit moeglich) Pattern-Regeln verwendet werden, z.B. fuer "%.o: %.c". (-1.0)
+Hier sollten (so weit moeglich) Pattern-Regeln verwendet werden, z.B. fuer "%.o: %.c".${1: (-1.0)}
 endsnippet
 
 context "m()"
@@ -58,7 +58,7 @@ Pseudo-Targets (= erzeugen keine Datei mit dem Namen des Targets) muessen als Ab
 endsnippet
 
 context "m()"
-snippet rm_-f "-f fehlt bei rm"
+snippet rm_f "-f fehlt bei rm"
 Beim Aufruf von "rm" sollte die Option "-f" verwendet werden. Das sorgt dafuer, dass kein Fehler
 # auftritt, wenn eine der angegebenen Dateien nicht existiert (z.B. weil mehrmals hintereinander
 # "make clean" aufgerufen wird).
