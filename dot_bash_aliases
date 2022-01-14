@@ -9,7 +9,6 @@ alias ll='ls -aFhl'
 alias la='ls -A'
 alias laa='ls -a'
 
-alias c='cd'
 alias ..='cd ..'
 alias ...='cd ../..'
 cdp() {
@@ -25,9 +24,11 @@ alias g='git'
 alias gdb='gdb -q'
 alias gdb32='gdb -ex 32bit'
 alias odi='objdump -M intel'
-alias xclip='xclip -selection c'
 alias fd='fd -HIL'
 alias df='df -h'
+
+alias c='xsel -b -i'
+alias v='xsel -b -o'
 
 alias invert="printf '\e[?5h'"
 alias uninvert="printf '\e[?5l'"
