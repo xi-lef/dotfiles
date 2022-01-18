@@ -26,11 +26,11 @@ let g:coc_status_error_sign = '❗'
 
 " Insert-mappings for auto-completion {{{
 inoremap <silent><expr> <C-@> coc#refresh()
-inoremap <expr> <TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
-inoremap <expr> <S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-inoremap <silent><nowait><expr> <C-F> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
-inoremap <silent><nowait><expr> <C-B> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+inoremap <expr> <TAB> pumvisible() ? "\<C-N>" : "\<TAB>"
+inoremap <expr> <S-TAB> pumvisible() ? "\<C-P>" : "\<C-H>"
+inoremap <expr> <CR> pumvisible() ? "\<C-Y>" : "\<C-G>u\<CR>"
+inoremap <silent><nowait><expr> <C-B> coc#float#has_scroll() ? "<C-R>=coc#float#scroll(0)<CR>" : "<Left>"
+inoremap <silent><nowait><expr> <C-F> coc#float#has_scroll() ? "<C-R>=coc#float#scroll(1)<CR>" : "<Right>"
 nnoremap <silent><nowait><expr> <C-B> coc#float#has_scroll() ? coc#float#scroll(0) : "<C-B>"
 nnoremap <silent><nowait><expr> <C-F> coc#float#has_scroll() ? coc#float#scroll(1) : "<C-F>"
 " }}}
@@ -79,7 +79,7 @@ endif
 " Filetype-specific plugins {{{
 Plug 'iamcco/markdown-preview.nvim', {'do': 'cd app && yarn install'}
 let g:mkdp_auto_close = 0
-nmap <C-p> <Plug>MarkdownPreviewToggle
+nmap <C-P> <Plug>MarkdownPreviewToggle
 
 Plug 'tikhomirov/vim-glsl'
 Plug 'sheerun/vim-polyglot'
