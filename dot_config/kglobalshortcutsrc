@@ -1,6 +1,7 @@
 [ActivityManager]
 _k_friendly_name=Activity Manager
 switch-to-activity-4c3daf5b-1d57-4ea6-9c12-a00b9bb40752=none,none,Switch to activity "Default"
+switch-to-activity-de60aa4e-c365-4ca1-bca6-a6e05e434c6f=none,none,Switch to activity "Default"
 
 [KDE Keyboard Layout Switcher]
 Switch keyboard layout to Deutsch=none,none,Tastaturbelegung zu Deutsch umschalten
@@ -40,7 +41,6 @@ display=Display\tMeta+P,Display\tMeta+P,Switch Display
 
 [khotkeys]
 _k_friendly_name=Custom Shortcuts Service
-{66b8f508-1df1-4eaa-ac16-5ed4b433a7af}=none,none,Launch Konsole
 {d03619b6-9b3c-48cc-9d9c-a2aadb485550}=,none,Search
 
 [kitty.desktop]
@@ -270,7 +270,7 @@ activate task manager entry 7=Meta+7,Meta+7,Activate Task Manager Entry 7
 activate task manager entry 8=Meta+8,Meta+8,Activate Task Manager Entry 8
 activate task manager entry 9=Meta+9,Meta+9,Activate Task Manager Entry 9
 activate widget 13=none,none,Activate Keyboard Indicator Widget
-activate widget 21=none,none,Activate Application Menu Widget
+activate widget 21=Meta+F1,none,Activate Application Menu Widget
 activate widget 36=Alt+F1,none,Activate Application Menu Widget
 activate widget 53=none,none,Activate Task Manager Widget
 activate widget 8=none,none,Activate System Tray Widget
