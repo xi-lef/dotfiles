@@ -26,9 +26,9 @@ let g:coc_status_error_sign = '❗'
 
 " Insert-mappings for auto-completion {{{
 inoremap <silent><expr> <C-@> coc#refresh()
-inoremap <expr> <TAB> pumvisible() ? "\<C-N>" : "\<TAB>"
-inoremap <expr> <S-TAB> pumvisible() ? "\<C-P>" : "\<C-H>"
-inoremap <expr> <CR> pumvisible() ? "\<C-Y>" : "\<C-G>u\<CR>"
+inoremap <expr> <TAB> pumvisible() ? "<C-N>" : "<TAB>"
+inoremap <expr> <S-TAB> pumvisible() ? "<C-P>" : "<C-H>"
+inoremap <expr> <CR> pumvisible() ? "<C-Y>" : "<C-G>u<CR>"
 inoremap <silent><nowait><expr> <C-B> coc#float#has_scroll() ? "<C-R>=coc#float#scroll(0)<CR>" : "<Left>"
 inoremap <silent><nowait><expr> <C-F> coc#float#has_scroll() ? "<C-R>=coc#float#scroll(1)<CR>" : "<Right>"
 nnoremap <silent><nowait><expr> <C-B> coc#float#has_scroll() ? coc#float#scroll(0) : "<C-B>"
