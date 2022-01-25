@@ -274,6 +274,8 @@ command W write !sudo tee > /dev/null %
 " Theme {{{
 "set t_Co=256
 set t_ut=
+let &t_SI = "\e[5 q"
+let &t_EI = "\e[2 q"
 set background=dark
 "set termguicolors
 " Darker background: value 233 is 'blackgravel' from 'sjl/badwolf' (232 is even darker)
@@ -328,6 +330,7 @@ augroup END
 syntax enable               " enable syntax highlighting
 set scrolloff=5             " lines above/below cursor when scrolling
 set number                  " show line numbers
+set cursorlineopt=number    " only highlight line number (for insert-mode)
 set title                   " window title is set reasonably
 set noshowmode              " do not show mode in last line
 set ignorecase              " ignore case when searching
@@ -372,6 +375,9 @@ set sessionoptions+=localoptions " do save local options (e.g. for spelling)
 set termwinscroll=100000    " more terminal scrollback
 set updatetime=100          " delay (e.g. for tagbar auto-refresh)
 set ttimeoutlen=100         " less delay for <S-O>
+
+" highlight the current line (number) in insert-mode
+autocmd InsertEnter,InsertLeave * set cursorline!
 " }}}
 
 " Miscellaneous {{{
