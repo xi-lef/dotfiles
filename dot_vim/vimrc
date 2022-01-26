@@ -330,7 +330,6 @@ augroup END
 syntax enable               " enable syntax highlighting
 set scrolloff=5             " lines above/below cursor when scrolling
 set number                  " show line numbers
-set cursorlineopt=number    " only highlight line number (for insert-mode)
 set title                   " window title is set reasonably
 set noshowmode              " do not show mode in last line
 set ignorecase              " ignore case when searching
@@ -376,8 +375,10 @@ set termwinscroll=100000    " more terminal scrollback
 set updatetime=100          " delay (e.g. for tagbar auto-refresh)
 set ttimeoutlen=100         " less delay for <S-O>
 
-" highlight the current line (number) in insert-mode
-autocmd InsertEnter,InsertLeave * set cursorline!
+" Highlight the current line (number) in insert-mode. Only set 'cursorlineopt' while in insert-mode
+" as to not influence NERDTree.
+autocmd InsertEnter * set cursorline cursorlineopt=number
+autocmd InsertLeave * set nocursorline cursorlineopt=both
 " }}}
 
 " Miscellaneous {{{
