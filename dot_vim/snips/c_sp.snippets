@@ -107,6 +107,13 @@ Fehlerbehandlung fehlt. (-${1|1.0,0.5,1.5,2.0|})
 endsnippet
 
 context "c()"
+snippet exec_exit "kein exit() nach exec()"
+Eine Funktion der exec(3)-Familie (wie z.B. `!p snip.rv = var()`(3)) kehrt nur zurueck, wenn ein
+Fehler aufgetreten ist. Hiernach muss also noch eine Fehlerbehandlung kommen (wobei der
+Rueckgabewert nicht betrachtet werden muss, da im Erfolgsfall ja nie returnt wird). (-1.0)
+endsnippet
+
+context "c()"
 snippet fclose "fclose() fehlt"
 Das muss mit fclose(3) wieder geschlossen werden. (-1.0)
 endsnippet
@@ -717,6 +724,12 @@ endsnippet
 
 # request-http.c {{{
 context "c() and (sister('request-http.c') or mother('request-httpx.c'))"
+snippet sister_mother_checkpath "checkPath() auf falschen Pfad angewandt"
+"checkPath" muss auf den Anfragepfad (also direkt der Pfad aus der HTTP-GET-Anfrage) aufgerufen
+werden. (-1.0)
+endsnippet
+
+context "c() and (sister('request-http.c') or mother('request-httpx.c'))"
 snippet sister_mother_multiple_answers "mehrere http*()-Aufrufe"
 Es wurde bereits eine Antwort mit "${1:httpOk}" gesendet. Hier nochmal eine (andere) Antwort zu
 schicken ist schlecht, da der Browser das nicht erwartet und dementsprechend kaputt anzeigt. (-0.5)
@@ -749,7 +762,7 @@ context "c() and rush()"
 snippet rush_kill_exit "exit() bei kill()"
 Hier lieber nicht sterben, denn: "ESRCH  The process or process group does not exist. Note that an
 existing process might be a zombie, a process that has terminated execution, but has not yet been
-wait(2)ed for" (Manpage kill(2)). Und das ist moeglich, da hier SIGCHLD blockiert ist, und deswegen
+wait(2)ed for." (Manpage kill(2)) Und das ist moeglich, da hier SIGCHLD blockiert ist, und deswegen
 der Kindprozess, der gerade getoetet werden soll, noch ein Zombie sein kann. (-0.5)
 endsnippet
 
@@ -954,10 +967,10 @@ endsnippet
 context "c() and jbuffer('sem.c')"
 snippet jbuffer_signal_after_unlock "signal()/broadcast() ausserhalb des kritischen Abschnitts"
 Das `!p snip.rv = var()`(3) muss noch innerhalb des kritischen Abschnitts erfolgen, da man sonst
-Probleme bzgl. Race Conditions bekommen kann. Siehe auch Manpage: "Thus, if all threads always
-acquire the mutex before signaling the condition, this guarantees that the condition cannot be
-signaled (and thus ignored) between the time a thread locks the mutex and the time it waits on the
-condition variable." (-1.0)
+Probleme bzgl. Race Conditions bekommen kann. "Thus, if all threads always acquire the mutex before
+signaling the condition, this guarantees that the condition cannot be signaled (and thus ignored)
+between the time a thread locks the mutex and the time it waits on the condition variable."
+(Manpage `!p snip.rv = var()`(3)) (-1.0)
 endsnippet
 # }}}
 # }}}
@@ -1008,6 +1021,22 @@ wenn es in der Aufgabenstellung nicht explizit gefordert ist. Damit dies ohne We
 gelingt, muss zunaechst open(2) mit dem O_CLOEXEC aufrufen. Wenn man anschliessend die auf FILE*
 arbeitenden Funktionen (wie z.B. fgets(3)) nutzen moechte, muss noch ein fdopen(3) verwendet
 werden.
+endsnippet
+
+context "c() and mother('request-httpx.c')"
+snippet mother_perl_length "bei Perl-Skript-Namen ueber Anfang hinausgelesen"
+Beim Pruefen, ob der Dateiname auf ".pl" endet, muss sichergestellt werden, dass nicht links ueber
+den Anfang des Strings hinausgelesen wird. Wenn z.B. der Name einer Datei nur aus einem einzelnen
+Buchstaben besteht, tritt hier genau dieses Problem auf. (-0.5)
+endsnippet
+
+context "c() and mother('request-httpx.c')"
+snippet mother_readdir_r "readdir_r() verwendet"
+readdir_r(3) ist laut Manpage deprecated (dt. veraltet) und sollte deswegen nicht verwendet werden.
+readdir(3) muss zwar laut POSIX nicht thread-safe sein, aber "[...] in modern implementations
+(including the glibc implementation), concurrent calls to readdir() that specify different
+directory streams are thread-safe." (Manpage readdir(3)) Noch besser ist es, direkt scandir(3) zu
+verwenden: das ist naemlich garantiert thread-safe (und macht das alles sowieso viel leichter ;)).
 endsnippet
 
 context "c() and mother('request-httpx.c')"
