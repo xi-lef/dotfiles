@@ -42,9 +42,11 @@ def var():
     x_arrow = w.buffer[y_arrow].find('^')
     if x_arrow == -1: return 'var'
 
+    l = w.buffer[y_arrow - 1]
+    # Replace tabs with the appropriate amount of spaces so the x-position is correct.
+    l = l.replace('\t', ' ' * vim.current.buffer.options['tabstop'])
     # Search for the first invalid character to the left of the '^' to find the beginning of the
     # variable name.
-    l = w.buffer[y_arrow - 1]
     m = re.search(r'\W', l[x_arrow :: -1])
     offset = 0 if not m else (m.start(0) - 1)
 
