@@ -114,6 +114,12 @@ Rueckgabewert nicht betrachtet werden muss, da im Erfolgsfall ja nie returnt wir
 endsnippet
 
 context "c()"
+snippet execv_execl "execv() anstatt execl() verwendet"
+Hier kann man auch exec${1|l,lp|}(3) verwenden; dort kann man die Argumente direkt uebergeben,
+anstatt zuerst das Array extra anlegen zu muessen. ;)
+endsnippet
+
+context "c()"
 snippet fclose "fclose() fehlt"
 Das muss mit fclose(3) wieder geschlossen werden. (-1.0)
 endsnippet
@@ -143,6 +149,11 @@ Das ist problematisch, da "${1:`!p snip.rv = var()`}" ein String vom Benutzer is
 als Format-String interpretiert wird. Wenn der Benutzer hier also z.B. ein "%d" reinschreibt, wird
 das, was als naechstes auf dem Stack liegt, als Dezimalzahl ausgegeben. In solchen Faellen muss
 deswegen immer "%s" als Format-String verwendet werden. (-1.0)
+endsnippet
+
+context "c()"
+snippet format_string_indirection "unnoetige Indirektion im Format-String"
+Das kann man auch direkt in den Format-String schreiben. ;)
 endsnippet
 
 context "c()"
@@ -189,6 +200,13 @@ context "c()"
 snippet perror_no_errno "perror() trotz ungesetzter errno"
 In diesem Fall ist die errno nicht gesetzt, deswegen kann hier perror(3) nicht verwendet werden.
 Man muss hier mit fprintf(3) selbst eine aussagekraeftige Fehlermeldung schreiben.
+endsnippet
+
+context "c()"
+snippet pthread_errno "pthread-Funktion-Rueckgabewert nicht in errno gespeichert"
+Saemtliche pthread-Funktionen setzen die errno(3) nicht selbst, d.h. der Rueckgabewert von z.B.
+`!p snip.rv = var()`(3) muss noch explizit in der errno gespeichert werden, damit danach perror(3)
+verwendet werden kann. (-0.5)
 endsnippet
 
 context "c()"
@@ -245,6 +263,14 @@ Hier muss "endptr" verwendet werden, um zwei Fehler abpruefen zu koennen: ersten
 leer sein, in welchem Fall einfach 0 returnt wird. Zweitens koennen nach der eigentlich Zahl noch
 Buchstaben enthalten sein (z.B. "123a"), was ja auch nicht sein soll. Siehe auch Manpage strtol(3).
 (-0.5)
+endsnippet
+
+context "c()"
+snippet unreadable_nested "unlesbarer Code durch starke Verschachtelung"
+Der Code hier ist sehr stark verschachtelt, was die Lesbarkeit deutlich verschlechtert. Prinzipiell
+sollte man eher Fehlerfaelle abfangen, und dort dann ein fruehzeitiges "return" oder exit(3) (je
+nachdem, was zutrifft) machen. Dann braucht man naemlich den darauf folgenden Erfolgsfall nicht in
+ein "else" zu stecken, und hat nicht so tiefe Verschachtelung, was alles uebersichtlicher macht.
 endsnippet
 
 context "c()"
@@ -735,6 +761,20 @@ Es wurde bereits eine Antwort mit "${1:httpOk}" gesendet. Hier nochmal eine (and
 schicken ist schlecht, da der Browser das nicht erwartet und dementsprechend kaputt anzeigt. (-0.5)
 endsnippet
 
+context "c() and (sister('request-http.c') or mother('request-httpx.c'))"
+snippet sister_mother_no_answer "keine Antwort an Client"
+In diesem Fall wird dem Client keine Antwort gesendet; es sollte aber eine (passende) Fehlermeldung
+gesendet werden. (-0.5)
+endsnippet
+
+context "c() and (sister('request-http.c') or mother('request-httpx.c'))"
+snippet sister_mother_strtok_end "nicht auf zusaetzliche Zeichen am Ende der Anfrage geprueft"
+Es waere cool, hier mit einem weiteren strtok(3)-Aufruf zu pruefen, ob danach noch mehr in der
+Anfragezeile steht. Das ist moeglich, da als Delimiter auch '\r' verwendet wird, d.h. eine Zeile
+der Form "GET /index.html HTTP/1.1\rhallo\n" wird hier als gueltig geparst, obwohl sie ja
+eigentlich ungueltig ist.
+endsnippet
+
 context "c() and sister('request-http.c')"
 snippet sister_regular_file "nicht auf regulaere Datei geprueft"
 Es sollen lediglich regulaere Dateien ausgeliefert werden, wofuer man stat(2) verwenden muss.
@@ -992,6 +1032,13 @@ Prozess) atomaren Schritt auszufuehren. (-1.0)
 endsnippet
 
 context "c() and mother('connection-mt.c')"
+snippet mother_exit "unnoetiges exit()"
+Nur weil das fehlschlaegt, soll sich nicht gleich der ganze Thread beenden. Das hier ist ja ein
+Server, d.h. man will nur im absoluten Ausnahmefall das Programm beenden. Stattdessen sollte man
+hier lediglich eine Fehlermeldung ausgeben und bereits belegte Ressourcen wieder freigeben. (-1.0)
+endsnippet
+
+context "c() and mother('connection-mt.c')"
 snippet mother_late_cloexec_clientSock "clientSock FD_CLOEXEC zu spaet gesetzt"
 Es ist zwingend notwendig, das Close-on-Exec-Flag auf "clientSock" bereits *vor* dem Hinzufuegen
 zum Puffer vorzunehmen. Sonst ist es bei einem sehr grossen Puffer, schnell hintereinander
@@ -1028,6 +1075,19 @@ snippet mother_perl_length "bei Perl-Skript-Namen ueber Anfang hinausgelesen"
 Beim Pruefen, ob der Dateiname auf ".pl" endet, muss sichergestellt werden, dass nicht links ueber
 den Anfang des Strings hinausgelesen wird. Wenn z.B. der Name einer Datei nur aus einem einzelnen
 Buchstaben besteht, tritt hier genau dieses Problem auf. (-0.5)
+endsnippet
+
+context "c() and mother('request-httpx.c')"
+snippet mother_perl_executable "Ausfuehren-Recht bei Perl-Skripten nicht geprueft"
+Perl-Skripte sollen nur ausgefuehrt werden, wenn deren Eigentuemer das Ausfuehren-Recht hat. Das
+muss hier noch mit stat(2) geprueft werden. (-1.0)
+endsnippet
+
+context "c() and mother('request-httpx.c')"
+snippet mother_readdir_overwrite "d_name direkt verwendet, ohne Kopieren"
+"The data returned by readdir() may be overwritten by subsequent calls to readdir() for the same
+directory stream." (Manpage readdir(3)) Der Name muss dementsprechend kopiert werden, z.B. mittels
+strdup(3). (-1.0)
 endsnippet
 
 context "c() and mother('request-httpx.c')"
