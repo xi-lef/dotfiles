@@ -177,7 +177,7 @@ endsnippet
 context "c()"
 snippet malloc_instead_of_stack "malloc() statt Stack-Allokation"
 Das haette man auch auf dem Stack machen koennen. Das spart die Fehlerbehandlung und das free(3)
-spaeter, was deutlich angenehmer zu schreiben ist. ;)
+spaeter, was insgesamt deutlich angenehmer ist. ;)
 endsnippet
 
 context "c()"
@@ -510,7 +510,7 @@ context "c() and mach()"
 snippet mach_buffer_overwrite "Puffer fuer Befehlszeile wird ueberschrieben"
 Dieser Puffer wird von jedem fgets(3)-Aufruf wiederverwendet, d.h. der Pufferinhalt wird bei jedem
 Schleifendurchlauf ueberschrieben. Da dieser Puffer dann direkt an den Arbeiterthread uebergeben
-wird, verwenden letztendlich alle Arbeiterthreads den selben Puffer, was natuerlich nicht
+wird, verwenden letztendlich alle Arbeiterthreads denselben Puffer, was natuerlich nicht
 funktionieren kann. Jeder Arbeiterthread braucht seinen eigenen Puffer, was am leichtesten mit
 strdup(3) erreicht werden kann. (-1.0)
 endsnippet
@@ -891,7 +891,7 @@ context "c() and jbuffer('jbuffer.c')"
 snippet jbuffer_CAS_r_late_read "Leseindex bei CAS zu spaet ausgelesen"
 Man darf sich hier auf keinen Fall den Wert vom Leseindex ("bb->${1:read}") erst bei dem CAS holen:
 die Idee hinter der Schleife ist, dass man sich den Wert holt, Berechnungen durchfuehrt, und am
-Ende vergleicht, ob noch der selbe Wert drin steht, wie zuvor. Dadurch soll ja erkannt werden, ob
+Ende vergleicht, ob noch derselbe Wert drin steht, wie zuvor. Dadurch soll ja erkannt werden, ob
 ein anderer Thread in der Zwischenzeit "bbGet" aufgerufen hat, in welchem Fall das ganze dann
 wiederholt werden muss. Hier wird der Wert zwei mal direkt nacheinander ausgelesen, und diese
 miteinander verglichen, wobei diese in den allermeisten Faellen identisch sind. Deswegen wird hier
@@ -1018,7 +1018,7 @@ context "c() and mother('request-httpx.c')"
 snippet mother_file_cloexec "FD_CLOEXEC nicht bei geoeffneten Dateien gesetzt"
 Es waere schoen, wenn auch die geoeffneten Dateien das Close-on-Exec-Flag bekommen wuerden, selbst
 wenn es in der Aufgabenstellung nicht explizit gefordert ist. Damit dies ohne Wettlaufsituation
-gelingt, muss zunaechst open(2) mit dem O_CLOEXEC aufrufen. Wenn man anschliessend die auf FILE*
+gelingt, muss man zunaechst open(2) mit O_CLOEXEC aufrufen. Wenn man anschliessend die auf FILE*
 arbeitenden Funktionen (wie z.B. fgets(3)) nutzen moechte, muss noch ein fdopen(3) verwendet
 werden.
 endsnippet
