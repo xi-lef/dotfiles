@@ -3,11 +3,11 @@
     name = Felix Windsheimer
 [alias]
     a = add
-    ap = add -p
-    ci = commit -v
-    c = commit -m
-    ca = commit -a
-    cam = commit -a -m
+    ap = add --patch
+    ci = commit --verbose
+    c = commit --message
+    ca = commit --all
+    cam = commit --all --message
     ame = commit --amend --no-edit
     amee = commit --amend
     p = push
@@ -19,6 +19,7 @@
     sr = !git remote show origin | tail -n 1 | sed 's/.*(\\(.*\\))/\\1/'
     l = log
     d = diff
+    db = diff --ignore-space-change
     dc = diff --cached
     sh = show
 
