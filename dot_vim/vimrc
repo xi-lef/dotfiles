@@ -26,8 +26,8 @@ let g:coc_status_error_sign = '❗'
 
 " Insert-mappings for auto-completion {{{
 inoremap <silent><expr> <C-@> coc#refresh()
-inoremap <expr> <TAB> pumvisible() ? "<C-N>" : "<TAB>"
-inoremap <expr> <S-TAB> pumvisible() ? "<C-P>" : "<C-H>"
+inoremap <expr> <Tab> pumvisible() ? "<C-N>" : "<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "<C-P>" : ""
 inoremap <expr> <CR> pumvisible() ? "<C-Y>" : "<C-G>u<CR>"
 inoremap <silent><nowait><expr> <C-B> coc#float#has_scroll() ? "<C-R>=coc#float#scroll(0)<CR>" : "<Left>"
 inoremap <silent><nowait><expr> <C-F> coc#float#has_scroll() ? "<C-R>=coc#float#scroll(1)<CR>" : "<Right>"
@@ -171,10 +171,10 @@ function SPComment(print_arrow = 1)
     " 'sp-comments' is bugged, so we have to limit the '^' to column 80 (lol)
     let target = min([80, virtcol('.')])
     let arrow = !a:print_arrow ? '' : repeat(" ", target - 4) . '^'
-    let clear = "\<ESC>0\"_Di" " helper-'function' to clear a line
+    let clear = "\<Esc>0\"_Di" " helper-'function' to clear a line
 
     execute "normal! o" . clear . start . "K" . arrow . "\<CR>"
-                \ . clear . end . "\<ESC>O" . clear . middle
+                \ . clear . end . "\<Esc>O" . clear . middle
     startinsert!
 endfunction
 " }}}
@@ -200,9 +200,10 @@ nnoremap <F9> :write <Bar> !g++ -O3 -o %:r %<CR>
 map <C-S> <C-U>
 map <C-Q> <C-Y>
 
-inoremap <C-Q> <Up>
-inoremap <C-E> <Down>
-inoremap <C-C> <ESC>
+imap <C-J> <C-O>j
+imap <C-K> <C-O>k
+inoremap <C-L> <Right>
+inoremap <C-C> <Esc>
 
 noremap j gj
 ounmap j
@@ -216,11 +217,11 @@ tmap <silent> <C-W>t <C-W>:vertical term<CR>
 nmap <silent> <C-W><C-T> :term ++curwin<CR>
 
 " Tabs {{{
-" open new, empty tab
+" Open new, empty tab
 nnoremap <silent> <C-T> :tabedit<CR>
 tnoremap <silent> <C-T> <C-W>:tabedit<CR>
 
-" map alt+<i> to switch to tab <i>
+" Map alt+<i> to switch to tab <i>
 nnoremap 1 1gt
 nnoremap 2 2gt
 nnoremap 3 3gt
@@ -233,11 +234,11 @@ nnoremap 9 9gt
 nnoremap 0 10gt
 nnoremap - 11gt
 nnoremap = 12gt
-" move tabs with ctrl-shift-page{up,down}
+" Move tabs with ctrl-shift-page{up,down}
 nnoremap <silent> <C-PageUp> :silent! tabm -<CR>
 nnoremap <silent> <C-PageDown> :silent! tabm +<CR>
 
-" same as above, but for terminal windows
+" Same as above, but for terminal windows
 tnoremap <silent> 1 <C-W>:1tabnext<CR>
 tnoremap <silent> 2 <C-W>:2tabnext<CR>
 tnoremap <silent> 3 <C-W>:3tabnext<CR>
