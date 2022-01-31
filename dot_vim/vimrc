@@ -87,6 +87,17 @@ let g:polyglot_disabled = ['autoindent', 'latex'] " conflict with vimtex
 
 Plug 'jackguo380/vim-lsp-cxx-highlight'
 Plug 'mogelbrod/vim-jsonpath'
+
+Plug 'rhysd/vim-clang-format'
+let g:clang_format#code_style = 'google'
+let g:clang_format#style_options = {
+            \ 'AccessModifierOffset': -4,
+            \ 'BreakBeforeBinaryOperators': 'All',
+            \ 'ColumnLimit': 99,
+            \ 'IndentWidth': 4
+            \ }
+nmap <silent> <Leader>k <Plug>(operator-clang-format)
+vnoremap <silent> <Leader>k :ClangFormat<CR>
 " }}}
 
 " 'Graphical' plugins {{{
@@ -121,6 +132,8 @@ Plug 'gcavallanti/vim-noscrollbar'
 Plug 'matze/vim-move'
 let g:move_key_modifier = 'C'
 Plug 'farmergreg/vim-lastplace'
+
+Plug 'kana/vim-operator-user' " For vim-clang-format
 " }}}
 
 " Statusline {{{
