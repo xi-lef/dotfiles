@@ -26,13 +26,13 @@ let g:coc_status_error_sign = '❗'
 
 " Insert-mappings for auto-completion {{{
 inoremap <silent><expr> <C-@> coc#refresh()
-inoremap <expr> <Tab> pumvisible() ? "<C-N>" : "<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "<C-P>" : ""
-inoremap <expr> <CR> pumvisible() ? "<C-Y>" : "<C-G>u<CR>"
-inoremap <silent><nowait><expr> <C-B> coc#float#has_scroll() ? "<C-R>=coc#float#scroll(0)<CR>" : "<Left>"
-inoremap <silent><nowait><expr> <C-F> coc#float#has_scroll() ? "<C-R>=coc#float#scroll(1)<CR>" : "<Right>"
-nnoremap <silent><nowait><expr> <C-B> coc#float#has_scroll() ? coc#float#scroll(0) : "<C-B>"
-nnoremap <silent><nowait><expr> <C-F> coc#float#has_scroll() ? coc#float#scroll(1) : "<C-F>"
+inoremap <expr> <Tab> pumvisible() ? '<C-N>' : '<Tab>'
+inoremap <expr> <S-Tab> pumvisible() ? '<C-P>' : ''
+inoremap <expr> <CR> pumvisible() ? '<C-Y>' : '<C-G>u<CR>'
+inoremap <silent><nowait><expr> <C-B> coc#float#has_scroll() ? '<C-R>=coc#float#scroll(0)<CR>' : '<Left>'
+inoremap <silent><nowait><expr> <C-F> coc#float#has_scroll() ? '<C-R>=coc#float#scroll(1)<CR>' : '<Right>'
+nnoremap <silent><nowait><expr> <C-B> coc#float#has_scroll() ? coc#float#scroll(0) : '<C-B>'
+nnoremap <silent><nowait><expr> <C-F> coc#float#has_scroll() ? coc#float#scroll(1) : '<C-F>'
 " }}}
 
 " Movement-mappings {{{
@@ -183,10 +183,10 @@ function SPComment(print_arrow = 1)
 
     " 'sp-comments' is bugged, so we have to limit the '^' to column 80 (lol)
     let target = min([80, virtcol('.')])
-    let arrow = !a:print_arrow ? '' : repeat(" ", target - 4) . '^'
+    let arrow = !a:print_arrow ? '' : repeat(' ', target - 4) . '^'
     let clear = "\<Esc>0\"_Di" " helper-'function' to clear a line
 
-    execute "normal! o" . clear . start . "K" . arrow . "\<CR>"
+    execute 'normal! o' . clear . start . 'K' . arrow . "\<CR>"
                 \ . clear . end . "\<Esc>O" . clear . middle
     startinsert!
 endfunction
@@ -194,8 +194,8 @@ endfunction
 
 " Mappings {{{
 " Set colors
-nnoremap <silent> <F2> :let &background = (&background == "dark" ? "light" : "dark")<CR>
-tnoremap <silent> <F2> <C-W>:let &background = (&background == "dark" ? "light" : "dark")<CR>
+nnoremap <silent> <F2> :let &background = (&background == 'dark' ? 'light' : 'dark')<CR>
+tnoremap <silent> <F2> <C-W>:let &background = (&background == 'dark' ? 'light' : 'dark')<CR>
 
 " Miscellaneous
 nnoremap <silent> <F5> :source $MYVIMRC<CR>:redraw!<CR>
