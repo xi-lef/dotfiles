@@ -1033,9 +1033,11 @@ endsnippet
 
 context "c() and mother('connection-mt.c')"
 snippet mother_exit "unnoetiges exit()"
-Nur weil das fehlschlaegt, soll sich nicht gleich der ganze Thread beenden. Das hier ist ja ein
-Server, d.h. man will nur im absoluten Ausnahmefall das Programm beenden. Stattdessen sollte man
-hier lediglich eine Fehlermeldung ausgeben und bereits belegte Ressourcen wieder freigeben. (-1.0)
+Nur weil das fehlschlaegt, soll sich nicht gleich der ganze Thread beenden: das hier ist ein
+Server, d.h. man will nur im absoluten Ausnahmefall das Programm beenden. In diesem Fall aber gab
+es nur ein Problem bei der aktuellen Anfrage, der Server kann jedoch noch weiterlaufen. Deswegen
+sollte man hier lediglich eine Fehlermeldung ausgeben und bereits belegte Ressourcen wieder
+freigeben. (-1.0)
 endsnippet
 
 context "c() and mother('connection-mt.c')"
@@ -1062,12 +1064,25 @@ endsnippet
 
 # request-httpx.c {{{
 context "c() and mother('request-httpx.c')"
+snippet mother_directory_dot "Verzeichniseintraege mit Punkt nicht gefiltert"
+Es sollen nur die Verzeichniseintraege ausgegeben werden, deren Name nicht mit einem '.' beginnt.
+(-1.0)
+endsnippet
+
+context "c() and mother('request-httpx.c')"
 snippet mother_file_cloexec "FD_CLOEXEC nicht bei geoeffneten Dateien gesetzt"
 Es waere schoen, wenn auch die geoeffneten Dateien das Close-on-Exec-Flag bekommen wuerden, selbst
 wenn es in der Aufgabenstellung nicht explizit gefordert ist. Damit dies ohne Wettlaufsituation
 gelingt, muss man zunaechst open(2) mit O_CLOEXEC aufrufen. Wenn man anschliessend die auf FILE*
 arbeitenden Funktionen (wie z.B. fgets(3)) nutzen moechte, muss noch ein fdopen(3) verwendet
 werden.
+endsnippet
+
+context "c() and mother('request-httpx.c')"
+snippet mother_index_html_file "kein Check ob index.html regulaere Datei ist"
+"index.html" soll nur ausgeliefert werden, wenn es eine Datei und kein Verzeichnis ist. Wenn
+es sich um ein Verzeichnis handelt, soll stattdessen einfach das angeforderte Verzeichnis gelistet
+werden. (-0.5)
 endsnippet
 
 context "c() and mother('request-httpx.c')"
