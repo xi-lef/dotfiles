@@ -115,9 +115,6 @@ nnoremap <silent> <C-W><C-N> :rightbelow vsplit .<CR>
 " }}}
 
 " Miscellaneous plugins {{{
-Plug 'tpope/vim-fugitive'
-nnoremap <silent> <Leader>G :Git<CR>
-
 Plug 'google/vim-searchindex'
 let g:searchindex_star_case = 0
 Plug 'bronson/vim-visual-star-search'
