@@ -93,8 +93,10 @@ let g:clang_format#code_style = 'google'
 let g:clang_format#style_options = {
             \ 'AccessModifierOffset': -4,
             \ 'BreakBeforeBinaryOperators': 'All',
-            \ 'ColumnLimit': 99,
-            \ 'IndentWidth': 4
+            \ 'ColumnLimit': 80,
+            \ 'DerivePointerAlignment': 'false',
+            \ 'IndentWidth': 4,
+            \ 'PointerAlignment': 'Right'
             \ }
 nmap <silent> <Leader>f <Plug>(operator-clang-format)
 vnoremap <silent> <Leader>f :ClangFormat<CR>
