@@ -89,7 +89,7 @@ let g:polyglot_disabled = ['autoindent', 'latex'] " conflict with vimtex
 Plug 'jackguo380/vim-lsp-cxx-highlight'
 Plug 'mogelbrod/vim-jsonpath'
 
-Plug 'rhysd/vim-clang-format'
+Plug 'xilefsensei/vim-clang-format'
 let g:clang_format#code_style = 'google'
 let g:clang_format#style_options = {
             \ 'AccessModifierOffset': -4,
