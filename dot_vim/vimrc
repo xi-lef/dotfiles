@@ -273,10 +273,10 @@ tnoremap <silent> <C-PageDown> <C-W>:silent! tabm +<CR>
 
 " Commands {{{
 " Sessions
-command -nargs=1 CS execute 'mksession! ' . $HOME . '/.vim/sessions/' . '<args>.vim'
-command SS execute 'mksession! ' . v:this_session
-command XS execute 'mksession! ' . v:this_session <Bar> wall <Bar> qall!
-command DS execute 'silent !rm ' . v:this_session <Bar> redraw!
+command -bar -nargs=1 CS execute 'mksession! ' . $HOME . '/.vim/sessions/' . '<args>.vim'
+command -bar SS execute 'mksession! ' . v:this_session
+command -bar XS SS <Bar> wall <Bar> qall!
+command -bar DS execute 'silent !rm ' . v:this_session <Bar> redraw!
 command QQ qall!
 
 " Shortcuts for opening vsplits
