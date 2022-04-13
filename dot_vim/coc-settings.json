@@ -1,7 +1,6 @@
 {
     "coc.preferences.extensionUpdateCheck": "daily",
     "clangd.fallbackFlags": ["-Wall, -Wextra"],
-    "clangd.semanticHighlighting": true,
     "git.removedSign.text": "–",
     "git.topRemovedSign.text": "–",
     "markdownlint.config": {
