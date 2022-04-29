@@ -19,7 +19,7 @@ command -nargs=1 CI CocInstall <args>
 command -nargs=1 CU CocUninstall <args>
 cnoreabbrev CC CocCommand
 let g:coc_global_extensions = ['coc-calc', 'coc-clangd', 'coc-cmake', 'coc-git', 'coc-java',
-            \ 'coc-json', 'coc-markdownlint', 'coc-pyright', 'coc-sh', 'coc-snippets',
+            \ 'coc-json', 'coc-markdownlint', 'coc-pyright', 'coc-sh', 'coc-snippets@3.0.5',
             \ 'coc-vimlsp', 'coc-vimtex']
 let g:coc_status_warning_sign = '⚠️ '
 let g:coc_status_error_sign = '❗'
