@@ -17,7 +17,7 @@ command PU PlugUpgrade | PlugUpdate
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 command -nargs=1 CI CocInstall <args>
 command -nargs=1 CU CocUninstall <args>
-command CC tabedit <Bar> CocConfig
+cnoreabbrev CC CocCommand
 let g:coc_global_extensions = ['coc-calc', 'coc-clangd', 'coc-cmake', 'coc-git', 'coc-java',
             \ 'coc-json', 'coc-markdownlint', 'coc-pyright', 'coc-sh', 'coc-snippets',
             \ 'coc-vimlsp', 'coc-vimtex']
