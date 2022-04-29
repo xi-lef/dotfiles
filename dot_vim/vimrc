@@ -314,12 +314,6 @@ augroup filetype_e2
     autocmd BufRead,BufNewFile *.ir setlocal filetype=e2ir
 augroup END
 
-augroup filetype_java
-    autocmd!
-    autocmd FileType java inoreabbrev <silent> <buffer> sysout System.out.println("");
-        \<Left><Left><Left><C-R>=Eatchar('\s')<CR>
-augroup END
-
 augroup filetype_json
     autocmd!
     autocmd FileType json,jsonc setlocal foldmethod=syntax
