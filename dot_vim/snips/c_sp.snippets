@@ -1,8 +1,9 @@
 # vim: fdm=marker tw=99 et
 # Global {{{
 global !p
-re_start = r'^/\*K\s*\^?$'  # /*K ^
-re_end = r'^\*/$'  # */
+# Accept extra spaces to be more robust with regard to pre-existing grading comments.
+re_start = r'^\s*/\*K\s*\^?$'  # /*K ^
+re_end = r'^\s*\*/$'  # */
 
 # Check if we are in a multiline-grading-comment.
 def c():
