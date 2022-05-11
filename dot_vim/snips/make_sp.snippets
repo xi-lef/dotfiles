@@ -81,6 +81,17 @@ Normal packt man ${1:das hier} in eine Variable, damit man das nicht mehrmals ti
 endsnippet
 # }}}
 
+# halde {{{
+context "m() and halde()"
+snippet halde_gnu "_GNU_SOURCE nicht definiert"
+Das Flag -D_GNU_SOURCE statt -D_XOPEN_SOURCE=700 ist hier ausnahmsweise okay und sogar noetig. Das
+liegt daran, dass wir in der halde einen Teil des POSIX-Interfaces implementieren, und das geht
+nicht aufbauend auf POSIX. Wir benoetigen das "MAP_ANONYMOUS"-Flag fuer mmap(2). Alternativen
+waeren sbrk(2) (nur in POSIX-2001, nicht mehr in POSIX-2008), mmap(2) auf "/dev/zero" (gar nicht in
+POSIX), posix_typed_mem_open(3p) (nur in POSIX-2017), oder memfd_create (Linux-spezifisch).
+endsnippet
+# }}}
+
 # The jbuffer-function for the "context" is found in the C-snippets.
 # jbuffer {{{
 context "m() and jbuffer()"
