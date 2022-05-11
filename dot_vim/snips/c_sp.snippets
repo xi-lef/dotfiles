@@ -83,6 +83,22 @@ Solche Debug-Ausgaben bitte vor der Abgabe entfernen, so was gehoert nicht in ei
 endsnippet
 
 context "c()"
+snippet duplicate "doppelter Code, der in eine Funktion ausgelagert werden sollte"
+Dieser Code kommt an mehreren Stellen identisch vor: man koennte ihn problemlos in eine
+Hilfsfunktion auslagern. Dadurch spart man sich Schreibarbeit, und es ist auch leichter, diesen
+Code zu veraendern, da man ihn dann nur an einer Stelle (anstatt an Mehreren) veraendern muss.
+Das eliminiert also eine haeufige Fehlerquelle. ;)
+endsnippet
+
+context "c()"
+snippet duplicate_if_else "doppelter Code in if- und else-Fall"
+Hier ist im if- und else-Fall teilweise der gleiche Code; um diesen doppelten Code zu vermeiden,
+kann man ihn einfach direkt hinter das if-else schreiben. Dadurch spart man sich Schreibarbeit, und
+es ist auch leichter, diesen Code zu veraendern, da man ihn dann nur an einer Stelle (anstatt an
+Mehreren) veraendern muss. Das eliminiert also eine haeufige Fehlerquelle. ;)
+endsnippet
+
+context "c()"
 snippet errno_overwritten "errno durch Funktionsaufruf ueberschrieben"
 Durch diesen Funktionsaufruf wird potentiell die errno ueberschrieben, wodurch das perror(3)
 danach eine falsche Fehlermeldung ausgeben koennte.${1: (-0.5)}
