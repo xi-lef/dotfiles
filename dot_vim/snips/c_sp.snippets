@@ -34,7 +34,9 @@ def mother(file = ''): return in_task('mother', file)
 
 # Get the name of the variable that the '^' at the start of the current grading-comment points to.
 # The '^' can point to any character that is part of the variable; it does not need to be precise.
-def var():
+# "x_offset" can be used to offset the start point of the search for the variable name; see the
+# snippet "pointer_dot_arrow" for an example of how this can be used.
+def var(x_offset = 0):
     w = vim.current.window
     y = w.cursor[0] - 1
 
@@ -43,15 +45,18 @@ def var():
     x_arrow = w.buffer[y_arrow].find('^')
     if x_arrow == -1: return 'var'
 
-    l = w.buffer[y_arrow - 1]
+    line = w.buffer[y_arrow - 1]
     # Replace tabs with the appropriate amount of spaces so the x-position is correct.
-    l = l.replace('\t', ' ' * vim.current.buffer.options['tabstop'])
+    line = line.replace('\t', ' ' * vim.current.buffer.options['tabstop'])
     # Search for the first invalid character to the left of the '^' to find the beginning of the
     # variable name.
-    m = re.search(r'\W', l[x_arrow :: -1])
-    offset = 0 if not m else (m.start(0) - 1)
+    m = re.search(r'\W', line[x_arrow :: -1])
+    offset = 0 if not m else max(0, m.start(0) - 1)
 
-    m = re.search(r'\w+', l[x_arrow - offset :])
+    m = re.search(r'\w+', line[x_arrow - offset :])
+    if x_offset:
+        # Search again, this time starting at the position of the match offset by "x_offset".
+        m = re.search(r'\w+', line[x_arrow - offset + m.start(0) + x_offset :])
     return m[0] if m else 'var'
 endglobal
 # }}}
