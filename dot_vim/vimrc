@@ -168,6 +168,8 @@ function Eatchar(pat)
     return (c =~ a:pat) ? '' : c
 endfunction
 
+" Inserts an SP-grading comment, with the arrow pointing to the position of the
+" cursor
 function SPComment(print_arrow = 1)
     if &filetype ==# 'c'
         let start = '/*'
