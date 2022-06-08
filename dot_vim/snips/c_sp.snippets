@@ -76,8 +76,8 @@ endsnippet
 
 context "c()"
 snippet char_array_sizeof "kein sizeof() fuer char-Array"
-Da "${1:arr}" als char-Array definiert ist, kann man hier "sizeof($1)" verwenden. Dadurch muss die
-Groesse nicht explizit doppelt angegeben werden, und es koennen nicht versehentlich
+Da "${1:arr}" als "char"-Array definiert ist, kann man hier "sizeof($1)" verwenden. Dadurch muss
+die Groesse nicht explizit doppelt angegeben werden, und es koennen nicht versehentlich
 unterschiedliche Werte genutzt werden. ;)
 endsnippet
 
@@ -134,6 +134,13 @@ Fehlerbehandlung fehlt. (-${1|1.0,0.5,1.5,2.0|})
 endsnippet
 
 context "c()"
+snippet error_handling_unneeded_output "unnoetige Fehlerbehandlung bei nichtessentieller Ausgabe"
+Diese Ausgabe zaehlt nicht zur Grundfunktionalitaet des Programmes; man braucht hier
+dementsprechend nicht unbedingt eine Fehlerbehandlung (siehe auch Korrekturhinweise auf der
+Webseite unter "Fehlerbehandlung bei Ein-/Ausgabe"). Sie schadet aber auch nicht. :)
+endsnippet
+
+context "c()"
 snippet exec_exit "kein exit() nach exec()"
 Eine Funktion der exec(3)-Familie (wie z.B. `!p snip.rv = var()`(3)) kehrt nur zurueck, wenn ein
 Fehler aufgetreten ist (da im Erfolgsfall das aktuelle Programm quasi komplett ersetzt wird, und es
@@ -166,9 +173,19 @@ Puffer gespeichert, aber noch nicht tatsaechlich rausgeschrieben wurde. (-1.5)
 endsnippet
 
 context "c()"
-snippet fgetc "[f]getc() char als return type"
+snippet fgetc_type "char als Rueckgabetyp bei [f]getc()"
 [f]getc returnt einen "int", d.h. das muss auch in einem "int" gespeichert werden, damit die
-Fehlerbehandlung (konkret: der Vergleich mit "EOF") korrekt funktionieren kann. (-1.0)
+Fehlerbehandlung (konkret: der Vergleich mit "EOF") korrekt funktionieren kann. EOF ist
+ueblicherweise als -1 definiert; ein "char" ist z.B. ein unsigned 8-Bit Wert, d.h. hat einen
+Wertebereich von [0, 255]. Es ist also nicht moeglich, zwischen -1 und 255 zu unterscheiden,
+da - als 8-Bit Wert betrachtet - beides gleich ist: 0xff. (-1.0)
+endsnippet
+
+context "c()"
+snippet fgets_size "falsche size bei fgets()"
+fgets(3) muss hier die Groesse des uebergebenen Puffers ("${1:buf}") uebergeben werden; das
+beinhaltet also auch den Platz fuer das '\0'.${2: Da hier "$1" ein "char"-Array ist, kann auch
+direkt "sizeof($1)" verwendet werden - dann kann dieser Fehler gar nicht passieren.} (-0.5)
 endsnippet
 
 context "c()"
@@ -198,7 +215,7 @@ endsnippet
 context "c()"
 snippet free_in_error_case "Ressourcen im Fehlerfall freigegeben"
 Im Fehlerfall muessen keine Ressourcen freigegeben werden, wenn das Programm im Rahmen der
-Fehlerbehandlung beendet wird. Dadurch kann der Code etwas uebersichtlicher bleiben. ;)
+Fehlerbehandlung beendet wird. Dadurch kann der Code etwas kurzer/uebersichtlicher bleiben. ;)
 endsnippet
 
 context "c()"
@@ -224,7 +241,7 @@ snippet if_success "if-Fall ist Erfolgsfall statt Fehlerfall"
 Hier steht der Code des Erfolgsfalls im if, wodurch das hier eine sehr lange if-Anweisung ist. Im
 Allgemeinen ist es deswegen oft besser, den Fehlerfall abzufangen, in welchem man dann z.B. ein
 fruehzeitiges "${1|return,break,continue|}" machen kann - dafuer muss man letztendlich nur die
-if-Bedingung invertieren. Insgesamt wird Code dadurch deutlich uebersichtlicher.
+if-Bedingung invertieren. Insgesamt wird der Code dadurch deutlich uebersichtlicher.
 endsnippet
 
 context "c()"
@@ -331,6 +348,12 @@ endsnippet
 context "c()"
 snippet stderr "Fehlerausgaben auf stdout"
 Fehlermeldungen gehoeren auf stderr. Das geht am einfachsten mit fprintf(3). (-0.5)
+endsnippet
+
+context "c()"
+snippet strdup_malloc_strcpy "malloc() + strcpy() statt strdup()"
+Hier kann man auch direkt strdup(3) verwenden, was das Allokieren des Speichers und das Kopieren
+des Strings in einer Funktion macht. Das ist etwas schoener. ;)
 endsnippet
 
 context "c()"
@@ -466,6 +489,13 @@ Wort gehoert) sowie ein '\0' dazu kommen. (-1.0)
 endsnippet
 
 context "c() and wsort()"
+snippet wsort_compare_const_type "const in compare() an falscher Stelle"
+Der korrekte Typ waere hier genau genommen "char * const *", also ein Pointer auf einen konstanten
+"char"-Pointer, da ja die Elemente des zu sortierenden Arrays (= "char"-Pointer) konstant sein
+sollen.
+endsnippet
+
+context "c() and wsort()"
 snippet wsort_compare_pointer "Pointer in compare() inkorrekt verwendet"
 Diese Funktion wird von qsort(3) aufgerufen, und bekommt dabei *Pointer* auf die zu sortierenden
 Elemente uebergeben. Diese Elemente sind hier Strings, also "char *"; diese Funktion bekommt also
@@ -480,13 +510,6 @@ Laut Aufgabenstellung sollen leere Zeilen ignoriert werden. (-1.0)
 endsnippet
 
 context "c() and wsort()"
-snippet wsort_fgets_size "falsche size bei fgets()"
-fgets(3) muss hier die Groesse des uebergebenen Puffers ("${1:buf}") uebergeben werden; das
-beinhaltet also auch den Platz fuer das '\0'.${2: Da hier "$1" ein char-Array ist, kann auch direkt
-"sizeof($1)" verwendet werden - dann kann dieser Fehler gar nicht passieren.} (-0.5)
-endsnippet
-
-context "c() and wsort()"
 snippet wsort_fgets_err "Fehlerbehandlung fgets() fehlt"
 Fehlerbehandlung fuer fgets(3) fehlt: sobald fgets(3) NULL zurueckgibt muss noch geprueft werden,
 ob ein Fehler aufgetreten ist. Dafuer gibt es dann feof(3) bzw. ferror(3) (siehe auch
@@ -496,11 +519,11 @@ endsnippet
 context "c() and wsort()"
 snippet wsort_LF_last_line "letzte Zeile ohne '\n' falsch behandelt"
 Laut Aufgabenstellung muss die letzte Zeile nicht zwangslaeufig ein '\n' enthalten - das geht hier
-kaputt, da ${1:...}
+kaputt, da ${1:...} (-1.0)
 endsnippet
 
 context "c() and wsort()"
-snippet wsort_LF_not_removed "\n ist Teil des Wortes"
+snippet wsort_LF_not_removed "'\n' ist Teil des Wortes"
 Laut Aufgabenstellung ist das '\n' am Ende einer Zeile nicht Teil des Wortes. Hier werden diese nie
 entfernt und dadurch mitsortiert, was zu einer falschen Sortierreihenfolge fuehrt. (-1.0)
 endsnippet
