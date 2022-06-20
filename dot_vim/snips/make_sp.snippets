@@ -1,9 +1,15 @@
 # vim: fdm=marker tw=99 et
 global !p
+re_start_mk = r'^##K\s*\^?$'  # ##K ^
+
 # Check if we are in a multiline-grading-comment.
 def m():
     return (snip.buffer[snip.line].startswith('# ')
-            and re.match(r'^##K\s*\^?$', snip.buffer[snip.line - 1]))  # ##K ^
+            and re.match(re_start_mk, snip.buffer[snip.line - 1]))
+
+# Same as for the C-snippets, but with the suitable regex.
+def var_mk(x_offset = 0):
+	return var(x_offset, re_start_mk)
 endglobal
 
 # These snippets must include the '#' at the start of each line, as make does not support multiline
@@ -17,14 +23,16 @@ snippet all "all nicht erstes Target"
 endsnippet
 
 context "m()"
-snippet clean_.o "clean loescht nicht alle Zwischenprodukte"
+snippet clean_rm_intermediate_objects "clean loescht nicht alle Zwischenprodukte"
 Das "clean"-Target muss auch alle Zwischenprodukte (d.h. alle erzeugten .o-Dateien) loeschen.
 # (-0.5)
 endsnippet
 
 context "m()"
 snippet dependency "Abhaengigkeit fehlt"
-Abhaengigkeit fuer "${1:header.h}" fehlt. (-0.5)
+"${1:header.h}" fehlt hier als Abhaengigkeit. Generell braucht man alle Dateien, die per
+# include-Direktive mit Anfuehrungszeichen (z.B. "#include "$1"") in einer .c-Datei inkludiert
+# werden, auch als Abhaengigkeit fuer die dazugehoerige .o-Datei im Makefile. (-0.5)
 endsnippet
 
 context "m()"
@@ -46,6 +54,13 @@ Beim Compilen muessen die Compileroptionen, die auf der Webseite angegeben sind,
 endsnippet
 
 context "m()"
+snippet intermediate_object_targets "keine Zwischenprodukte verwendet"
+Laut Aufgabenstellung soll stets auf Zwischenprodukte zurueckgegriffen werden. Das bedeutet, dass
+# eine .c-Datei zuerst in eine .o-Datei (Objektdatei) uebersetzt werden muss, bevor die Letztere
+# dann zu dem ausfuehrbaren Programm gebunden wird. Siehe auch Foliensatz zur clash, 5.5. (-1.0)
+endsnippet
+
+context "m()"
 snippet pattern "keine Pattern-Regeln"
 Hier sollten (so weit moeglich) Pattern-Regeln verwendet werden, z.B. fuer "%.o: %.c".${1: (-1.0)}
 endsnippet
@@ -58,6 +73,14 @@ Pseudo-Targets (= erzeugen keine Datei mit dem Namen des Targets) muessen als Ab
 endsnippet
 
 context "m()"
+snippet precompiled_header "Precompiled Header werden erzeugt"
+Hier steht der Header "${1:`!p snip.rv = var_mk()`.h}" im Compiler-Aufruf, wodurch ein sogenannter
+# "precompiled Header" (namens "$1.gch") erzeugt wird. Das ist nicht direkt schlimm, aber bei
+# kleinen Programmen wie in SP normalerweise unnoetig. Allerdings sollten diese Dateien dann beim
+# "clean"-Target auch wieder geloescht werden, um vollstaendig sauberzumachen.
+endsnippet
+
+context "m()"
 snippet rm_f "-f fehlt bei rm"
 Beim Aufruf von "rm" sollte die Option "-f" verwendet werden. Das sorgt dafuer, dass kein Fehler
 # auftritt, wenn eine der angegebenen Dateien nicht existiert (z.B. weil mehrmals hintereinander
@@ -66,7 +89,14 @@ endsnippet
 
 context "m()"
 snippet rm_multiple "mehrfache rm-Aufrufe"
-rm(1) nimmt auch mehrere Argumente in einem Aufruf entgegen. ;)
+rm(1) nimmt auch mehrere Argumente (d.h. Dateien) in einem Aufruf entgegen. ;)
+endsnippet
+
+context "m()"
+snippet var_both "Compiler und -flags in einer Variable"
+Normalerweise teilt man das auf: eine Variable "CC" fuer den Compiler, und eine Variable "CFLAGS"
+# fuer die Compilerflags. Damit kann man z.B. leichter einen anderen Compiler von der Kommandozeile
+# aus nutzen (z.B. mit "make CC=clang").
 endsnippet
 
 context "m()"

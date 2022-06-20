@@ -36,7 +36,7 @@ def mother(file): return in_task('mother', file)
 # The '^' can point to any character that is part of the variable; it does not need to be precise.
 # "x_offset" can be used to offset the start point of the search for the variable name; see the
 # snippet "pointer_dot_arrow" for an example of how this can be used.
-def var(x_offset = 0):
+def var(x_offset = 0, re_start = re_start):
     w = vim.current.window
     y = w.cursor[0] - 1
 
@@ -184,8 +184,8 @@ endsnippet
 context "c()"
 snippet fgets_size "falsche size bei fgets()"
 fgets(3) muss hier die Groesse des uebergebenen Puffers ("${1:buf}") uebergeben werden; das
-beinhaltet also auch den Platz fuer das '\0'.${2: Da hier "$1" ein "char"-Array ist, kann auch
-direkt "sizeof($1)" verwendet werden - dann kann dieser Fehler gar nicht passieren.} (-0.5)
+beinhaltet also auch den Platz fuer das '\0'. (Wenn "$1" ein "char"-Array ist, kann auch direkt
+"sizeof($1)" verwendet werden - dann kann dieser Fehler gar nicht passieren.) (-0.5)
 endsnippet
 
 context "c()"
@@ -246,11 +246,12 @@ endsnippet
 
 context "c()"
 snippet indentation "schlechte Einrueckung"
-Der Code ist teilweise schlecht eingerueckt bzw. formatiert, was es deutlich erschwert, den Code zu
-verstehen. Es gibt viele Wege, Code "automatisiert" einzuruecken; die meisten IDEs z.B. haben ein
-Feature dafuer. In der Kommandozeile gibt es auch clang-format(1), welches man einfach mit
-"clang-format -i `!v expand('%')`" verwenden kann. In Vim z.B. kann man auch einfach die
-Tastenfolge "gg=G" druecken, um die aktuelle Datei korrekt einzuruecken.
+Der Code war teilweise schlecht eingerueckt bzw. formatiert, was es deutlich erschwert, den Code zu
+verstehen; ich habe das fuer die Korrektur mal behoben. Es gibt viele Wege, Code "automatisiert"
+einzuruecken: die meisten IDEs z.B. haben ein Feature dafuer. In der Kommandozeile gibt es auch
+clang-format(1), welches man einfach mit "clang-format -i `!v expand('%')`" verwenden kann. In Vim
+z.B. kann man auch einfach die Tastenfolge "gg=G" (im "Normal mode") druecken, um die aktuelle
+Datei korrekt einzuruecken.
 endsnippet
 
 context "c()"
@@ -258,6 +259,13 @@ snippet library_perror_exit "perror() oder exit() in Bibliotheksfunktion"
 Diese Funktion ist als Bibliotheksfunktion zu betrachten, deswegen darf hier weder perror(3) noch
 exit(3) verwendet werden. Die Ausgabe einer Fehlermeldung bzw. das Beenden des Programmes soll die
 Entscheidung des Aufrufers sein. (-${1|0.5,1.0|})
+endsnippet
+
+context "c()"
+snippet linux_header "Inkludieren eines Linux-Headers"
+Einen Linux-Header zu inkludieren ist in SP quasi immer falsch, da man portabel zu der
+POSIX-Schnittstelle programmieren sollt. Wenn man so einen Header braucht, sollte man (in SP)
+seinen Ansatz nochmal ueberdenken.
 endsnippet
 
 context "c()"
@@ -274,7 +282,7 @@ endsnippet
 context "c()"
 snippet perror_no_errno "perror() trotz ungesetzter errno"
 In diesem Fall ist die errno nicht gesetzt, deswegen kann hier perror(3) nicht verwendet werden.
-Man muss hier mit fprintf(3) selbst eine aussagekraeftige Fehlermeldung schreiben.
+Man muss hier mit fprintf(3) selbst eine aussagekraeftige Fehlermeldung schreiben. (-0.5)
 endsnippet
 
 context "c()"
@@ -304,6 +312,11 @@ context "c()"
 snippet readdir_errno "errno vor readdir() nicht auf 0 gesetzt"
 Die errno muss vor jedem readdir(3)-Aufruf auf 0 gesetzt werden. Sonst ist es nicht moeglich,
 zwischen einem Fehler und end-of-directory-stream zu unterscheiden (siehe auch Manpage). (-0.5)
+endsnippet
+
+context "c()"
+snippet realloc_tmp "unnoetigte temporaere Variable fuer realloc"
+Hier kann man auch direkt "${1:ptr}" verwenden, da im Fehlerfall das Programm eh beendet wird.
 endsnippet
 
 context "c()"
@@ -370,11 +383,21 @@ Normalerweise loescht man einen "TODO"-Kommentar, nachdem man ihn erledigt hat. 
 endsnippet
 
 context "c()"
+snippet unreadable_global "unlesbarer Code durch (viele) globale Variablen"
+Globale Variablen erschweren die Lesbarkeit des Codes stark, da nicht direkt klar ist, wo sie
+veraendert und verwendet werden. Das macht es schwieriger fuer mich, den Code zu lesen, und es ist
+auch deutlich leichter, Fehler beim Schreiben des Codes zu machen. Man sollte diese Werte eher als
+Argumente an Funktionen uebergeben und als Rueckgabewerte zurueckgeben, dadurch kann man dem
+Datenfluss deutlich besser folgen. (-0.5)
+endsnippet
+
+context "c()"
 snippet unreadable_nested "unlesbarer Code durch starke Verschachtelung"
 Der Code hier ist sehr stark verschachtelt, was die Lesbarkeit deutlich verschlechtert. Prinzipiell
-sollte man eher Fehlerfaelle abfangen, und dort dann ein fruehzeitiges "return" oder exit(3) (je
-nachdem, was zutrifft) machen. Dann braucht man naemlich den darauf folgenden Erfolgsfall nicht in
-ein "else" zu stecken, und hat nicht so tiefe Verschachtelung, was alles uebersichtlicher macht.
+sollte man eher Fehlerfaelle explizit abfangen, und dort dann ein fruehzeitiges "return",
+"continue", "break", oder exit(3) (je nachdem, was zutrifft) machen. Dann braucht man naemlich den
+darauf folgenden Erfolgsfall nicht in ein "else" zu stecken, und hat nicht so tiefe
+Verschachtelung, was alles uebersichtlicher macht.
 endsnippet
 
 context "c()"
@@ -588,9 +611,22 @@ endsnippet
 
 # clash {{{
 context "c() and clash()"
-snippet clash_cd_exit "exit() bei cd"
-Das ist ein Fall, wo es sinnvoll ist, das exit(3) wegzulassen: wenn man sich einfach nur beim
+snippet clash_background_first_char "erstes Zeichen des letztens Tokens mit '&' vergleicht"
+Man will hier nicht pruefen, ob das letzte Token mit einem '&' beginnt, sondern ob es ein "&" ist.
+Sonst geht z.B. "echo &hallo" kaputt. (-0.5)
+endsnippet
+
+context "c() and clash()"
+snippet clash_chdir_exit "exit() bei chdir"
+Das ist ein Fall, wo es sinnvoll ist, das exit(3) wegzulassen: wenn man sich z.B. einfach nur beim
 Pfadnamen vertippt, will man ja nicht, dass sich die ganze Shell beendet. ;)
+endsnippet
+
+context "c() and clash()"
+snippet clash_duplicate_tokens "Duplizieren der Tokens (z.B. mit strdup())"
+Das ganze Duplizieren der einzelnen Tokens ist komplett unnoetig. Man kann einfach die Tokens von
+strtok(3) direkt speichern, da strtok(3) ja Nullbytes einfuegt, und einem dadurch quasi schon
+"einzelne Strings" gibt.
 endsnippet
 
 context "c() and clash()"
@@ -617,7 +653,19 @@ snippet clash_getcwd_path_max "PATH_MAX fuer getcwd() verwendet"
 "PATH_MAX" zu verwenden ist hier nicht korrekt: es muss das in der Manpage von getcwd(3)
 beschriebene Vorgehen verwendet werden. Im Internet gibt es viele Erklaerungen, warum "PATH_MAX"
 quasi nie verwendet werden sollte; eine gute und kompakte Erklaerung gibt es auch in der Manpage
-von der aehnlichen Funktion realpath(3) in der Sektion 'BUGS'. (-2.0)
+von der aehnlichen Funktion realpath(3) in der Sektion 'BUGS'. (-3.0)
+endsnippet
+
+context "c() and clash()"
+snippet clash_line_empty "Fehler bei leerer Eingabezeile"
+Wenn die Eingabezeile leer ist (d.h. der Benutzer einfach Enter drueckt), fuehrt das zu einem
+Fehler. Solche Zeilen sollen einfach ignoriert werden. (-1.0)
+endsnippet
+
+context "c() and clash()"
+snippet clash_line_whitespace "Fehler bei Eingabezeile, die nur Whitespace enthaelt"
+Wenn die Eingabezeile nur aus Trennzeichen besteht (z.B. einfach ein Leerzeichen), ist das nullte
+Token bereits NULL, was ${1|hier,spaeter|} zu einem Segmentation Fault fuehrt. (-1.0)
 endsnippet
 
 context "c() and clash()"
@@ -1163,7 +1211,7 @@ snippet mother_late_cloexec_clientSock "clientSock FD_CLOEXEC zu spaet gesetzt"
 Es ist zwingend notwendig, das Close-on-Exec-Flag auf "clientSock" bereits *vor* dem Hinzufuegen
 zum Puffer vorzunehmen. Sonst ist es bei einem sehr grossen Puffer, schnell hintereinander
 eintreffender Anfragen und wenig Threads mit steigender Wahrscheinlichkeit moeglich, dass ein
-anderer Thread ein exec(2) ausfuehrt, bevor dieser Dateideskriptor mit dem Flag versehen wird.
+anderer Thread ein exec(3) ausfuehrt, bevor dieser Dateideskriptor mit dem Flag versehen wird.
 Dadurch dass sich alle Threads einen Adressraum teilen, koennen auch ueber Threads hinweg die
 Dateideskriptoren an Kinder vererbt werden. Das ist ein Problem das sich nicht vollends loesen
 laesst, aber den Dateideskriptor hier womoeglich lange ungeschuetzt in der Queue zu lassen ist
