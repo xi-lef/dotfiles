@@ -68,6 +68,14 @@ Bei Pointern ist es schoener, NULL statt 0 zu verwenden.
 endsnippet
 
 context "c()"
+snippet argc_check "argc nicht geprueft"
+Es muss noch geprueft werden, ob in "argc" der erwartete Wert steht. Sonst geht ein simpler Aufruf
+wie "./`!v expand('%:r')`" kaputt, da einfach auf argv-Eintraege zugegriffen wird, die NULL sind.
+Stattdessen soll in diesem Fall eine Fehlermeldung ausgegeben werden, die sagt, wie man das
+Programm korrekt aufruft (siehe auch Referenzimplementierung). (-0.5)
+endsnippet
+
+context "c()"
 snippet atoi_strtol "atoi() statt strtol()"
 atoi(3) darf nicht  verwendt werden, da man damit keine Fehler abfangen kann: es kann z.B. nicht
 unterschieden werden, ob die Eingabe eine 0 war, oder ein Fehler aufgetreten ist. Stattdessen muss
@@ -110,8 +118,9 @@ endsnippet
 
 context "c()"
 snippet errno_overwritten "errno durch Funktionsaufruf ueberschrieben"
-Durch diesen Funktionsaufruf wird potentiell die errno ueberschrieben, wodurch das perror(3)
-danach eine falsche Fehlermeldung ausgeben koennte.${1: (-0.5)}
+Durch diesen Funktionsaufruf wird potentiell die errno ueberschrieben, wodurch perror(3) danach
+eine falsche Fehlermeldung ausgeben koennte. Korrekt waere hier, die errno zu sichern, und nach dem
+Funktionsaufruf wiederherzustellen. ${1: (-0.5)}
 endsnippet
 
 context "c()"
@@ -221,6 +230,12 @@ endsnippet
 context "c()"
 snippet freeaddrinfo "freeaddrinfo() fehlt"
 Das muss mit freeaddrinfo(3) wieder freigegeben werden. (-1.0)
+endsnippet
+
+context "c()"
+snippet global_init "unnoetige Initialisierung von globaler Variable"
+(Modul-)globale Variablen werden standardmaessig mit 0 (bzw. NULL fuer Pointer) initialisiert. Das
+muss man hier also nicht explizit machen. ;)
 endsnippet
 
 context "c()"
@@ -720,6 +735,19 @@ Beenden automatisch freigegeben werden. (-1.0)
 endsnippet
 
 context "c() and mach()"
+snippet mach_flag_constants "magische Werte fuer Flags"
+Hier werden einfach direkt Zahlen fuer verschiedene Situationen in den "flags" verwendet. Das
+funktioniert natuerlich, aber ist sehr fehleranfaellig: es ist leicht, versehentlich an einer
+Stelle eine falsche Zahl zu verwenden. Ein guter Weg, das zu umgehen, ist mithilfe einer enum, z.B.
+"enum Flags { RUNNING, COMPLETED, POISON };".
+endsnippet
+
+context "c() and mach()"
+snippet mach_flag_define_macros "Makros fuer Flags"
+Makros sind ein guter Weg hierfuer. Noch besser (in meinen Augen) waere aber eine enum. ;)
+endsnippet
+
+context "c() and mach()"
 snippet mach_join_detached_thread "pthread_join() auf detached Thread"
 Wenn ein Thread mittels pthread_detach(3) detached wurde, kann auf diesen nicht mehr mit
 pthread_join(3) gewartet werden. Hier braucht man Semaphoren zum Warten. (-1.0)
@@ -729,6 +757,12 @@ context "c() and mach()"
 snippet mach_output_thread_join "nicht auf Ausgabethread gewartet"
 Es muss noch gewartet werden, bis der Ausgabethread sich beendet hat, damit sicher alle Ausgaben
 rausgeschrieben werden. Das geht am leichtesten mit pthread_join(3). (-1.0)
+endsnippet
+
+context "c() and mach()"
+snippet mach_run_cmd_error "Fehler beim Ausfuehren nicht ignoriert"
+Laut Aufgabenstellung sollen Fehler beim Ausfuehren (mit "run_cmd") vollstaendig ignoriert werden.
+(-1.0)
 endsnippet
 
 context "c() and mach()"
