@@ -156,7 +156,7 @@ let g:lightline = {
 autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
 " }}}
 
-Plug 'xilefsensei/papercolor-theme'
+Plug 'NLKNguyen/papercolor-theme'
 
 call plug#end()
 " }}}
@@ -171,7 +171,7 @@ endfunction
 " Inserts an SP-grading comment, with the arrow pointing to the position of the
 " cursor
 function SPComment(print_arrow = 1)
-    if &filetype ==# 'c'
+    if &filetype ==# 'c' || expand('%') ==# 'machfile'
         let start = '/*'
         let middle = ''
         let end = '*/'
@@ -275,7 +275,7 @@ tnoremap <silent> <C-PageDown> <C-W>:silent! tabm +<CR>
 
 " Commands {{{
 " Sessions
-command -bar -nargs=1 CS execute 'mksession! ' . $HOME . '/.vim/sessions/' . '<args>.vim'
+command -bang -bar -nargs=1 CS execute 'mksession<bang> ' . $HOME . '/.vim/sessions/' . '<args>.vim'
 command -bar SS execute 'mksession! ' . v:this_session
 command -bar XS SS <Bar> wall <Bar> qall!
 command -bar DS execute 'silent !rm ' . v:this_session <Bar> redraw!
@@ -364,6 +364,7 @@ set shiftwidth=0            " use tabstop-value
 set textwidth=80            " max 80 characters per line
 set expandtab               " use spaces instead of tabs
 set smarttab                " smart shit, idk
+set list                    " show whitespace (e.g. tabs)
 set autoindent              " copy indent from adjacent line
 set smartindent             " smart, language-based indenting
 set signcolumn=number       " show signs (from ycm/coc) in place of line numbers
