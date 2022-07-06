@@ -57,9 +57,11 @@ nnoremap <silent> <Leader>gl :CocCommand git.showCommit<CR>
 nnoremap <silent> <Leader>gt :CocCommand git.toggleGutters<CR>
 command OI :call CocAction('runCommand', 'editor.action.organizeImport')
 
-" Highlight the symbol and its references when holding the cursor
-autocmd CursorHold * silent call CocActionAsync('highlight')
-autocmd CursorHold * CocCommand git.refresh
+augroup coc
+    " Highlight the symbol and its references when holding the cursor
+    autocmd CursorHold * silent! call CocActionAsync('highlight')
+    autocmd CursorHold * silent! CocCommand git.refresh
+augroup END
 " }}}
 " }}}
 
