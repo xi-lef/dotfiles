@@ -12,6 +12,7 @@
     amee = commit --amend
     p = push
     pl = pull
+    spl = !git stash push && git svn rebase && git stash pop
     cl = clone
 
     s = status
