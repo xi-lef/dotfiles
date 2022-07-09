@@ -26,3 +26,12 @@ ForwardX11 yes
 ControlPath ~/.ssh/cm-%r@%h:%p
 ControlMaster auto
 ControlPersist 15m
+
+Host cs6-jump
+Hostname cs6-jump.cs.fau.de
+User jo15xyfy
+
+Host dse
+Hostname cs6-cascade-01.cs6.fau.de
+Proxyjump cs6-jump
+User jo15xyfy
