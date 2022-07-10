@@ -1,6 +1,7 @@
 Host fau
 Hostname cip4e2.cip.cs.fau.de
 User jo15xyfy
+ForwardAgent yes
 #ForwardX11 yes
 
 Host irc
