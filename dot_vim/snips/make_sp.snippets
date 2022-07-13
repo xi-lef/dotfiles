@@ -30,9 +30,9 @@ endsnippet
 
 context "m()"
 snippet dependency "Abhaengigkeit fehlt"
-"${1:header.h}" fehlt hier als Abhaengigkeit. Generell braucht man alle Dateien, die per
-# include-Direktive mit Anfuehrungszeichen (z.B. "#include "$1"") in einer .c-Datei inkludiert
-# werden, auch als Abhaengigkeit fuer die dazugehoerige .o-Datei im Makefile. (-0.5)
+"${1:`!p snip.rv = var_mk()`.h}" fehlt hier als Abhaengigkeit. Generell braucht man alle Dateien,
+# die per include-Direktive mit Anfuehrungszeichen (z.B. "#include "$1"") in einer .c-Datei
+# inkludiert werden, auch als Abhaengigkeit fuer die dazugehoerige .o-Datei im Makefile. (-0.5)
 endsnippet
 
 context "m()"
@@ -105,6 +105,14 @@ Das nennt man per Konvention eigentlich "${1:CFLAGS}". ;)
 endsnippet
 
 context "m()"
+snippet var_undefined_rR "undefinierte Variable benutzt (Fehler bei make -rR)"
+"${1:`!p snip.rv = var_mk()`}" wird hier verwendet, aber nie definiert. Das funktioniert nur, da
+# Make selbst normalerweise einige Variablen definiert (darunter eben auch "$1"). Allerdings muss
+# das Makefile laut Aufgabenstellung auch ohne eingebaute Regeln funktionieren: "make -rR" soll
+# keine Fehler erzeugen, was durch die fehlende Definition von "$1" nicht der Fall ist. (-0.5)
+endsnippet
+
+context "m()"
 snippet var_use "Variable nicht verwendet"
 Normal packt man ${1:das hier} in eine Variable, damit man das nicht mehrmals tippen (bzw.
 # copy-pasten) muss. ;)
@@ -112,13 +120,13 @@ endsnippet
 # }}}
 
 # halde {{{
-context "m() and halde()"
+context "m() and halde('')"
 snippet halde_gnu "_GNU_SOURCE nicht definiert"
 Das Flag -D_GNU_SOURCE statt -D_XOPEN_SOURCE=700 ist hier ausnahmsweise okay und sogar noetig. Das
-liegt daran, dass wir in der halde einen Teil des POSIX-Interfaces implementieren, und das geht
-nicht aufbauend auf POSIX. Wir benoetigen das "MAP_ANONYMOUS"-Flag fuer mmap(2). Alternativen
-waeren sbrk(2) (nur in POSIX-2001, nicht mehr in POSIX-2008), mmap(2) auf "/dev/zero" (gar nicht in
-POSIX), posix_typed_mem_open(3p) (nur in POSIX-2017), oder memfd_create (Linux-spezifisch).
+# liegt daran, dass man in der halde einen Teil des POSIX-Interfaces implementiert, und das geht
+# nicht aufbauend auf POSIX. Man benoetigt also das "MAP_ANONYMOUS"-Flag fuer mmap(2). Alternativen
+# waeren: sbrk(2) (nur in POSIX-2001, nicht mehr in POSIX-2008), mmap(2) auf "/dev/zero" (gar nicht
+# in POSIX), posix_typed_mem_open(3p) (nur in POSIX-2017), oder memfd_create (Linux-spezifisch).
 endsnippet
 # }}}
 
