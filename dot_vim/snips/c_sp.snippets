@@ -595,6 +595,12 @@ endsnippet
 
 # halde {{{
 context "c() and halde()"
+snippet halde_calloc_overflow "calloc: keine Overflow-Behandlung"
+"nmemb * size" kann ueberlaufen ("Integer Overflow"), was man abfangen kann und sollte. Mehr dazu
+in der Besprechungsuebung.
+endsnippet
+
+context "c() and halde()"
 snippet halde_free_magic "free: MAGIC nicht geprueft"
 Fuer "${1:`!p snip.rv = var()`}" muss noch geprueft werden, ob im dazugehoerigen "mblock->next"
 wirklich "MAGIC" steht. Dazu soll sichergestellt werden, dass der uebergebene Pointer wirklich von
@@ -608,24 +614,55 @@ wird. ;)
 endsnippet
 
 context "c() and halde()"
-snippet halde_realloc_size "realloc: zu viel kopiert"
-Hier duerfen maximal "min(size, mblock->size)" viele Bytes kopiert werden, da sonst ueber den
+snippet halde_malloc_head_reinitialize "malloc: Reinitialisierung bei komplett belegtem Speicher"
+Dieser Check funktioniert nicht ganz: falls der gesamte verwaltete Speicher belegt ist, wird hier
+erneut Speicher vom Betriebssystem angefordert. Laut Aufgabenstellung soll das aber nur einmalig
+(initial) erfolgen. (-1.0)
+endsnippet
+
+context "c() and halde()"
+snippet halde_malloc_always_create_mblock "malloc: neuer mblock in jedem Fall erstellt"
+Hinter dem vergebenen Speicherbereich soll zwar prinzipiell ein neuer mblock erzeugt werden, um den
+Rest des Speicherbereichs zu verwalten - falls das aber nicht geht, soll der aktuelle
+"malloc"-Aufruf trotzdem bedient werden (weil ja noch genug Speicher verfuegbar ist). In diesem
+Fall wuerde man dann eben keinen neuen mblock erzeugen, was komplett in Ordnung ist. (-1.0)
+endsnippet
+
+context "c() and halde()"
+snippet halde_malloc_size_modified "malloc: size faelschlicherweise verkleinert"
+Die Groesse des vergebenen mblocks darf nur veraendert (also verkleinert) werden, wenn ein neuer
+mblock dahinter angelegt wird. Sonst geht der Speicher, der vom vergebenen mblock nicht verwendet
+wird, dauerhaft verloren. (-1.0)
+endsnippet
+
+context "c() and halde()"
+snippet halde_mblock_memory "mblock->memory nicht genutzt"
+Hierfuer gibt es auch den sogenannten Flexible Array Member: "`!p snip.rv = var()`->memory". ;)
+endsnippet
+
+context "c() and halde()"
+snippet halde_realloc_size_min "realloc: zu viel kopiert"
+Hier duerfen maximal "min(size, ptr_mblock->size)" viele Bytes kopiert werden, da sonst ueber den
 verwalteten Speicherplatz hinausgeschrieben wird, wobei die Daten in anderen mblocks ueberschrieben
 werden koennten. (-1.0)
 endsnippet
 
 context "c() and halde()"
-snippet halde_size_modified "malloc: size faelschlicherweise verkleinert"
-Die Groesse des vergebenen mblocks darf nur veraendert (also verkleinert) werden, wenn ein neuer
-mblock dahinter angelegt wird. Sonst geht der Speicher, der vom vergebenen mblock nicht verwendet
-wird, dauerhaft verloren. (-1.0)
+snippet halde_realloc_size_zero "realloc: size 0 nicht als free() behandelt"
+Laut Aufgabenstellung soll sich "realloc(ptr, 0)" wie "free(ptr)" verhalten. Das fehlt hier. (-1.0)
 endsnippet
 
 # test.c {{{
 context "c() and halde('test.c')"
 snippet halde_test_edge_case "test: kein Randfall abgeprueft"
 Laut Aufgabenstellung soll mindestens einer der in der Manpage beschriebenen Randfaelle abgeprueft
-werden. (-0.5) Ideal waere sogar, alle Randfaelle abzupruefen. ;)
+werden (mit einem Kommentar). (-0.5) Ideal waere sogar, alle Randfaelle abzupruefen. ;)
+endsnippet
+
+context "c() and halde('test.c')"
+snippet halde_test_required "verlangte Aufrufe nicht vorhanden"
+Laut Aufgabenstellung soll hier (mindestens) vier Mal "malloc" + Freigabe mit "free" + vier Mal
+"malloc" getestet werden. Das ist leider gar nicht erfuellt. (-1.0)
 endsnippet
 # }}}
 # }}}
