@@ -66,10 +66,17 @@ Hier sollten (so weit moeglich) Pattern-Regeln verwendet werden, z.B. fuer "%.o:
 endsnippet
 
 context "m()"
-snippet phony ".PHONY fehlt"
+snippet phony_missing ".PHONY fehlt"
 Pseudo-Targets (= erzeugen keine Datei mit dem Namen des Targets) muessen als Abhaengigkeit des
 # Spezial-Targets ".PHONY" angegeben werden, damit diese immer gebaut werden. In SP betrifft
 # das die Targets "all" und "clean". (-0.5)
+endsnippet
+
+context "m()"
+snippet phony_spelling ".PHONY falsch geschrieben"
+Das muss exakt ".PHONY" geschrieben werden, sonst funktioniert das leider nicht. Testen kann man
+# das z.B., indem man die Datei "clean" anlegt ("touch clean"), und danach versucht, "make clean"
+# auszufuehren: "make: 'clean' is up to date.". (-0.5)
 endsnippet
 
 context "m()"
@@ -114,8 +121,8 @@ endsnippet
 
 context "m()"
 snippet var_use "Variable nicht verwendet"
-Normal packt man ${1:das hier} in eine Variable, damit man das nicht mehrmals tippen (bzw.
-# copy-pasten) muss. ;)
+Normal packt man ${2:das hier} in eine Variable namens "${1:CFLAGS}", damit man das nicht mehrmals
+# tippen (bzw. copy-pasten) muss. ;)
 endsnippet
 # }}}
 
