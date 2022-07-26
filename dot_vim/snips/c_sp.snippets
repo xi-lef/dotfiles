@@ -324,9 +324,17 @@ unnoetig, hier alle IDs in einem Array abzuspeichern. ;)
 endsnippet
 
 context "c()"
+snippet readdir_comma "fuer readdir() nicht Komma-Operator genutzt"
+Noch schoener geht das Setzen der errno mithilfe des Komma-Operators direkt im Kopf der
+while-Schleife: "while (errno = 0, ent = readdir(dir)) { ... } ". ;)
+endsnippet
+
+context "c()"
 snippet readdir_errno "errno vor readdir() nicht auf 0 gesetzt"
 Die errno muss vor jedem readdir(3)-Aufruf auf 0 gesetzt werden. Sonst ist es nicht moeglich,
-zwischen einem Fehler und end-of-directory-stream zu unterscheiden (siehe auch Manpage). (-0.5)
+zwischen einem Fehler und end-of-directory-stream zu unterscheiden (siehe auch Manpage). Am
+schoensten geht das mithilfe des Komma-Operators direkt im Kopf der while-Schleife:
+"while (errno = 0, ent = readdir(dir)) { ... } ". (-0.5)
 endsnippet
 
 context "c()"
