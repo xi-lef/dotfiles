@@ -393,11 +393,18 @@ des Strings in einer Funktion macht. Das ist etwas schoener. ;)
 endsnippet
 
 context "c()"
-snippet strtol_endptr "endptr bei strtol() nicht verwendet"
+snippet strtol_endptr "strtol(): endptr nicht verwendet"
 Hier muss "endptr" verwendet werden, um zwei Fehler abpruefen zu koennen: erstens kann der String
 leer sein, in welchem Fall einfach 0 returnt wird. Zweitens koennen nach der eigentlich Zahl noch
 Buchstaben enthalten sein (z.B. "123a"), was ja auch nicht sein soll. Siehe auch Manpage strtol(3).
 (-0.5)
+endsnippet
+
+context "c()"
+snippet strtol_errno "strtol(): errno nicht gesetzt und geprueft"
+Vor dem Aufruf von strtol(3) muss die errno(3) auf 0 gesetzt werden. Da strtol(3) die errno im
+Erfolgsfall unveraendert laesst, kann man so durch das Betrachten der errno bestimmte Fehler (genau
+genommen: ERANGE) abfangen. Siehe auch das Beispiel in der Manpage strtol(3). (-0.5)
 endsnippet
 
 context "c()"
@@ -875,9 +882,24 @@ stat(2) den symbolischen Link quasi dereferenziert (siehe Manpage). (-1.0)
 endsnippet
 
 context "c() and creeper()"
+snippet creeper_no_arguments "nicht auf keine Argumente geprueft"
+Im Falle von "getNumberOfArguments() == 0" ist es sinnvoll, den Benutzer auf die korrekte
+Verwendung hinzuweisen, damit er weiss, wie die creeper zu verwenden ist. Zur Inspiration kann man
+z.B. mal die Referenzimplementierung ohne jegliche Argumente aufrufen. ;)
+endsnippet
+
+context "c() and creeper()"
 snippet creeper_skip_dot ". und .. nicht uebersprungen"
 Die Verzeichniseintraege "." und ".." muessen uebersprungen werden, da es sonst zu einer
 Endlosrekursion kommt. (-1.0)
+endsnippet
+
+context "c() and creeper()"
+snippet creeper_type_check "type-Option nicht geprueft"
+Es ist generell immer eine gute Idee, Benutzereingaben zu pruefen (falls moeglich). Da fuer die
+"type"-Option nur zwei gueltige Werte ("d" und "f") existieren, ist es sehr sinnvoll, genau darauf
+zu pruefen. Falls der Benutzer etwas anderes uebergibt, kann man ihm das dann mit einer
+Fehlermeldung mitteilen. :)
 endsnippet
 # }}}
 
