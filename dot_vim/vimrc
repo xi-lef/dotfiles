@@ -186,8 +186,8 @@ function SPComment(print_arrow = 1)
         return
     endif
 
-    " 'sp-comments' is bugged, so we have to limit the '^' to column 80 (lol)
-    let target = min([80, virtcol('.')])
+    " 'sp-comments' is bugged (or 'featured'?), so we have to limit the column for '^'
+    let target = min([79, virtcol('.')])
     let arrow = !a:print_arrow ? '' : repeat(' ', target - 4) . '^'
     let clear = "\<Esc>0\"_Di" " helper-'function' to clear a line
 
