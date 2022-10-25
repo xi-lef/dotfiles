@@ -26,9 +26,9 @@ let g:coc_status_error_sign = '❗'
 
 " Insert-mappings for auto-completion {{{
 inoremap <silent><expr> <C-@> coc#refresh()
-inoremap <expr> <Tab> pumvisible() ? '<C-N>' : '<Tab>'
-inoremap <expr> <S-Tab> pumvisible() ? '<C-P>' : ''
-inoremap <expr> <CR> pumvisible() ? '<C-Y>' : '<C-G>u<CR>'
+inoremap <silent><expr> <Tab> coc#pum#visible() ? coc#pum#next(1) : '<Tab>'
+inoremap <silent><expr> <S-Tab> coc#pum#visible() ? coc#pum#prev(1) : ''
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#_select_confirm() : '<CR>'
 inoremap <silent><nowait><expr> <C-B> coc#float#has_scroll() ? '<C-R>=coc#float#scroll(0)<CR>' : '<Left>'
 inoremap <silent><nowait><expr> <C-F> coc#float#has_scroll() ? '<C-R>=coc#float#scroll(1)<CR>' : '<Right>'
 nnoremap <silent><nowait><expr> <C-B> coc#float#has_scroll() ? coc#float#scroll(0) : '<C-B>'
