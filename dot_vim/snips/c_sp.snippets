@@ -916,9 +916,22 @@ zu filtern.
 endsnippet
 
 context "c() and snail()"
+snippet snail_dot_missing_CRLF "Zeilenumbruch vor '.' fehlt"
+Die Benutzereingabe muss nicht zwingend mit '\n' (bzw. "\r\n") enden, d.h. hier fehlt eventuell ein
+Zeilenumbruch vor dem '.'. Sonst kann der Server nicht erkennen, dass die Mail vorbei ist. (-1.0)
+endsnippet
+
+context "c() and snail()"
 snippet snail_doubled_CR "doppeltes \r bei Benutzereingabe"
 Die Eingabe kann bereits ein '\r' enthalten (je nach Benutzersystem). In diesem Fall wird hier
-faelschlicherweise ein zusaetzliches '\r' eingefuegt. (-0.5)
+faelschlicherweise ein zusaetzliches '\r' eingefuegt. Ist letztendlich wohl nicht schlimm, aber
+vermutlich nicht so beabsichtigt.
+endsnippet
+
+context "c() and snail()"
+snippet snail_eai_system "keine gesonderte Behandlung von EAI_SYSTEM"
+Bei dem Rueckgabewert EAI_SYSTEM ist die errno(3) gesetzt. Damit ist eine Ausgabe mithilfe von
+perror(3) sinnvoller.
 endsnippet
 
 context "c() and snail()"
@@ -929,16 +942,47 @@ vergleichen. ;)
 endsnippet
 
 context "c() and snail()"
+snippet snail_fflush_often "fflush() unnoetig oft"
+Hier ist es nicht noetig, nach jede${1|r Zeile,m Zeichen|} fflush(3) aufzurufen. Man muss ja nur
+flushen, wenn man eine Antwort vom Server erwartet, was hier (eine Weile lang) nicht der Fall
+ist.
+endsnippet
+
+context "c() and snail()"
+snippet snail_fqdn "FQDN nicht bestimmt"
+Hier muss der FQDN des Clients mit einem DNS-Lookup bestimmt werden. Wie genau das geht, steht in
+einem Hinweis in der Aufgabenstellung. (-3.0)
+endsnippet
+
+context "c() and snail()"
+snippet snail_from_full_name "voller Name im From-Feld fehlt"
+Hier soll noch der volle Name des Benutzers gesendet werden, welcher in der passwd-Struktur steht
+(siehe letzter Hinweis in der Aufgabenstellung). (-2.0)
+endsnippet
+
+context "c() and snail()"
 snippet snail_gethostname_length "namelen bei gethostname() anders als bei Definition"
 Hier muss der gleiche Wert verwendet werden wie oben bei der Definition von "${1:hostname}". (-0.5)
 endsnippet
 
 context "c() and snail()"
-snippet snail_getpwuid
+snippet snail_getpwuid "in Speicher von getpwuid() geschrieben"
 Es ist nicht erlaubt, in den von getpwuid(3) zurueckgegebenen Speicher zu schreiben. Stattdessen
 muss eine Kopie der Daten angelegt werden, wenn diese veraendert werden sollen.
 "The application shall not modify the structure to which the return value points, nor any storage
 areas pointed to by pointers within the structure." (Manpage getpwuid(3p)) (-1.0)
+endsnippet
+
+context "c() and snail()"
+snippet snail_hints_unneeded_fields "unnoetige Felder fuer FQDN-Lookup gesetzt"
+Fuer den FQDN-Lookup braucht man nur das AI_CANONNAME in den Flags. Alle anderen Werte sind dafuer
+ja irrelevant.
+endsnippet
+
+context "c() and snail()"
+snippet snail_hints_canonname_written "hints.ai_canonname wird beschrieben"
+"ai_canonname" wird von getaddrinfo(2) gesetzt; dort wird also quasi Information zurueckgegeben.
+Das zu setzen ist also sinnlos.
 endsnippet
 
 context "c() and snail()"
@@ -962,7 +1006,8 @@ context "c() and snail()"
 snippet snail_mailbody "Mail-Body am Anfang eingelesen"
 Es ist ziemlich schade, wenn der Benutzer seine gesamte Mail eintippt, nur damit dann z.B. beim
 Herstellen der Verbindung ein Fehler auftritt, der zum Programmabbruch fuehrt. Ein anderer Aufbau
-waere hier schlauer gewesen.
+waere hier schlauer gewesen. Ausserdem muss man sich den Mailinhalt dann nicht zwischenspeichern,
+sondern kann ihn direkt an den Server uebertragen, was den Code deutlich einfacher macht. ;)
 endsnippet
 
 context "c() and snail()"
@@ -972,6 +1017,13 @@ verschiedene Moeglichkeiten (d.h. verschiedene Arten von Sockets) ausprobiert we
 eine davon nicht funktioniert, soll hier einfach die naechste versucht werden. Nur wenn keine
 einzige Moeglichkeit geklappt hat, muss das Programm tatsaechlich beendet werden, weil natuerlich
 nicht sinnvoll weiter gemacht werden kann. (-1.0)
+endsnippet
+
+context "c() and snail()"
+snippet snail_space_statuscode "nicht auf Leerzeichen nach Statuscode geprueft"
+Es waere gut, noch zu pruefen, ob nach dem dreistelligen Statuscode auch ein Leerzeichen kommt.
+Sonst waere es ja theoretisch moeglich, dass es ein vierstelliger Statuscode ist; solche sind zwar
+nicht definiert, aber das Programm wird dadurch etwas robuster. ;)
 endsnippet
 # }}}
 
