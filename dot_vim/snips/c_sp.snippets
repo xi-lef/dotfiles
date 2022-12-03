@@ -27,10 +27,10 @@ def clash(file = 'clash.c'): return in_task('clash', file)
 def mach(file = 'mach.c'): return in_task('mach', file)
 def creeper(): return in_task('creeper')
 def snail(): return in_task('snail')
-def sister(file): return in_task('sister', file)
+def sister(file = ''): return in_task('sister', file)
 def rush(): return in_task('rush')
 def jbuffer(file = ''): return in_task('jbuffer', file)
-def mother(file): return in_task('mother', file)
+def mother(file = ''): return in_task('mother', file)
 
 # Get the name of the variable that the '^' at the start of the current grading-comment points to.
 # The '^' can point to any character that is part of the variable; it does not need to be precise.
@@ -1030,7 +1030,7 @@ endsnippet
 # sister {{{
 # sister.c {{{
 context "c() and sister('sister.c')"
-snippet sister_accept "exit() bei accept"
+snippet sister_accept_exit "exit() bei accept"
 In diesem Fall sollte das Programm nicht beendet werden, nur weil die Verbindung nicht hergestellt
 werden konnte. Der Server kann in dieser Situation durchaus weiter laufen, denn mindestens die
 folgenden Fehler sind keine Schwerwiegenden und sollten ein Retry zur Folge haben:
@@ -1039,6 +1039,31 @@ after accept() and treat them like EAGAIN by retrying. In the case of TCP/IP, th
 EPROTO, ENOPROTOOPT, EHOSTDOWN, ENONET, EHOSTUNREACH, EOPNOTSUPP, and ENETUNREACH." (Manpage
 accept(2))
 Die Fehlermeldung kann ja trotzdem mit perror() ausgeben werden. (-0.5)
+endsnippet
+
+context "c() and sister('sister.c')"
+snippet sister_htons "kein htons() verwendet"
+Der Port muss noch mit htons(3) in die Netzwerk-Byteorder gebracht werden. (-0.5)
+endsnippet
+
+context "c() and sister('sister.c')"
+snippet sister_port_range "kein Check fuer Wertebereich vom Port"
+Hier wird der Port ${1|implizit,explizit|} auf einen "uint16_t" gecastet. Wenn der vom Benutzer
+eingegebene Wert nicht im Wertebereich eines "uint16_t"s liegt, wird der Wert einfach
+abgeschnitten. Damit das nicht passiert, muss vorher explizit geprueft werden, ob der vom
+Benutzer gegebene Wert im Wertebereich liegt. (-0.5)
+endsnippet
+
+context "c() and sister('sister.c')"
+snippet sister_uint16_max_const "Konstante anstatt von UINT16_MAX verwendet"
+Hier waere es wohl besser, die Konstante "UINT16_MAX" zu verwenden. Das ist ja der Typ, der am Ende
+von htons(3) erwartet wird.
+endsnippet
+
+context "c() and sister('sister.c')"
+snippet sister_wwwpath_module "wwwpath im falschen Modul geprueft"
+Der wwwpath ist fuer dieses Modul nicht relevant. Das sollte eigentlich im request-Modul geprueft
+werden.
 endsnippet
 # }}}
 
@@ -1051,7 +1076,7 @@ Prozesse, die auf dem gleichen Socket auf Anfragen warten. (-1.0)
 endsnippet
 
 context "c() and sister('connection-fork.c')"
-snippet sister_fork "exit() bei fork()"
+snippet sister_fork_exit "exit() bei fork()"
 fork(2) kann auch aufgrund von Ressourcen-Knappheit scheitern, was im spaeteren Verlauf wieder
 gelingen kann. Zum Beispiel kann es sein, dass gerade sehr viele Kinder existieren, und erst
 gewartet werden muss, bis sich eins von ihnen beendet hat.
@@ -1062,11 +1087,12 @@ context "c() and sister('connection-fork.c')"
 snippet sister_clientSock_close "kein close() auf clientSock im Elternprozess"
 Im Elternprozess muss noch "clientSock" geschlossen werden, da dieser beim fork(2) auch dupliziert
 wurde (siehe auch Foliensatz zur rush, 3.5). Damit am Ende keine Ressourcen geleakt werden, muss er
-hier geschlossen werden, sobald er nicht mehr gebraucht wird (was eigentlich sofort ist). (-0.5)
+hier geschlossen werden, sobald er nicht mehr gebraucht wird (was eigentlich sofort ist). Das steht
+auch indirekt in connection.h. (-0.5)
 endsnippet
 
 context "c() and sister('connection-fork.c')"
-snippet sister_listenSock_close "kein close() auf listenSock im Kind"
+snippet sister_listenSock_close "kein close() auf listenSock im Kindprozess"
 Im Kind muss noch "listenSock" geschlossen werden, da dieser beim fork(2) auch dupliziert wurde
 (siehe auch Foliensatz zur rush, 3.5). Das steht uebrigens auch in connection.h explizit drin. ;)
 (-0.5)
@@ -1074,6 +1100,13 @@ endsnippet
 # }}}
 
 # request-http.c {{{
+context "c() and sister('request-http.c')"
+snippet sister_exit "exit() statt return"
+Hier exit(3) aufzurufen ist keine gute Idee, da sich dadurch (wenn das connection-Modul ohne die
+Erzeugung von Kindprozessen implementiert ist) womoeglich der ganze Server beendet. Und die Module
+sollen ja unabhaengig voneinander korrekt sein. (-1.0)
+endsnippet
+
 context "c() and (sister('request-http.c') or mother('request-httpx.c'))"
 snippet sister_mother_checkpath "checkPath() auf falschen Pfad angewandt"
 "checkPath" muss auf den Anfragepfad (also direkt der Pfad aus der HTTP-GET-Anfrage) aufgerufen
@@ -1081,9 +1114,25 @@ werden. (-1.0)
 endsnippet
 
 context "c() and (sister('request-http.c') or mother('request-httpx.c'))"
+snippet sister_mother_fgets_file "fgets() zum Senden der Datei genutzt"
+fgets(3) kann hier nicht verwendet werden, da prinzipiell "beliebige" Dateien angefordert werden
+koennten, z.B. auch Bilder. Und Bilder sind keine Textdateien (fuer welche fgets(3) funktionieren
+wuerde), sondern letztendlich Binaerdateien. Wenn in einem Bild also ein Byte mit dem Wert 0
+vorkommt, wird das quasi als '\0' interpretiert, und die Datei wird nicht vollstaendig gesendet.
+Hier muss also zeichenweise mit z.B. fgetc(3) gearbeitet werden. (-1.0)
+endsnippet
+
+context "c() and (sister('request-http.c') or mother('request-httpx.c'))"
+snippet sister_mother_line_endings "nicht \n und \r\n unterstuetzt"
+Laut Aufgabenstellung darf die Anfragezeile sowohl mit "\n", als auch "\r\n" enden. Dies wird hier
+nicht unterstuetzt. (-1.0)
+endsnippet
+
+context "c() and (sister('request-http.c') or mother('request-httpx.c'))"
 snippet sister_mother_multiple_answers "mehrere http*()-Aufrufe"
-Es wurde bereits eine Antwort mit "${1:httpOk}" gesendet. Hier nochmal eine (andere) Antwort zu
-schicken ist schlecht, da der Browser das nicht erwartet und dementsprechend kaputt anzeigt. (-0.5)
+Es wurde bereits eine Antwort mit "${2:httpOk}" gesendet. Hier nochmal eine (andere) Antwort zu
+schicken ist schlecht, da der Browser das nicht erwartet und dementsprechend kaputt anzeigt.
+${1:(-0.5)}
 endsnippet
 
 context "c() and (sister('request-http.c') or mother('request-httpx.c'))"
@@ -1100,14 +1149,19 @@ der Form "GET /index.html HTTP/1.1\rhallo\n" wird hier als gueltig geparst, obwo
 eigentlich ungueltig ist.
 endsnippet
 
-context "c() and sister('request-http.c')"
-snippet sister_regular_file "nicht auf regulaere Datei geprueft"
-Es sollen lediglich regulaere Dateien ausgeliefert werden, wofuer man stat(2) verwenden muss.
-(-1.0)
+context "c() and (sister('request-http.c') or mother('request-httpx.c'))"
+snippet sister_mother_token_null_check "Token nicht auf NULL geprueft vor Verwendung"
+Die Tokens muessen noch auf NULL geprueft werden, bevor sie (z.B. mit strcmp(3)) verwendet werden.
+Sonst kann das schnell zu einem Segmentation Fault fuehren. (-0.5)
 endsnippet
 
 context "c() and sister('request-http.c')"
-snippet sister_wwwpath "wwwpath Laenge nicht geprueft"
+snippet sister_regular_file "nicht auf regulaere Datei geprueft"
+Es sollen lediglich regulaere Dateien ausgeliefert werden. (-1.0)
+endsnippet
+
+context "c() and sister('request-http.c')"
+snippet sister_wwwpath_length "wwwpath Laenge nicht geprueft"
 Es waere schoen, noch zu pruefen, ob der wwwpath ein leerer String ist, was dann mit einer
 Fehlermeldung abgehandelt werden kann.
 endsnippet
