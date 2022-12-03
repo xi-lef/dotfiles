@@ -68,6 +68,17 @@ Bei Pointern ist es schoener, NULL statt 0 zu verwenden.
 endsnippet
 
 context "c()"
+snippet access_existence_check "access() zur Existenz-Pruefung genutzt"
+Manpage access(2): "Warning: Using these calls to check if a user is authorized to, for example,
+open a file before actually doing so using open(2) creates a security hole, because the user might
+exploit the short time interval between checking and opening the file to manipulate it. For this
+reason, the use of this system call should be avoided." Das trifft hier zwar nicht exakt zu, aber
+das Problem der beschriebenen Race Condition besteht trotzdem. Der access(2)-Aufruf hier ist
+sowieso unnoetig: wenn die Datei nicht ${1|existiert,gelesen werden kann|}, wird eben der folgende
+${2:fdopen(3)}-Aufruf fehlschlagen. Dann kann man es dort abfangen.
+endsnippet
+
+context "c()"
 snippet argc_check "argc nicht geprueft"
 Es muss noch geprueft werden, ob in "argc" der erwartete Wert steht. Sonst geht ein simpler Aufruf
 wie "./`!v expand('%:r')`" kaputt, da einfach auf argv-Eintraege zugegriffen wird, die NULL sind.
@@ -76,10 +87,23 @@ Programm korrekt aufruft (siehe auch Referenzimplementierung). (-0.5)
 endsnippet
 
 context "c()"
+snippet argc_imprecise "argc ungenau geprueft"
+Die erlaubten Werte fuer argc sind hier klar eingeschraenkt; es waere also sehr sinnvoll, das auch
+klar abzupruefen. Wenn *irgendein* unerlaubter Wert in argc steht, sollte der Benutzer auf die
+korrekte Verwendung hingewiesen werden.
+endsnippet
+
+context "c()"
 snippet atoi_strtol "atoi() statt strtol()"
 atoi(3) darf nicht  verwendt werden, da man damit keine Fehler abfangen kann: es kann z.B. nicht
 unterschieden werden, ob die Eingabe eine 0 war, oder ein Fehler aufgetreten ist. Stattdessen muss
 strtol(3) verwendet werden (siehe auch Korrekturhinweise auf der Webseite). (-2.0)
+endsnippet
+
+context "c()"
+snippet cast_void "void* unnoetig gecastet"
+Ein void-Pointer kann implizit auf jeden anderen Pointer-Typen gecastet werden. Dieser explizite
+Cast ist also unnoetig; man kann ihn fuer bessere Lesbarkeit weglassen. ;)
 endsnippet
 
 context "c()"
@@ -98,6 +122,12 @@ context "c()"
 snippet debug_output "Debug-Ausgaben enthalten"
 Solche Debug-Ausgaben bitte vor der Abgabe entfernen, so was gehoert nicht in ein fertiges Programm
 (was die Abgabe darstellen sollte ;)).${1: (-0.5)}
+endsnippet
+
+context "c()"
+snippet dup_fdopen_error_handling "dup() + fdopen() ohne dup()-Fehlerbehandlung"
+Eine Fehlerbehandlung von dup(2) ist zwar nicht zwingend notwendig, da es quasi beim fdopen(3)
+abgefangen wird. Trotzdem waere sie ganz nett, damit es ggf. eine bessere Fehlermeldung gibt. ;)
 endsnippet
 
 context "c()"
@@ -166,6 +196,21 @@ endsnippet
 context "c()"
 snippet fclose "fclose() fehlt"
 Das muss mit fclose(3) wieder geschlossen werden. (-1.0)
+endsnippet
+
+context "c()"
+snippet fclose_close_double "doppeltes Schliessen durch close() + fclose()"
+fclose(3) schliesst auch den darunterliegenden Dateideskriptor, d.h. dieses close(2) ist falsch; es
+kann und muss einfach weggelassen werden, damit der Dateideskriptor nicht doppelt geschlossen wird.
+(-0.5)
+endsnippet
+
+context "c()"
+snippet fdopen_without_dup "mehrere fdopen() auf demselben Dateideskriptor"
+Hier wird derselbe Dateideskriptor wie beim obigen fdopen(3)-Aufruf verwendet. Das funktioniert
+nicht, da bei einem folgenden fclose(3) der darunterliegende Dateideskriptor geschlossen wird.
+Dadurch wuerde also derselbe Dateideskriptor mehrmals geschlossen werden, das nicht korrekt ist.
+Siehe Foliensatz zur snail, 1.4. (-1.0)
 endsnippet
 
 context "c()"
@@ -255,7 +300,7 @@ context "c()"
 snippet if_success "if-Fall ist Erfolgsfall statt Fehlerfall"
 Hier steht der Code des Erfolgsfalls im if, wodurch das hier eine sehr lange if-Anweisung ist. Im
 Allgemeinen ist es deswegen oft besser, den Fehlerfall abzufangen, in welchem man dann z.B. ein
-fruehzeitiges "${1|return,break,continue|}" machen kann - dafuer muss man letztendlich nur die
+fruehzeitiges "${1|return,break,continue,exit|}" machen kann - dafuer muss man letztendlich nur die
 if-Bedingung invertieren. Insgesamt wird der Code dadurch deutlich uebersichtlicher.
 endsnippet
 
@@ -287,6 +332,12 @@ context "c()"
 snippet malloc_instead_of_stack "malloc() statt Stack-Allokation"
 Das haette man auch auf dem Stack machen koennen. Das spart die Fehlerbehandlung und das free(3)
 spaeter, was insgesamt deutlich angenehmer ist. ;)
+endsnippet
+
+context "c()"
+snippet malloc_zero "malloc(0)"
+malloc(0) *darf* NULL returnen (siehe halde). Deshalb ist es falsch, hier anzunehmen, dass NULL
+einen Fehlerfall darstellt. (-0.5)
 endsnippet
 
 context "c()"
@@ -343,6 +394,13 @@ Hier kann man auch direkt "${1:ptr}" verwenden, da im Fehlerfall das Programm eh
 endsnippet
 
 context "c()"
+snippet return_stack_pointer "Pointer auf lokale Variable wird returnt"
+"${1:`!p snip.rv = var()`}" ist eine lokale Variable, d.h. sie liegt auf dem Stack. Sobald aus
+dieser Funktion returnt wird, ist "$1" damit nicht mehr gueltig; das kann also nicht so returnt
+werden. (-1.0) Eine simple Alternative ist hier, den Heap (d.h. malloc(3)) zu verwenden.
+endsnippet
+
+context "c()"
 snippet same "Gleiches wie oben"
 Gleiches wie ${1:oben}.${2:`!p
 w = vim.current.window
@@ -366,6 +424,13 @@ endsnippet
 context "c()"
 snippet sizeof_char "sizeof(char) statt 1"
 "sizeof(char)" ist in C immer 1; man kann sich das also sparen. ;)
+endsnippet
+
+context "c()"
+snippet sizeof_for_strlen "sizeof() statt strlen()"
+"sizeof(${1:`!p snip.rv = var()`})" gibt die Groesse von "$1" zurueck, was ein Pointer und damit
+ueblicherweise 8 ist. Dies wird schon beim Compilen ermittelt. Hier will man aber die Laenge von
+dem String, der hinter dem Pointer steht, welche man mit strlen(3) ermittelt. (-1.0)
 endsnippet
 
 context "c()"
