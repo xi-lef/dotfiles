@@ -1,10 +1,15 @@
 {
     "coc.preferences.extensionUpdateCheck": "daily",
-    "clangd.fallbackFlags": ["-Wall, -Wextra"],
+    "clangd.fallbackFlags": [
+        "-Wall, -Wextra"
+    ],
     "git.removedSign.text": "–",
     "git.topRemovedSign.text": "–",
     "markdownlint.config": {
         "line-length": false
     },
-    "snippets.ultisnips.directories": ["snips"]
+    "pyright.inlayHints.variableTypes": false,
+    "snippets.ultisnips.directories": [
+        "snips"
+    ]
 }

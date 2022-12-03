@@ -50,11 +50,12 @@ nmap <Leader>q <Plug>(coc-fix-current)
 nnoremap <silent> <Leader>h :CocCommand clangd.switchSourceHeader<CR>
 nnoremap <silent> <C-W><Leader>h :CocCommand clangd.switchSourceHeader vsplit<CR>
 nnoremap <silent> <Leader>i :call CocActionAsync('doHover')<CR>
+nnoremap <silent> <Leader>t :CocCommand document.toggleInlayHint<CR>
 nnoremap <silent> <Leader>a :CocCommand git.chunkStage<CR>
 nnoremap <silent> <Leader>d :CocCommand git.chunkInfo<CR>
 nnoremap <silent> <Leader>u :CocCommand git.chunkUndo<CR>
-nnoremap <silent> <Leader>gl :CocCommand git.showCommit<CR>
-nnoremap <silent> <Leader>gt :CocCommand git.toggleGutters<CR>
+nnoremap <silent> <Leader>l :CocCommand git.showCommit<CR>
+nnoremap <silent> <Leader>g :CocCommand git.toggleGutters<CR>
 command OI :call CocAction('runCommand', 'editor.action.organizeImport')
 
 augroup coc
