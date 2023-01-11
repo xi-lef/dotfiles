@@ -25,7 +25,7 @@ let g:coc_status_warning_sign = '⚠️ '
 let g:coc_status_error_sign = '❗'
 
 " Insert-mappings for auto-completion {{{
-inoremap <silent><expr> <C-@> coc#refresh()
+inoremap <silent><expr> <C-Space> coc#refresh()
 inoremap <silent><expr> <Tab> coc#pum#visible() ? coc#pum#next(1) : '<Tab>'
 inoremap <silent><expr> <S-Tab> coc#pum#visible() ? coc#pum#prev(1) : ''
 inoremap <silent><expr> <CR> coc#pum#visible() ? coc#_select_confirm() : '<CR>'
@@ -244,35 +244,35 @@ nnoremap <silent> <C-T> :tabedit<CR>
 tnoremap <silent> <C-T> <C-W>:tabedit<CR>
 
 " Map alt+<i> to switch to tab <i>
-nnoremap 1 1gt
-nnoremap 2 2gt
-nnoremap 3 3gt
-nnoremap 4 4gt
-nnoremap 5 5gt
-nnoremap 6 6gt
-nnoremap 7 7gt
-nnoremap 8 8gt
-nnoremap 9 9gt
-nnoremap 0 10gt
-nnoremap - 11gt
-nnoremap = 12gt
+nnoremap <A-1> 1gt
+nnoremap <A-2> 2gt
+nnoremap <A-3> 3gt
+nnoremap <A-4> 4gt
+nnoremap <A-5> 5gt
+nnoremap <A-6> 6gt
+nnoremap <A-7> 7gt
+nnoremap <A-8> 8gt
+nnoremap <A-9> 9gt
+nnoremap <A-0> 10gt
+nnoremap <A--> 11gt
+nnoremap <A-=> 12gt
 " Move tabs with ctrl-shift-page{up,down}
 nnoremap <silent> <C-PageUp> :silent! tabm -<CR>
 nnoremap <silent> <C-PageDown> :silent! tabm +<CR>
 
 " Same as above, but for terminal windows
-tnoremap <silent> 1 <C-W>:1tabnext<CR>
-tnoremap <silent> 2 <C-W>:2tabnext<CR>
-tnoremap <silent> 3 <C-W>:3tabnext<CR>
-tnoremap <silent> 4 <C-W>:4tabnext<CR>
-tnoremap <silent> 5 <C-W>:5tabnext<CR>
-tnoremap <silent> 6 <C-W>:6tabnext<CR>
-tnoremap <silent> 7 <C-W>:7tabnext<CR>
-tnoremap <silent> 8 <C-W>:8tabnext<CR>
-tnoremap <silent> 9 <C-W>:9tabnext<CR>
-tnoremap <silent> 0 <C-W>:10tabnext<CR>
-tnoremap <silent> - <C-W>:11tabnext<CR>
-tnoremap <silent> = <C-W>:12tabnext<CR>
+tnoremap <silent> <A-1> <C-W>:1tabnext<CR>
+tnoremap <silent> <A-2> <C-W>:2tabnext<CR>
+tnoremap <silent> <A-3> <C-W>:3tabnext<CR>
+tnoremap <silent> <A-4> <C-W>:4tabnext<CR>
+tnoremap <silent> <A-5> <C-W>:5tabnext<CR>
+tnoremap <silent> <A-6> <C-W>:6tabnext<CR>
+tnoremap <silent> <A-7> <C-W>:7tabnext<CR>
+tnoremap <silent> <A-8> <C-W>:8tabnext<CR>
+tnoremap <silent> <A-9> <C-W>:9tabnext<CR>
+tnoremap <silent> <A-0> <C-W>:10tabnext<CR>
+tnoremap <silent> <A--> <C-W>:11tabnext<CR>
+tnoremap <silent> <A-=> <C-W>:12tabnext<CR>
 tnoremap <silent> <C-PageUp> <C-W>:silent! tabm -<CR>
 tnoremap <silent> <C-PageDown> <C-W>:silent! tabm +<CR>
 " }}}
