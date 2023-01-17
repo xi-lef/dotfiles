@@ -131,6 +131,14 @@ abgefangen wird. Trotzdem waere sie ganz nett, damit es ggf. eine bessere Fehler
 endsnippet
 
 context "c()"
+snippet dup2_order "falsche Reihenfolge der Argumente fuer dup2()"
+Hier ist die Reihenfolge der Argumente falsch rum. Das zweite Argument ist der Dateideskriptor, der
+zuerst geschlossen wird (quasi mit close(2)), und dann wird der erste Dateideskriptor dupliziert
+(und verwendet den gerade geschlossenen Dateideskriptor wieder). Oder anders formuliert: der zweite
+Dateideskriptor wird auf den ersten Dateideskriptor "umgebogen" (siehe auch Manpage dup2(2)). (-0.5)
+endsnippet
+
+context "c()"
 snippet duplicate_function "doppelter Code, der in eine Funktion ausgelagert werden sollte"
 Dieser Code kommt an mehreren Stellen identisch vor: man koennte ihn problemlos in eine
 Hilfsfunktion auslagern. Dadurch spart man sich Schreibarbeit, und es ist auch leichter, diesen
@@ -150,7 +158,7 @@ context "c()"
 snippet errno_overwritten "errno durch Funktionsaufruf ueberschrieben"
 Durch diesen Funktionsaufruf wird potentiell die errno ueberschrieben, wodurch perror(3) danach
 eine falsche Fehlermeldung ausgeben koennte. Korrekt waere hier, die errno zu sichern, und nach dem
-Funktionsaufruf wiederherzustellen. ${1: (-0.5)}
+Funktionsaufruf wiederherzustellen.${1: (-0.5)}
 endsnippet
 
 context "c()"
@@ -284,7 +292,7 @@ muss man hier also nicht explizit machen. ;)
 endsnippet
 
 context "c()"
-snippet global_variable "unnoetig globale Variable"
+snippet global_unneeded "unnoetig globale Variable"
 Diese Variable ist unnoetig global und koennte genauso gut eine lokale Variable in "${1:func}"
 sein. (-0.5)
 endsnippet
@@ -349,6 +357,17 @@ context "c()"
 snippet perror_no_errno "perror() trotz ungesetzter errno"
 In diesem Fall ist die errno nicht gesetzt, deswegen kann hier perror(3) nicht verwendet werden.
 Man muss hier mit fprintf(3) selbst eine aussagekraeftige Fehlermeldung schreiben. (-0.5)
+endsnippet
+
+context "c()"
+snippet pid_t_assumed_int "Annahme, dass ein pid_t ein int ist"
+Ein pid_t ist nicht unbedingt ein int. So weit ich das sehe, ist laut POSIX lediglich gegeben, dass
+ein pid_t signed und maximal ein long ist; siehe Manpage system_data_types(7).
+Ein Weg das hier zu pruefen, waere, den Wert von strtol(3) auf einen pid_t zu casten, und dann die
+beiden Werte (also den long und den pid_t) zu vergleichen. Wenn sie ungleich sind, wurde der Wert
+wohl abgeschnitten, und man sollte besser nicht weitermachen. Leider ist das Verhalten bei einem
+Cast in einen "kleineren" Datentypen aber Implementation-defined: es ist leider nicht garantiert,
+dass das so funktioniert.
 endsnippet
 
 context "c()"
@@ -419,6 +438,18 @@ endsnippet
 context "c()"
 snippet semdestroy "semDestroy() fehlt"
 Das muss mit semDestroy() wieder freigegeben werden. (-1.0)
+endsnippet
+
+context "c()"
+snippet sigaction_unneeded_flags "unnoetiges Setzen der sa_flags fuer sigaction()"
+Dieses Flag ist nur relevant, wenn man eine Signalbehandlungsfunktion installiert. Bei SIG_IGN bzw.
+SIG_DFL ist es irrelevant.
+endsnippet
+
+context "c()"
+snippet sigaction_unneeded_mask "unnoetiges Setzen der sa_mask fuer sigaction()"
+Die "sa_mask" ist nur relevant, wenn man eine Signalbehandlungsfunktion installiert. Bei SIG_IGN
+bzw. SIG_DFL ist sie irrelevant.
 endsnippet
 
 context "c()"
@@ -1235,6 +1266,12 @@ endsnippet
 
 # rush {{{
 context "c() and rush()"
+snippet rush_block_all_signals "unnoetig alle Signale mit sigfillset() blockiert"
+Hier alle Signale zu blockieren ist overkill. Es waere schoener, sich hier zu ueberlegen, welche(s)
+Signal(e) man genau blockieren muss, und dann genau diese (und nicht mehr) blockiert.
+endsnippet
+
+context "c() and rush()"
 snippet rush_fork_sigchld_unblocked "SIGCHLD vor fork() nicht blockiert"
 Vor dem fork(2) muss SIGCHLD blockiert werden. Falls sich der Kindprozess, der hier erzeugt wird,
 beendet, bevor der Elternprozess diesen in die plist eintragen kann, wird hier naemlich ein SIGCHLD
@@ -1251,7 +1288,7 @@ der Kindprozess, der gerade getoetet werden soll, noch ein Zombie sein kann. (-0
 endsnippet
 
 context "c() and rush()"
-snippet rush_kill_not-child "kill() moeglicherweise fuer nicht-Kindprozess"
+snippet rush_nuke_kill_non_child "kill() moeglicherweise fuer nicht-Kindprozess"
 Es muss noch geprueft werden, ob der zu toetende Prozess ueberhaupt ein eigener Kindprozess ist.
 Dafuer muss man in der plist mittels "plistGet" nachschauen. (-0.5)
 endsnippet
@@ -1260,15 +1297,15 @@ context "c() and rush()"
 snippet rush_nuke_plist_unsynchronized "ungeschuetzter Zugriff auf plist in nuke()"
 Da hier auf der plist gearbeitet wird, muss SIGCHLD blockiert sein. Sonst kann es passieren, dass
 die selbststaendige Terminierung eines zu toetenden Kindprozesses etwas kaputt macht, da in dem
-Fall ja unsynchronisiert auf die plist zugegriffen werden wuerde. Auch kann es natuerlich
-passieren, dass sich der Kindprozess beendet, und die PID wiederverwendet wird - dann wird ein
-(vermutlich) komplett anderer Prozess faelschlicherweise getoetet. Es muss also bis nach dem
-sleep(3) verhindert werden, dass SIGCHLD zugestellt wird. (-2.0)
+Fall ja unsynchronisiert auf die plist zugegriffen werden wuerde. (-1.0)
+Auch kann es passieren, dass sich der Kindprozess beendet, und die PID wiederverwendet wird - dann
+wird ein (vermutlich) komplett anderer Prozess faelschlicherweise getoetet. Es muss also bis nach
+dem sleep(3) verhindert werden, dass SIGCHLD zugestellt wird. (-1.0)
 endsnippet
 
 context "c() and rush()"
 snippet rush_open_flags "open() flags falsch"
-Hier muessen die korrekten "flags" angegeben werden, oder einfacher: creat(2) genutzt werden.
+Hier muessen die korrekten "flags" angegeben werden; oder einfacher: man nutzt creat(2).
 (-0.5)
 endsnippet
 
@@ -1291,6 +1328,13 @@ snippet rush_redirection_close "close() fehlt bei Ein-/Ausgabeumleitung"
 Der Dateideskriptor "${1:`!p snip.rv = var()`}" muss hier noch geschlossen werden. Nach dem dup2(2)
 existieren erstmal zwei Dateideskriptoren, die auf die gleiche Datei zeigen ("$1" und
 "STDIN_FILENO"); dementsprechend muss hier close(2) verwendet werden. (-1.0)
+endsnippet
+
+context "c() and rush()"
+snippet rush_redirection_parent "Ein-/Ausgabeumleitung im Elternprozess"
+Die Umleitung der Ein-/Ausgabe im Elternprozess zu machen ergibt keinen Sinn. Warum nicht einfach
+im Kindprozess machen, wo es relevant ist (weil dort der Befehl tatsaechlich ausgefuehrt wird)?
+(-1.0)
 endsnippet
 
 context "c() and rush()"
@@ -1332,7 +1376,7 @@ endsnippet
 context "c() and rush()"
 snippet rush_sigsuspend_background "sigsuspend() wartet auf Hintergrundprozesse"
 Hier muss sichergestellt werden, dass sigsuspend(3) nicht durch das Beenden eines
-Hintergrundprozesses zurueckkehrt: hier muss ja auf den eben gestarteten Vordergrundprozess
+Hintergrundprozesses zurueckkehrt: hier soll ja auf den eben gestarteten Vordergrundprozess
 gewartet werden. Um das zu realisieren, kann eine Variable aehnlich wie im Foliensatz unter 3.2
 verwendet werden. (-2.0)
 endsnippet
