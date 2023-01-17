@@ -1390,10 +1390,11 @@ endsnippet
 
 # jbuffer {{{
 context "c() and jbuffer()"
-snippet jbuffer_errno_set_to_0 "errno wird auf 0 gesetzt"
+snippet jbuffer_errno_set_to_zero "errno wird auf 0 gesetzt"
 Die errno darf von Bibliotheksfunktionen niemals auf den Wert 0 gesetzt werden. POSIX gibt zwar nur
 die Garantie, dass keine POSIX-Funktion die errno auf 0 setzt, aber im C11-Standard heisst es:
-"[errno] is never set to zero by any library function". (C11 §7.5 Abs. 3)
+"[errno] is never set to zero by any library function". (C11 §7.5 Abs. 3) Und genau das kann hier
+passieren, wenn die aufgerufene Funktion erfolgreich war.
 endsnippet
 
 context "c() and jbuffer()"
@@ -1412,7 +1413,7 @@ endsnippet
 context "c() and jbuffer('jbuffer.c')"
 snippet jbuffer_atomic_unneeded "unnoetiges atomic"
 Das muss nicht atomic sein. Dann wird der restliche Code etwas schoener, da der Wert dann ja direkt
-verwendet und veraendert werden darf. ;)
+(d.h. ohne atomic-Funktionen) verwendet werden darf. ;)
 endsnippet
 
 context "c() and jbuffer('jbuffer.c')"

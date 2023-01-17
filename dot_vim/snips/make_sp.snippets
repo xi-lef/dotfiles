@@ -23,6 +23,13 @@ snippet all "all nicht erstes Target"
 endsnippet
 
 context "m()"
+snippet automatic_variables "automatische Variablen nicht genutzt"
+Hier waere es besser, automatische Variablen zu nutzen. Das beinhaltet "$@" fuer den Namen des
+# Targets, oder "$^" bzw. "$<" fuer alle bzw. die erste Abhaengigkeit. Dadurch tippt man das alles
+# nicht doppelt, was immer eine gute Idee ist. ;)
+endsnippet
+
+context "m()"
 snippet clean_rm_intermediate_objects "clean loescht nicht alle Zwischenprodukte"
 Das "clean"-Target muss auch alle Zwischenprodukte (d.h. alle erzeugten .o-Dateien) loeschen.
 # (-0.5)
