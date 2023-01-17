@@ -1,0 +1,63 @@
+" Automatically install vim-plug
+if empty(glob('~/.vim/autoload/plug.vim'))
+    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+                \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+call plug#begin()
+Plug 'junegunn/vim-plug'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+call plug#end()
+
+" version 3.0.5 is required so the context is considered for auto-completion suggestions
+let g:coc_global_extensions = ['coc-snippets@3.0.5']
+
+" not required but nice
+inoremap <silent><expr> <Tab> coc#pum#visible() ? coc#pum#next(1) : '<Tab>'
+inoremap <silent><expr> <S-Tab> coc#pum#visible() ? coc#pum#prev(1) : ''
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#_select_confirm() : '<CR>'
+
+" Inserts an SP-grading comment, with the arrow pointing to the position of the
+" cursor
+function SPComment(print_arrow = 1)
+    if &filetype ==# 'c' || expand('%') ==# 'machfile'
+        let start = '/*'
+        let middle = ''
+        let end = '*/'
+    elseif &filetype ==# 'make'
+        let start = '##'
+        let middle = '# '
+        let end = '#/'
+    else
+        echoerr 'Unrecognized filetype'
+        return
+    endif
+
+    " 'sp-comments' is bugged (or 'featured'?), so we have to limit the column for '^'
+    let target = min([79, virtcol('.')])
+    let arrow = !a:print_arrow ? '' : repeat(' ', target - 4) . '^'
+    let clear = "\<Esc>0\"_Di" " helper-'function' to clear a line
+
+    execute 'normal! o' . clear . start . 'K' . arrow . "\<CR>"
+                \ . clear . end . "\<Esc>O" . clear . middle
+    startinsert!
+endfunction
+
+" \c inserts a comment with an arrow, \C without an arrow
+nnoremap <silent> <Leader>c :call SPComment()<CR>
+nnoremap <silent> <Leader>C :call SPComment(0)<CR>
+
+" some general settings (subjective)
+syntax enable               " enable syntax highlighting
+set number                  " show line numbers
+set background=dark         " dark mode
+set termguicolors           " true colors in modern terminals
+
+set autoindent              " copy indent from adjacent line
+set smartindent             " smart, language-based indenting
+
+set hlsearch                " highlight search results after hitting enter
+set incsearch               " highlight search results while typing
+set ignorecase              " ignore case when searching
+set smartcase               " override ignorecase when searching for upper case pattern
