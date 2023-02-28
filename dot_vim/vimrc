@@ -18,9 +18,20 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 cnoreabbrev CI CocInstall
 cnoreabbrev CU CocUninstall
 cnoreabbrev CC CocCommand
-let g:coc_global_extensions = ['coc-calc', 'coc-clangd', 'coc-cmake', 'coc-git', 'coc-java',
-            \ 'coc-json', 'coc-markdownlint', 'coc-pyright', 'coc-sh', 'coc-snippets@3.0.5',
-            \ 'coc-vimlsp', 'coc-vimtex']
+let g:coc_global_extensions = [
+            \ 'coc-calc',
+            \ 'coc-clangd',
+            \ 'coc-cmake',
+            \ 'coc-git',
+            \ 'coc-java',
+            \ 'coc-json',
+            \ 'coc-markdownlint',
+            \ 'coc-pyright',
+            \ 'coc-sh',
+            \ 'coc-snippets@3.0.5',
+            \ 'coc-vimlsp',
+            \ 'coc-vimtex'
+            \]
 let g:coc_status_warning_sign = '⚠️ '
 let g:coc_status_error_sign = '❗'
 
