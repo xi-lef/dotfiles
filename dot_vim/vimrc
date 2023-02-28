@@ -22,13 +22,16 @@ let g:coc_global_extensions = [
             \ 'coc-calc',
             \ 'coc-clangd',
             \ 'coc-cmake',
+            \ 'coc-css',
             \ 'coc-git',
+            \ 'coc-html',
             \ 'coc-java',
             \ 'coc-json',
             \ 'coc-markdownlint',
             \ 'coc-pyright',
             \ 'coc-sh',
             \ 'coc-snippets@3.0.5',
+            \ 'coc-tsserver',
             \ 'coc-vimlsp',
             \ 'coc-vimtex'
             \]
