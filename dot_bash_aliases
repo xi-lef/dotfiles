@@ -43,7 +43,6 @@ vis() {
 
 if [[ $TERM == 'xterm-kitty' ]]; then
     alias icat='kitty +kitten icat'
-    alias kssh='kitty +kitten ssh use-python'
     tok() {
         termpdf.py "$@" 2> /dev/null
     }
