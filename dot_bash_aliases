@@ -1,6 +1,6 @@
 r() {
     unalias -a
-    source ~/.bashrc
+    source "$HOME/.bashrc"
     history -n
 }
 
@@ -12,7 +12,7 @@ alias laa='ls -a'
 alias ..='cd ..'
 alias ...='cd ../..'
 cdp() {
-    cd -P ${1:-.}
+    cd -P "${1:-.}"
 }
 alias cdd='cd ~/downloads/'
 alias bd='. bd -si' # si: case-insensitive, s: case-sensitive
@@ -38,7 +38,7 @@ alias vip='vim -p'
 alias vir='vim --cmd "let g:coc_start_at_startup = 0"'
 # the session-name ($1) must be appended without a space, so alias does not work.
 vis() {
-    vim -S $HOME/.vim/sessions/$1
+    vim -S "$HOME/.vim/sessions/$1"
 }
 
 if [[ $TERM == 'xterm-kitty' ]]; then
@@ -49,12 +49,12 @@ if [[ $TERM == 'xterm-kitty' ]]; then
 fi
 
 swap() {
-    local tmpfile=$(mktemp $(dirname "$1")/XXXXXX)
+    local -r tmpfile=$(mktemp "$(dirname "$1")/XXXXXX")
     mv "$1" "$tmpfile" && mv "$2" "$1" && mv "$tmpfile" "$2"
 }
 
 #alias ff="git --git-dir=$HOME/Dropbox/cfg/dotfiles/ --work-tree=$HOME"
-alias ff="git -C $(chezmoi source-path)"
+alias ff='git -C $(chezmoi source-path)'
 
 # ex - archive extractor
 # usage: ex <file>
