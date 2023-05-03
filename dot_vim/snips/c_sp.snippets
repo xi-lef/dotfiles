@@ -1522,11 +1522,11 @@ endsnippet
 
 context "c() and mother('connection-mt.c')"
 snippet mother_exit "unnoetiges exit()"
-Nur weil das fehlschlaegt, soll sich nicht gleich der ganze Thread beenden: das hier ist ein
-Server, d.h. man will nur im absoluten Ausnahmefall das Programm beenden. In diesem Fall aber gab
-es nur ein Problem bei der aktuellen Anfrage, der Server kann jedoch noch weiterlaufen. Deswegen
-sollte man hier lediglich eine Fehlermeldung ausgeben und bereits belegte Ressourcen wieder
-freigeben. (-1.0)
+Nur weil das fehlschlaegt, soll sich nicht gleich das ganze Programm (oder auch nur ein Thread)
+beenden: das hier ist ein Server, d.h. man will nur im absoluten Ausnahmefall das Programm beenden.
+In diesem Fall aber gab es nur ein Problem bei der aktuellen Anfrage, der Server kann jedoch noch
+weiterlaufen. Deswegen sollte man hier lediglich eine Fehlermeldung ausgeben und bereits belegte
+Ressourcen wieder freigeben. (-1.0)
 endsnippet
 
 context "c() and mother('connection-mt.c')"
@@ -1535,8 +1535,8 @@ Es ist zwingend notwendig, das Close-on-Exec-Flag auf "clientSock" bereits *vor*
 zum Puffer vorzunehmen. Sonst ist es bei einem sehr grossen Puffer, schnell hintereinander
 eintreffender Anfragen und wenig Threads mit steigender Wahrscheinlichkeit moeglich, dass ein
 anderer Thread ein exec(3) ausfuehrt, bevor dieser Dateideskriptor mit dem Flag versehen wird.
-Dadurch dass sich alle Threads einen Adressraum teilen, koennen auch ueber Threads hinweg die
-Dateideskriptoren an Kinder vererbt werden. Das ist ein Problem das sich nicht vollends loesen
+Dadurch, dass sich alle Threads einen Adressraum teilen, koennen auch ueber Threads hinweg die
+Dateideskriptoren an Kinder vererbt werden. Das ist ein Problem, das sich nicht vollends loesen
 laesst, aber den Dateideskriptor hier womoeglich lange ungeschuetzt in der Queue zu lassen ist
 keine gute Idee. (-0.5)
 endsnippet
@@ -1544,10 +1544,11 @@ endsnippet
 context "c() and mother('connection-mt.c')"
 snippet mother_race_dup_cloexec "Race Condition durch dup() + fcntl()"
 Hier existiert eine kleine Race Condition: zwischen dem dup(2) und dem fcntl(2) ist das
-Close-on-Exec-Flag nicht gesetzt. Wenn also genau hier ein fork(2) in einem anderen Thread
-aufgerufen wird, wird der Dateideskriptor hier auch nach dem exec(2) offen bleiben. Deswegen ist es
-am besten, hier einfach fnctl(2) mit dem Kommando "F_DUPFD_CLOEXEC" aufruft, um das Duplizieren und
-Setzen des FD_CLOEXEC-Bits in einem (fuer den Prozess) atomaren Schritt auszufuehren.
+Close-on-Exec-Flag kurzzeitig nicht gesetzt. Wenn also genau hier ein fork(2) in einem anderen
+Thread aufgerufen wird, wird dieser Dateideskriptor auch nach dem exec(2) offen bleiben. Deswegen
+ist es am besten, hier einfach fnctl(2) mit dem Kommando "F_DUPFD_CLOEXEC" aufruft, um das
+Duplizieren und Setzen des FD_CLOEXEC-Bits in einem (fuer den Prozess) atomaren Schritt
+auszufuehren.
 endsnippet
 # }}}
 
@@ -1607,6 +1608,12 @@ context "c() and mother('request-httpx.c')"
 snippet mother_scandir "scandir() nicht verwendet"
 Statt opendir(3) + readdir(3) sollte man lieber scandir(3) verwenden, da das den Code deutlich
 simpler macht. ;)
+endsnippet
+
+context "c() and mother('request-httpx.c')"
+snippet mother_sigchld "SIGCHLD nicht behandelt"
+Da fuer das Ausfuehren von Perl-Skripten fork(2) verwendet wird, muss sich hier um die anfallenden
+Kindprozesse gekuemmert werden. (-2.0)
 endsnippet
 # }}}
 # }}}
