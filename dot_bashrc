@@ -74,7 +74,7 @@ export PATH=$_SP_SVN_PATH/bin:$PATH
 
 # disable readline argument repetition
 for i in {0..9}; do
-    bind -r '\e'$i
+    bind -r "\e$i"
 done
 unset i
 
@@ -95,21 +95,21 @@ PROMPT_COMMAND='history -a'
 set_prompt() {
     # terminal color codes
     local DEFAULT='\[\e[m\]'
-    local BLACK='\[\e[0;30m\]'
-    local GRAY='\[\e[1;30m\]'
+    #local BLACK='\[\e[0;30m\]'
+    #local GRAY='\[\e[1;30m\]'
     local RED='\[\e[0;31m\]'
-    local LIGHTRED='\[\e[1;31m\]'
+    #local LIGHTRED='\[\e[1;31m\]'
     local GREEN='\[\e[0;32m\]'
-    local LIGHTGREEN='\[\e[1;32m\]'
+    #local LIGHTGREEN='\[\e[1;32m\]'
     local BROWN='\[\e[0;33m\]' # orange
-    local YELLOW='\[\e[1;33m\]'
-    local BLUE='\[\e[0;34m\]'
-    local LIGHTBLUE='\[\e[1;34m\]'
-    local PURPLE='\[\e[0;35m\]'
-    local PINK='\[\e[1;35m\]' # light purple
+    #local YELLOW='\[\e[1;33m\]'
+    #local BLUE='\[\e[0;34m\]'
+    #local LIGHTBLUE='\[\e[1;34m\]'
+    #local PURPLE='\[\e[0;35m\]'
+    #local PINK='\[\e[1;35m\]' # light purple
     local CYAN='\[\e[0;36m\]'
-    local LIGHTCYAN='\[\e[1;36m\]'
-    local WHITE='\[\e[1;37m\]'
+    #local LIGHTCYAN='\[\e[1;36m\]'
+    #local WHITE='\[\e[1;37m\]'
     local LIGHTGRAY='\[\e[0;37m\]'
 
     # if this bash is in an SSH-session, display the username + hostname
@@ -118,13 +118,13 @@ set_prompt() {
     fi
 
     # if user is root, use red brackets around the time
-    if [ $(id -u) -eq 0 ]; then
+    if [ "$(id -u)" -eq 0 ]; then
         local BRACKETCOLOR=$RED
     else
         local BRACKETCOLOR=$LIGHTGRAY
     fi
 
-    PS1="$BRACKETCOLOR[$BROWN\t$BRACKETCOLOR] $GREEN$name$CYAN\w$DEFAULT "
+    PS1="${BRACKETCOLOR}[$BROWN\t$BRACKETCOLOR] $GREEN$name$CYAN\w$DEFAULT "
 
     # if this is an xterm set the title to user@host:dir
     case "$TERM" in
