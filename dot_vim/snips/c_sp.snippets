@@ -101,6 +101,12 @@ strtol(3) verwendet werden (siehe auch Korrekturhinweise auf der Webseite). (-2.
 endsnippet
 
 context "c()"
+snippet boolean "bool waere passender"
+Hier wuerde der Datentyp "bool" wohl besser passen, da es ja nur die beiden Optionen "true" und
+"false" gibt. In C muss man dafuer noch den Header <stdbool.h> inkludieren.
+endsnippet
+
+context "c()"
 snippet cast_void "void* unnoetig gecastet"
 Ein void-Pointer kann implizit auf jeden anderen Pointer-Typen gecastet werden. Dieser explizite
 Cast ist also unnoetig; man kann ihn fuer bessere Lesbarkeit weglassen. ;)
@@ -144,14 +150,6 @@ Dieser Code kommt an mehreren Stellen identisch vor: man koennte ihn problemlos 
 Hilfsfunktion auslagern. Dadurch spart man sich Schreibarbeit, und es ist auch leichter, diesen
 Code zu veraendern, da man ihn dann nur an einer Stelle (anstatt an Mehreren) veraendern muss.
 Das eliminiert also eine haeufige Fehlerquelle. ;)
-endsnippet
-
-context "c()"
-snippet duplicate_if_else "doppelter Code in if- und else-Fall"
-Hier ist im if- und else-Fall teilweise der gleiche Code; um diesen doppelten Code zu vermeiden,
-kann man ihn einfach direkt hinter das if-else schreiben. Dadurch spart man sich Schreibarbeit, und
-es ist auch leichter, diesen Code zu veraendern, da man ihn dann nur an einer Stelle (anstatt an
-Mehreren) veraendern muss. Das eliminiert also eine haeufige Fehlerquelle. ;)
 endsnippet
 
 context "c()"
@@ -235,8 +233,14 @@ Puffer gespeichert, aber noch nicht tatsaechlich rausgeschrieben wurde. (-1.5)
 endsnippet
 
 context "c()"
+snippet fflush_input_stream "fflush() auf Eingabestream"
+fflush(3) auf einem Eingabestream (der nicht mit einer "seekable file" assoziiert ist) ist
+undefiniertes Verhalten. Mit "${1:stdin}" als Stream trifft genau das hier zu. (-1.0)
+endsnippet
+
+context "c()"
 snippet fgetc_type "char als Rueckgabetyp bei [f]getc()"
-[f]getc returnt einen "int", d.h. das muss auch in einem "int" gespeichert werden, damit die
+[f]getc(3) returnt einen "int", d.h. das muss auch in einem "int" gespeichert werden, damit die
 Fehlerbehandlung (konkret: der Vergleich mit "EOF") korrekt funktionieren kann. EOF ist
 ueblicherweise als -1 definiert; ein "char" ist z.B. ein unsigned 8-Bit Wert, d.h. hat einen
 Wertebereich von [0, 255]. Es ist also nicht moeglich, zwischen -1 und 255 zu unterscheiden,
@@ -298,6 +302,31 @@ sein. (-0.5)
 endsnippet
 
 context "c()"
+snippet helper_function_once "Hilfsfunktion nur ein Mal aufgerufen"
+Es ist im Allgemeinen nicht so sinnvoll, etwas in eine Hilfsfunktion auszulagern, wenn diese
+Hilfsfunktion dann nur ein einziges Mal aufgerufen wird. Durch die extra Funktion hat man etwas
+mehr Komplexitaet; zwar hat man durch das Auslagern eventuell etwas bessere Lesbarkeit, aber das
+haette man hier auch durch z.B. einen Kommentar erreichen koennen. Normalerweise nutzt man
+Hilfsfunktionen eher, um einen mehrmals vorkommenden Codeabschnitt auszulagern, um weniger
+doppelten Code zu haben. Ist zwar auch etwas subjektiv, aber hier trifft das in meinen Augen zu.
+endsnippet
+
+context "c()"
+snippet if_else_duplicate "doppelter Code in if- und else-Fall"
+Hier ist im if- und else-Fall teilweise der gleiche Code; um diesen doppelten Code zu vermeiden,
+kann man ihn einfach direkt hinter das if-else schreiben. Dadurch spart man sich Schreibarbeit, und
+es ist auch leichter, diesen Code zu veraendern, da man ihn dann nur an einer Stelle (anstatt an
+Mehreren) veraendern muss. Das eliminiert also eine haeufige Fehlerquelle. ;)
+endsnippet
+
+context "c()"
+snippet if_else_identical "effektiv identischer Code in if- und else-Fall"
+Hier macht der Code im if-Fall letztendlich das exakt gleiche, wie der Code im else-Fall. Man
+koennte einfach immer den Code im ${1|if,else|}-Fall verwenden; dann wuerde es trotzdem
+funktionieren, und der Code waere deutlich simpler. ;)
+endsnippet
+
+context "c()"
 snippet if_return_else "unnoetiger else-Fall nach return im if-Fall"
 Da im if-Fall bereits ein "${1|return,break,continue|}" steht, braucht man hier kein extra "else".
 Der Code wird ja sowieso nur ausgefuehrt, wenn der if-Fall nicht betreten wurde. Das macht den Code
@@ -306,10 +335,10 @@ endsnippet
 
 context "c()"
 snippet if_success "if-Fall ist Erfolgsfall statt Fehlerfall"
-Hier steht der Code des Erfolgsfalls im if, wodurch das hier eine sehr lange if-Anweisung ist. Im
+Hier steht der Code des Erfolgsfalls im if, wodurch das hier ein unnoetig langer if-Block ist. Im
 Allgemeinen ist es deswegen oft besser, den Fehlerfall abzufangen, in welchem man dann z.B. ein
-fruehzeitiges "${1|return,break,continue,exit|}" machen kann - dafuer muss man letztendlich nur die
-if-Bedingung invertieren. Insgesamt wird der Code dadurch deutlich uebersichtlicher.
+fruehzeitiges "${1|return,break,continue,exit(3)|}" machen kann - dafuer muss man letztendlich nur
+die if-Bedingung invertieren. Insgesamt wird der Code dadurch deutlich uebersichtlicher.
 endsnippet
 
 context "c()"
@@ -343,6 +372,14 @@ spaeter, was insgesamt deutlich angenehmer ist. ;)
 endsnippet
 
 context "c()"
+snippet malloc_overwrite "gemalloc()ter Pointer wird direkt danach ueberschrieben"
+Warum wird hier mit malloc(3) Speicher angelegt, nur damit der Pointer direkt danach ueberschrieben
+wird? Dadurch geht der Speicher, der durch malloc(3) reserviert wird, ja dauerhaft verloren, und
+kann nicht mehr mit free(3) freigegeben werden, was notwendig ist. Man kann - und muss - sich das
+malloc(3) hier komplett sparen. (-1.0)
+endsnippet
+
+context "c()"
 snippet malloc_zero "malloc(0)"
 malloc(0) *darf* NULL returnen (siehe halde). Deshalb ist es falsch, hier anzunehmen, dass NULL
 einen Fehlerfall darstellt. (-0.5)
@@ -351,6 +388,14 @@ endsnippet
 context "c()"
 snippet nullbyte "Platz fuer '\0' fehlt"
 Hier fehlt ein Byte fuer das '\0'. (-0.5)
+endsnippet
+
+context "c()"
+snippet perror_message "komischer String bei perror()"
+Normalerweise uebergibt man an perror(3) einfach den Namen der fehlgeschlagenen Funktion, also hier
+"perror("${1:malloc}")". perror(3) gibt diesen String gefolgt von einem Doppelpunkt und einer
+Fehlerbeschreibung basierend auf dem Wert der errno(3) aus. So bekommt man also eine schoene und
+aussagekraeftige Fehlermeldung. :)
 endsnippet
 
 context "c()"
@@ -506,6 +551,23 @@ endsnippet
 context "c()"
 snippet todo_comment "TODO im Code"
 Normalerweise loescht man einen "TODO"-Kommentar, nachdem man ihn erledigt hat. ;)
+endsnippet
+
+context "c()"
+snippet type_downcast "impliziter Downcast bei Rueckgabewert einer Funktion"
+${1:func}(3) returnt einen ${2:size_t}, was hier aber in einem "`!p snip.rv = var()`" gespeichert
+wird. Dabei gehen theoretisch Informationen verloren, da der Rueckgabewert in einen "kleineren"
+Datentyp (d.h. mit einem kleinen Wertebereich) implizit gecastet wird. Man sollte immer den
+passenden Datentypen verwenden; hier wuerde das ja nicht mal den Code komplizierter machen.
+endsnippet
+
+context "c()"
+snippet unfinished "unfertige Abgabe"
+Schade, dass es nicht fuer die vollstaendige Bearbeitung gereicht hat. Falls es in Zukunft zeitlich
+(oder willensmaessig) besser passt, kann ich auch gerne spaeter noch Feedback zum fertigen Code
+geben; nur Punkte kann ich dann wohl nicht mehr geben, da das einen triftigen Grund braucht. Aber
+vor allem als Klausurvorbereitung halte ich es fuer sehr sinnvoll, alle Aufgaben bearbeitet zu
+haben, weswegen ich das auf jeden Fall empfehlen kann und gerne anbiete. (-15.0)
 endsnippet
 
 context "c()"
