@@ -733,13 +733,15 @@ snippet wsort_compare_pointer "Pointer in compare() inkorrekt verwendet"
 Diese Funktion wird von qsort(3) aufgerufen, und bekommt dabei *Pointer* auf die zu sortierenden
 Elemente uebergeben. Diese Elemente sind hier Strings, also "char *"; diese Funktion bekommt also
 Pointer auf Strings, also "char **" uebergeben. Hier werden nun die Pointer sortiert, es muessen
-aber die Strings "dahinter" sortiert werden. Dafuer muessen die Argumente korrekt gecasted werden,
+aber die Strings "dahinter" sortiert werden. Dafuer muessen die Argumente korrekt gecastet werden,
 bevor sie verwendet werden. (-1.0)
 endsnippet
 
 context "c() and wsort()"
 snippet wsort_empty_lines "leere Zeilen nicht ignoriert"
-Laut Aufgabenstellung sollen leere Zeilen ignoriert werden. (-1.0)
+Laut Aufgabenstellung sollen leere Zeilen ignoriert werden. Leerzeilen kommen sogar in wlist1 und
+wlist5 vor; durch Testen mit diesen beiden Listen haette dieser Fehler also verhindert werden
+koennen. (-1.0)
 endsnippet
 
 context "c() and wsort()"
