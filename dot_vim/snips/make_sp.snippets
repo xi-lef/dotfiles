@@ -114,6 +114,13 @@ rm(1) nimmt auch mehrere Argumente (d.h. Dateien) in einem Aufruf entgegen. ;)
 endsnippet
 
 context "m()"
+snippet unneeded_output_name "unnoetiges -o"
+Den Namen der erzeugten Datei mit "-o ${1:`!p snip.rv = var_mk()`.o}" zu spezifizieren ist hier
+# nicht noetig, da "-c" verwendet wird. Das "-c" sorgt naemlich dafuer, dass der Standardname der
+# erzeugten Datei bereits "$1" lautet. ;)
+endsnippet
+
+context "m()"
 snippet var_both "Compiler und -flags in einer Variable"
 Normalerweise teilt man das auf: eine Variable "CC" fuer den Compiler, und eine Variable "CFLAGS"
 # fuer die Compilerflags. Damit kann man z.B. leichter einen anderen Compiler von der Kommandozeile
@@ -136,7 +143,8 @@ endsnippet
 context "m()"
 snippet var_use "Variable nicht verwendet"
 Normal packt man ${2:das hier} in eine Variable namens "${1:CFLAGS}", damit man das nicht mehrmals
-# tippen (bzw. copy-pasten) muss. ;)
+# tippen (bzw. copy-pasten) muss. Und leichter aendern kann man es dann auch, sogar von der
+# Kommandozeile: "make $1='something else'". ;)
 endsnippet
 # }}}
 
