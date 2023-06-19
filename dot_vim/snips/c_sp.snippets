@@ -352,10 +352,19 @@ Datei korrekt einzuruecken.
 endsnippet
 
 context "c()"
+snippet library_errno_overwritten "errno in Bibliotheksfunktion unnoetig gesetzt"
+Wieso wird die errno hier nochmal explizit gesetzt? Das wird doch schon von ${1:malloc(3)} gemacht,
+wenn es fehlschlaegt, und die Funktion wird wohl besser wissen, was genau schief gegangen ist.
+Stattdessen wird der Wert ueberschrieben, wodurch die Information, was wirklich schief gegangen
+ist, verloren geht (bzw. gehen kann, falls es ein anderer Fehler war).
+${2:Hier wird die errno sogar auf einen sinnlosen Wert gesetzt, was sehr schlecht ist. (-0.5)}
+endsnippet
+
+context "c()"
 snippet library_perror_exit "perror() oder exit() in Bibliotheksfunktion"
-Diese Funktion ist als Bibliotheksfunktion zu betrachten, deswegen darf hier weder perror(3) noch
-exit(3) verwendet werden. Die Ausgabe einer Fehlermeldung bzw. das Beenden des Programmes soll die
-Entscheidung des Aufrufers sein. (-${1|0.5,1.0|})
+Diese Funktion ist als Bibliotheksfunktion zu betrachten, deswegen duerfen hier weder Ausgaben
+gemacht noch exit(3) verwendet werden. Die Ausgabe einer Fehlermeldung bzw. das Beenden des
+Programmes soll die Entscheidung des Aufrufers sein. (-${1|0.5,1.0|})
 endsnippet
 
 context "c()"
@@ -999,9 +1008,21 @@ Makros sind ein guter Weg hierfuer. Noch besser (in meinen Augen) waere aber ein
 endsnippet
 
 context "c() and mach()"
+snippet mach_input_stored_indirect "Befehle werden zwischengespeichert"
+Laut Aufgabenstellung sollen die Befehle explizit direkt verarbeitet werden, und nicht erst
+in irgendwelchen Datenstrukturen zwischengespeichert werden. (-1.0)
+endsnippet
+
+context "c() and mach()"
 snippet mach_join_detached_thread "pthread_join() auf detached Thread"
 Wenn ein Thread mittels pthread_detach(3) detached wurde, kann auf diesen nicht mehr mit
 pthread_join(3) gewartet werden. Hier braucht man Semaphoren zum Warten. (-1.0)
+endsnippet
+
+context "c() and mach()"
+snippet mach_output_queue_put_main "queue_put() in Hauptthread statt Arbeiterthread"
+Die Arbeiterthreads sollen dem Ausgabethread die Befehle mitteilen. Dieses queue_put() soll also
+nicht im Hauptthread gemacht werden, sondern nur in den Arbeiterthreads. (-0.5)
 endsnippet
 
 context "c() and mach()"
@@ -1024,6 +1045,12 @@ endsnippet
 
 # queue.c {{{
 context "c() and mach('queue.c')"
+snippet mach_deinit_remove "entfernen aller Listenelemente in queue_deinit()"
+queue.h: "queue_deinit() assumes the queue is empty and will not remove existing elements." Hier
+wird genau das gemacht, was also die Schnittstelle verletzt. Und an die muss man sich ja halten.
+endsnippet
+
+context "c() and mach('queue.c')"
 snippet mach_early_lock "fruehes locken durch P() in queue_put()"
 Es waere besser, das erst zu machen, wenn es wirklich notwendig ist, d.h. erst vor dem Zugriff auf
 "${1:head}". malloc(3) ist vergleichsweise langsam, deswegen sollte das eher nicht Teil des
@@ -1032,8 +1059,8 @@ endsnippet
 
 context "c() and mach('queue.c')"
 snippet mach_free "Belegte Ressourcen im Fehlerfall nicht freigegeben"
-"If an error occurs during initialization, all already allocated resources must be freed before
-returning an error." (-1.0)
+queue.h: "If an error occurs during initialization, all already allocated resources must be freed
+before returning an error." (-1.0)
 endsnippet
 
 context "c() and mach('queue.c')"
