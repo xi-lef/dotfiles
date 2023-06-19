@@ -861,8 +861,8 @@ endsnippet
 # clash {{{
 context "c() and clash()"
 snippet clash_background_first_char "erstes Zeichen des letztens Tokens mit '&' vergleicht"
-Man will hier nicht pruefen, ob das letzte Token mit einem '&' beginnt, sondern ob es ein "&" ist.
-Sonst geht z.B. "echo &hallo" kaputt. (-0.5)
+Man will hier nicht pruefen, ob das letzte Token mit einem '&' beginnt, sondern ob es ein "&" ist
+(oder zumindest damit endet). Sonst geht z.B. "echo &hallo" kaputt. (-1.0)
 endsnippet
 
 context "c() and clash()"
@@ -902,7 +902,14 @@ snippet clash_getcwd_path_max "PATH_MAX fuer getcwd() verwendet"
 "PATH_MAX" zu verwenden ist hier nicht korrekt: es muss das in der Manpage von getcwd(3)
 beschriebene Vorgehen verwendet werden. Im Internet gibt es viele Erklaerungen, warum "PATH_MAX"
 quasi nie verwendet werden sollte; eine gute und kompakte Erklaerung gibt es auch in der Manpage
-von der aehnlichen Funktion realpath(3) in der Sektion 'BUGS'. (-3.0)
+von der aehnlichen Funktion realpath(3) in der Sektion 'BUGS'. Oder man liest sich in der Manpage
+zu limits.h(7p) die Beschreibung zu "Pathname Variable Values" und konkret "PATH_MAX" durch. (-3.0)
+endsnippet
+
+context "c() and clash()"
+snippet clash_line_ampersand "Fehler bei Eingabezeile, die nur Ampersand enthaelt"
+Wenn die Eingabezeile nur aus einem Ampersand besteht, geht das hier kaputt, da hier auf NULL
+zugegriffen wird. (-1.0)
 endsnippet
 
 context "c() and clash()"
@@ -933,6 +940,22 @@ snippet clash_wexitstatus "kein WEXITSTATUS() verwendet"
 Das hier ist nicht der Exitstatus, dort stehen auch noch andere Informationen drin. Um an den
 eigentlichen Exitstatus zu kommen, muss das Makro "WEXITSTATUS" verwendet werden (siehe Manpage).
 (-1.0)
+endsnippet
+
+context "c() and clash()"
+snippet clash_wifexited_removeelement "removeElement() nur bei WIFEXITED"
+Es ist nicht ganz richtig, removeElement() nur im Fall "WIFEXITED" aufzurufen. waitpid(2) liefert
+ja (standardmaessig) nur Informationen ueber Kindprozesse, die terminiert sind. "WIFEXITED"
+bedeutet, dass der Kindprozess sich ganz normal beendet hat, aber es gibt auch noch "WIFSIGNALED",
+wenn der Kindprozess durch ein Signal beendet wurde - auch in diesem Fall muss das Element ja aus
+der plist entfernt werden. (-0.5)
+endsnippet
+
+context "c() and clash()"
+snippet clash_zombies "nicht um Zombie-Prozesse gekuemmert"
+Es muss sich noch um Hintergrundprozesse, die sich in der Zwischenzeit (eventuell) beendet haben,
+gekuemmert werden. Hierfuer gibt es waitpid(2) mit dem Argument "-1", wie es in der Tafeluebung
+erklaert wurde. (-5.0)
 endsnippet
 
 # plist.c {{{
