@@ -638,6 +638,14 @@ Fehlerueberpruefungen durchfuehren, und auftretende Fehler entsprechend behandel
 endsnippet
 
 context "c() and lilo()"
+snippet lilo_exit "exit() anstatt return -1"
+Diese Funktion ist als Bibliotheksfunktion zu betrachten, deswegen darf hier nicht exit(3)
+verwendet werden. Die Ausgabe einer Fehlermeldung bzw. das Beenden des Programmes soll die
+Entscheidung des Aufrufers sein. Stattdessen soll hier, wie in den anderen Fehlerfaellen auch, -1
+zurueckgegeben werden. (-0.5)
+endsnippet
+
+context "c() and lilo()"
 snippet lilo_first_element_unchecked "erstes Element nicht auf Gleichheit geprueft"
 Das erste Element der Liste wird hier nicht mit dem einzufuegenden Wert verglichen, wodurch
 womoeglich Werte doppelt eingefuegt werden. (-0.5)
@@ -662,6 +670,14 @@ womoeglich Werte doppelt eingefuegt werden. (-0.5)
 endsnippet
 
 context "c() and lilo()"
+snippet lilo_lifo "LIFO statt LILO implementiert"
+Hier wurde keine LILO (Last In Last Out) sondern eine LIFO (Last In First Out) implementiert. Es
+muss also entweder beim Entnehmen oder beim Einfuegen eines Elements die Reihenfolge in der Liste
+anders gehandhabt werden, also dass z.B. ein neues Element nicht am Anfang der Liste eingefuegt
+wird, sondern am Ende. (-1.0)
+endsnippet
+
+context "c() and lilo()"
 snippet lilo_main_list_functionality "Listenfunktionalitaet in main()"
 Laut Aufgabenstellung darf keine Listenfunktionalitaet in der main()-Funktion implementiert werden;
 sie soll lediglich zum Testen verwendet werden. Der Punkt davon ist, dass "insertElement" und
@@ -672,7 +688,7 @@ endsnippet
 context "c() and lilo()"
 snippet lilo_negative_values "negative Werte erlaubt"
 Laut Aufgabenstellung soll die Funktion "insertElement" nur *nicht*-negative Werte in die Liste
-einfuegen. Hier fehlt die entsprechende Pruefung. (-0.5)
+einfuegen. ${1:Hier fehlt die entsprechende Pruefung.} (-0.5)
 endsnippet
 
 context "c() and lilo()"
