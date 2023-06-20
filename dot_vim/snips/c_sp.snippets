@@ -343,12 +343,11 @@ endsnippet
 
 context "c()"
 snippet indentation "schlechte Einrueckung"
-Der Code war teilweise schlecht eingerueckt bzw. formatiert, was es deutlich erschwert, den Code zu
-verstehen; ich habe das fuer die Korrektur mal behoben. Es gibt viele Wege, Code "automatisiert"
-einzuruecken: die meisten IDEs z.B. haben ein Feature dafuer. In der Kommandozeile gibt es auch
-clang-format(1), welches man einfach mit "clang-format -i `!v expand('%')`" verwenden kann. In Vim
-z.B. kann man auch einfach die Tastenfolge "gg=G" (im "Normal mode") druecken, um die aktuelle
-Datei korrekt einzuruecken.
+Der Code ist teilweise schlecht eingerueckt bzw. formatiert, was es deutlich erschwert, den Code zu
+verstehen. Es gibt viele Wege, Code "automatisiert" einzuruecken: die meisten IDEs z.B. haben ein
+Feature dafuer. In der Kommandozeile gibt es auch clang-format(1), welches man einfach mit
+"clang-format -i `!v expand('%')`" verwenden kann. In Vim dagegen kann man auch einfach die
+Tastenfolge "gg=G" (im "Normal mode") druecken, um die aktuelle Datei korrekt einzuruecken.
 endsnippet
 
 context "c()"
@@ -444,7 +443,8 @@ endsnippet
 context "c()"
 snippet pthread_id_array "Thread-ID unnoetigerweise gespeichert"
 Da die Thread-IDs spaeter nicht mehr verwendet werden (z.B. fuer ein pthread_join(3)), ist es
-unnoetig, hier alle IDs in einem Array abzuspeichern. ;)
+unnoetig, hier alle IDs in einem Array abzuspeichern. Eine einzige pthread_t-Variable haette
+gereicht. ;)
 endsnippet
 
 context "c()"
@@ -1032,9 +1032,23 @@ rausgeschrieben werden. Das geht am leichtesten mit pthread_join(3). (-1.0)
 endsnippet
 
 context "c() and mach()"
+snippet mach_output_thread_semaphore "Semaphore statt pthread_join() fuer Ausgabethread"
+Anstatt diese extra Semaphore zu nutzen, haette man auf den Ausgabethread auch mit pthread_join(3)
+warten koennen, da dieser ja nicht detached laufen muss. Das waere etwas einfacher. ;)
+endsnippet
+
+context "c() and mach()"
 snippet mach_run_cmd_error "Fehler beim Ausfuehren nicht ignoriert"
 Laut Aufgabenstellung sollen Fehler beim Ausfuehren (mit "run_cmd") vollstaendig ignoriert werden.
 (-1.0)
+endsnippet
+
+context "c() and mach()"
+snippet mach_run_cmd_out_newline "'\n' bei out von rum_cmd() komisch behandelt"
+Man koennte auch einfach im Ausgabethread beim entsprechenden printf(3)-Aufruf das '\n' im
+Format-String entfernen. Jetzt ist hier naemlich leider das Problem, dass laut run.h auch NULL in
+"output" geschrieben werden darf, was hier nicht abgefangen wird und zu einem Segmentation Fault
+fuehrt. :( (-0.5)
 endsnippet
 
 context "c() and mach()"
