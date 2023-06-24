@@ -106,7 +106,7 @@ let g:polyglot_disabled = ['autoindent', 'latex'] " conflict with vimtex
 Plug 'jackguo380/vim-lsp-cxx-highlight'
 Plug 'mogelbrod/vim-jsonpath'
 
-Plug 'xilefsensei/vim-clang-format'
+Plug 'xi-lef/vim-clang-format'
 let g:clang_format#code_style = 'google'
 let g:clang_format#style_options = {
             \ 'AccessModifierOffset': -4,
@@ -140,7 +140,7 @@ Plug 'bronson/vim-visual-star-search'
 
 Plug 'ntpeters/vim-better-whitespace'
 let g:show_spaces_that_precede_tabs = 1
-Plug 'xilefsensei/vim-sleuth'
+Plug 'xi-lef/vim-sleuth'
 Plug 'Yggdroot/indentLine'
 let g:indentLine_enabled = 0 " Use :IndentLines{Enable,Disable,Toggle}
 
