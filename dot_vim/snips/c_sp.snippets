@@ -1111,6 +1111,13 @@ endsnippet
 
 # creeper {{{
 context "c() and creeper()"
+snippet creeper_arg_check "Argumente nicht optimal geprueft"
+Hier waere es wohl besser, auf so was wie "getNumberOfArguments() == 0" zu pruefen, damit auch bei
+einem Aufruf wie \`./creeper -type=f\` eine sinnvolle Fehlermeldung ausgegeben wird, da das ja auch
+keine wirklich korrekte Verwendung ist. ;)
+endsnippet
+
+context "c() and creeper()"
 snippet creeper_basename "basename() auf Original-String"
 basename(3) kann den Inhalt des uebergebenen Strings veraendern. Daher muss man eine Kopie anlegen,
 wenn man den Inhalt danach nochmal benutzen will. (-1.0)
@@ -1146,6 +1153,14 @@ stat(2) den symbolischen Link quasi dereferenziert (siehe Manpage). (-1.0)
 endsnippet
 
 context "c() and creeper()"
+snippet creeper_maxdepth_magic "magischer Wert fuer unendliche Tiefe verwendet"
+Hiermit gehen halt "nur" "`!p snip.rv = var()`" viele Stufen an Rekursion, und falls es tiefere
+Ordner gibt, werden die nicht mehr betrachtet. Da waere irgendein Spezialwert, der quasi
+"unendlich" bedeutet, deutlich besser, selbst wenn man das dann an (mindestens) einer Stelle
+gesondert behandeln muss.
+endsnippet
+
+context "c() and creeper()"
 snippet creeper_no_arguments "nicht auf keine Argumente geprueft"
 Im Falle von "getNumberOfArguments() == 0" ist es sinnvoll, den Benutzer auf die korrekte
 Verwendung hinzuweisen, damit er weiss, wie die creeper zu verwenden ist. Zur Inspiration kann man
@@ -1164,6 +1179,13 @@ Es ist generell immer eine gute Idee, Benutzereingaben zu pruefen (falls moeglic
 "type"-Option nur zwei gueltige Werte ("d" und "f") existieren, ist es sehr sinnvoll, genau darauf
 zu pruefen. Falls der Benutzer etwas anderes uebergibt, kann man ihm das dann mit einer
 Fehlermeldung mitteilen. :)
+endsnippet
+
+context "c() and creeper()"
+snippet creeper_type_check_first_char "nur erstes Zeichen bei type-Option geprueft"
+Hier wird nur das erste Zeichen geprueft. Wenn der Benutzer z.B. "-type=doof" angibt, wird nur das
+'d' betrachtet, was dann als gueltig gezaehlt wird; aber eigentlich ist das ja ungueltig, und der
+Benutzer sollte auf seine falsche (und doofe) Verwendung hingewiesen werden. ;)
 endsnippet
 # }}}
 
