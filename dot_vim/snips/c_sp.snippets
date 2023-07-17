@@ -297,7 +297,7 @@ endsnippet
 
 context "c()"
 snippet global_unneeded "unnoetig globale Variable"
-Diese Variable ist unnoetig global und koennte genauso gut eine lokale Variable in "${1:func}"
+Diese Variable ist unnoetig global und koennte genauso gut eine lokale Variable in ${1:func}()
 sein. (-0.5)
 endsnippet
 
@@ -571,6 +571,12 @@ passenden Datentypen verwenden; hier wuerde das ja nicht mal den Code komplizier
 endsnippet
 
 context "c()"
+snippet type_too_small "zu kleiner Datentyp"
+"`!p snip.rv = var()`" hat hier einen zu kleinen Wertebereich und reicht deswegen nicht aus; hier
+wird ein "${1:size_t}" benoetigt. (-0.5)
+endsnippet
+
+context "c()"
 snippet unfinished "unfertige Abgabe"
 Schade, dass es nicht fuer die vollstaendige Bearbeitung gereicht hat. Falls es in Zukunft zeitlich
 (oder willensmaessig) besser passt, kann ich auch gerne spaeter noch Feedback zum fertigen Code
@@ -809,7 +815,7 @@ endsnippet
 
 context "c() and halde()"
 snippet halde_function_local_static "keine funktionslokale static Variable"
-Eine *funktionslokale* static Variable waere hier schoener, da das ja nur in "malloc" verwendet
+Eine *funktionslokale* static Variable waere hier schoener, da das ja nur in malloc() verwendet
 wird. ;)
 endsnippet
 
@@ -824,8 +830,26 @@ context "c() and halde()"
 snippet halde_malloc_always_create_mblock "malloc: neuer mblock in jedem Fall erstellt"
 Hinter dem vergebenen Speicherbereich soll zwar prinzipiell ein neuer mblock erzeugt werden, um den
 Rest des Speicherbereichs zu verwalten - falls das aber nicht geht, soll der aktuelle
-"malloc"-Aufruf trotzdem bedient werden (weil ja noch genug Speicher verfuegbar ist). In diesem
+malloc()-Aufruf trotzdem bedient werden (weil ja noch genug Speicher verfuegbar ist). In diesem
 Fall wuerde man dann eben keinen neuen mblock erzeugen, was komplett in Ordnung ist. (-1.0)
+endsnippet
+
+context "c() and halde()"
+snippet halde_malloc_mblock_size_zero "mblock fuer null Bytes erstellt"
+Hier wird ein mblock erstellt, welcher null Bytes an Speicher verwaltet. Das ist sinnlos, weil oben
+schon geprueft wurde, ob null Bytes angefordert wurden, in welchem Fall NULL zurueckgegeben wird.
+Deswegen kann der hier erstellte mblock nie verwendet werden, und der Speicher ist einfach
+permanent verloren. (-1.0)
+endsnippet
+
+context "c() and halde()"
+snippet halde_malloc_memory_mmap_error "memory im mmap()-Fehlerfall nicht auf NULL gesetzt"
+Durch den Fehler bei mmap(2) steht in "memory" jetzt ja der Wert MAP_FAILED. Wenn der Benutzer
+spaeter nochmal malloc(3) aufruft, funktioniert logischerweise der Check auf "memory == NULL" nicht
+mehr, und man wuerde hier weitermachen, was unweigerlich zu einem Segmentation Fault fuehren wird.
+Deswegen waere es hier sehr sinnvoll, "memory" auf NULL zurueckzusetzen, damit der naechste
+malloc(3)-Aufruf "richtig" funktioniert - selbst wenn er dann hoechstwahrscheinlich wieder einfach
+fehlschlagen wird.
 endsnippet
 
 context "c() and halde()"
@@ -836,15 +860,15 @@ wird, dauerhaft verloren. (-1.0)
 endsnippet
 
 context "c() and halde()"
-snippet halde_mblock_memory "mblock->memory nicht genutzt"
+snippet halde_mblock_memory_fam "mblock->memory nicht genutzt"
 Hierfuer gibt es auch den sogenannten Flexible Array Member: "`!p snip.rv = var()`->memory". ;)
 endsnippet
 
 context "c() and halde()"
 snippet halde_realloc_size_min "realloc: zu viel kopiert"
-Hier duerfen maximal "min(size, ptr_mblock->size)" viele Bytes kopiert werden, da sonst ueber den
-verwalteten Speicherplatz hinausgeschrieben wird, wobei die Daten in anderen mblocks ueberschrieben
-werden koennten. (-1.0)
+Hier duerfen maximal "min(size, ${1:ptr_mblock}->size)" viele Bytes kopiert werden, da sonst ueber
+den verwalteten Speicherplatz hinausgeschrieben wird, wobei die Daten in anderen mblocks
+ueberschrieben werden koennten. (-1.0)
 endsnippet
 
 context "c() and halde()"
