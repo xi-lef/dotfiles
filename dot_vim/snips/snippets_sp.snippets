@@ -43,3 +43,11 @@ snippet `!p snip.rv = get_task()[0]`_${2:trigger} "${3:desc}"
 $0
 `echo endsnippet`
 endsnippet
+
+snippet var "snip.rv = var()"
+"\`!p snip.rv = var()\`"
+endsnippet
+
+snippet var_unsure "${1:snip.rv = var()}"
+"\${1:\`!p snip.rv = var()\`}"
+endsnippet
