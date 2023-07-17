@@ -223,6 +223,7 @@ nnoremap <silent> <F7> :set spell!<CR>
 nnoremap <silent> <Space> :nohlsearch<CR>
 nnoremap <silent> <Leader>c :call SPComment()<CR>
 nnoremap <silent> <Leader>C :call SPComment(0)<CR>
+nnoremap <silent> <Leader>S :call SPComment(0) <Bar> :normal! aSchoen. :)<C-O>0<CR>
 nnoremap Y y$
 noremap ' `
 nnoremap p ]p
