@@ -201,10 +201,10 @@ function SPComment(print_arrow = 1)
         return
     endif
 
-    " 'sp-comments' is bugged (or 'featured'?), so we have to limit the column for '^'
-    let target = min([79, virtcol('.')])
-    let arrow = !a:print_arrow ? '' : repeat(' ', target - 4) . '^'
-    let clear = "\<Esc>0\"_Di" " helper-'function' to clear a line
+    " the correct amount of spaces (depending on the cursor ) follow by '^'
+    let arrow = !a:print_arrow ? '' : repeat(' ', virtcol('.') - 4) . '^'
+    " helper-'function' to clear a line
+    let clear = "\<Esc>0\"_Di"
 
     execute 'normal! o' . clear . start . 'K' . arrow . "\<CR>"
                 \ . clear . end . "\<Esc>O" . clear . middle
