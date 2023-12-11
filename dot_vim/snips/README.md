@@ -38,10 +38,10 @@ function SPComment(print_arrow = 1)
         return
     endif
 
-    " 'sp-comments' is bugged (or 'featured'?), so we have to limit the column for '^'
-    let target = min([79, virtcol('.')])
-    let arrow = !a:print_arrow ? '' : repeat(' ', target - 4) . '^'
-    let clear = "\<Esc>0\"_Di" " helper-'function' to clear a line
+    " the correct amount of spaces (depending on the cursor ) follow by '^'
+    let arrow = !a:print_arrow ? '' : repeat(' ', virtcol('.') - 4) . '^'
+    " helper-'function' to clear a line
+    let clear = "\<Esc>0\"_Di"
 
     execute 'normal! o' . clear . start . 'K' . arrow . "\<CR>"
                 \ . clear . end . "\<Esc>O" . clear . middle
@@ -62,6 +62,9 @@ nnoremap <silent> <Leader>C :call SPComment(0)<CR>
 3. Start typing and use `coc`'s auto-completion to find a suitable snippet.
     1. All task-specific snippets start with the task name, so you can, for
        example, type `lilo` and see all snippets applicable to `lilo`.
+         1. For this to work, the folder containing the submissions must contain
+            the exercise name; for example, you need to rename 'aufgabe1-T01' to
+            'aufgabe1-T01-lilo'.
     2. General snippets try to use descriptive names. Take a look at the
        available snippets beforehand to get an idea of the names.
 4. Depending on the snippet, it might prompt you to enter/adjust some custom
@@ -69,3 +72,20 @@ nnoremap <silent> <Leader>C :call SPComment(0)<CR>
 
 Of course, not every possible mistake is covered by a snippet; do not become
 lazy. :)
+
+## Known (Technical) Issues
+
+- you need to open a .c-file before grading Makefiles so the snippets work
+    properly. This is because of Python-code in the C-snippets-file that needs
+    to be loaded, and i couldn't figure out how to share it properly (e.g. in
+    `~/.vim/pythonx`).
+- Makefile-snippets are not pretty, because the first line mustn't contain a '#'
+    at the start, but following lines need to have it. I think this is
+    unavoidable, as Make doesn't have real multineline-comments.
+- `coc-snippets` is supposed to be locked to version 3.0.5 so the `context` of
+    snippets is evaluated for auto-completion. This was removed in later
+    versions, resulting in none of the snippets showing up in the
+    auto-completion. This version-lock sometimes doesn't work: the extension may
+    auto-update itself, and thus needs to be downgraded again (e.g. using
+    `:CocUninstall coc-snippets` and restarting vim to auto-install the correct
+    version)
