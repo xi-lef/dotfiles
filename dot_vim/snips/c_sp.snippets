@@ -1555,15 +1555,25 @@ endsnippet
 context "c() and rush()"
 snippet rush_block_all_signals "unnoetig alle Signale mit sigfillset() blockiert"
 Hier alle Signale zu blockieren ist overkill. Es waere schoener, sich hier zu ueberlegen, welche(s)
-Signal(e) man genau blockieren muss, und dann genau diese (und nicht mehr) blockiert.
+Signal(e) man genau blockieren muss, und dann genau diese(s) (und nicht mehr) blockiert.
+endsnippet
+
+context "c() and rush()"
+snippet rush_fork_child_sigchld_blocked "SIGCHLD bleibt im Kindprozess blockiert"
+SIGCHLD wurde (korrekterweise) vor dem fork(2) blockiert. Der Kindprozess erbt ja aber die
+Signalmaske, und auch nach dem exec(3) bleibt sie unveraendert (siehe Folien 3.4), deswegen muss
+SIGCHLD im Kindprozess explizit deblockiert werden, damit das ausgefuehrte Programm regulaer
+SIGCHLD zugestellt bekommen kann. (-0.5)
 endsnippet
 
 context "c() and rush()"
 snippet rush_fork_sigchld_unblocked "SIGCHLD vor fork() nicht blockiert"
-Vor dem fork(2) muss SIGCHLD blockiert werden. Falls sich der Kindprozess, der hier erzeugt wird,
-beendet, bevor der Elternprozess diesen in die plist eintragen kann, wird hier naemlich ein SIGCHLD
-zugestellt. Das geht dann im Signalhandler kaputt, da dort ja erwartet wird, dass der Kindprozess
-in der plist steht. (-2.0)
+Vor dem fork(2) muss SIGCHLD blockiert werden. Falls sich der hier erzeugte Kindprozess beendet,
+bevor der Elternprozess diesen in die plist eintragen kann, wird hier ja ein SIGCHLD zugestellt:
+das geht dann im Signalhandler kaputt, da dort ja erwartet wird, dass der Kindprozess bereits in
+der plist steht. Und der Kindprozess kann "so schnell" fertig sein, da Eltern- und Kindprozess nach
+dem fork(2) ja unabhaengig voneinander laufen - dadurch kann der Kindprozess natuerlich deutlich
+frueher fertig sein, als der Elternprozess. (-2.0)
 endsnippet
 
 context "c() and rush()"
@@ -1575,19 +1585,32 @@ der Kindprozess, der gerade getoetet werden soll, noch ein Zombie sein kann. (-0
 endsnippet
 
 context "c() and rush()"
-snippet rush_nuke_kill_non_child "kill() moeglicherweise fuer nicht-Kindprozess"
+snippet rush_nuke_argv2 "nuke: argv[2] nicht geprueft"
+Es waere nett, hier noch "argv[2]" zu betrachten, damit man einen ungueltigen Aufruf wie
+"nuke 1234 bla" erkennen kann. ;)
+endsnippet
+
+context "c() and rush()"
+snippet rush_nuke_kill_non_child "nuke: kill() moeglicherweise fuer nicht-Kindprozess"
 Es muss noch geprueft werden, ob der zu toetende Prozess ueberhaupt ein eigener Kindprozess ist.
 Dafuer muss man in der plist mittels "plistGet" nachschauen. (-0.5)
 endsnippet
 
 context "c() and rush()"
-snippet rush_nuke_plist_unsynchronized "ungeschuetzter Zugriff auf plist in nuke()"
+snippet rush_nuke_plist_unsynchronized "nuke: ungeschuetzter Zugriff auf plist"
 Da hier auf der plist gearbeitet wird, muss SIGCHLD blockiert sein. Sonst kann es passieren, dass
 die selbststaendige Terminierung eines zu toetenden Kindprozesses etwas kaputt macht, da in dem
-Fall ja unsynchronisiert auf die plist zugegriffen werden wuerde. (-1.0)
-Auch kann es passieren, dass sich der Kindprozess beendet, und die PID wiederverwendet wird - dann
-wird ein (vermutlich) komplett anderer Prozess faelschlicherweise getoetet. Es muss also bis nach
-dem sleep(3) verhindert werden, dass SIGCHLD zugestellt wird. (-1.0)
+Fall ja unsynchronisiert (durch den Signalhandler) auf die plist zugegriffen werden wuerde. (-1.0)
+Auch kann es passieren, dass sich der Kindprozess (zu einem unguenstigen Zeitpunkt) von selbst
+beendet, und die PID dann wiederverwendet wird - dadurch wird ein (vermutlich) komplett anderer
+Prozess faelschlicherweise getoetet. Es muss also bis nach dem kill(2) verhindert werden, dass
+SIGCHLD zugestellt wird. (-1.0)
+endsnippet
+
+context "c() and rush()"
+snippet rush_nuke_sleep_signals_unblocked "nuke: Signale waehrend sleep() nicht blockiert"
+Waehrend sleep(3) ausgefuehrt wird, muss sichergestellt sein, dass "kein Signal dafuer sorgen kann,
+dass sleep(3) vorzeitig zurueckkehrt" (siehe Aufgabenstellung). (-1.0)
 endsnippet
 
 context "c() and rush()"
@@ -1607,7 +1630,9 @@ context "c() and rush()"
 snippet rush_plist_unsynchronized_access "ungeschuetzter Zugriff auf plist"
 Um hier auf der plist zu arbeiten, muss sichergestellt werden, dass der Signalhandler nicht
 gleichzeitig auf die plist zugreift, da sonst der interne Zustand kaputt gehen kann. Um das zu
-erreichen, muss hier voruebergehend die Zustellung von SIGCHLD blockiert werden. (-2.0)
+erreichen, muss hier voruebergehend die Zustellung von SIGCHLD blockiert werden.
+"This function can be safely used in a signal handler provided it does not overlap any other calls
+to a plist operation." (plist.h bzgl. plistNotifyEvent()). (-2.0)
 endsnippet
 
 context "c() and rush()"
@@ -1625,6 +1650,12 @@ im Kindprozess machen, wo es relevant ist (weil dort der Befehl tatsaechlich aus
 endsnippet
 
 context "c() and rush()"
+snippet rush_redirection_truncate "Verwerfen alter Inhalte bei Ausgabeumleitung fehlt"
+Das alleine erfuellt nicht ganz die Anforderungen der Aufgabenstellung, konkret das
+"alte Inhalte werden dabei komplett verworfen". (-0.5)
+endsnippet
+
+context "c() and rush()"
 snippet rush_sa_mask "sa_mask nicht gesetzt bei SIGCHLD-Handler"
 Hier muss noch der "sa_mask"-Member mittels sigemptyset(3) initialisiert werden. (-0.5)
 endsnippet
@@ -1637,14 +1668,20 @@ Fehler "EINTR" entsprechend behandelt werden, was aber sehr viel komplizierter i
 endsnippet
 
 context "c() and rush()"
-snippet rush_signal_handler_errno "errno im Signalhandler nicht gesichert"
+snippet rush_signal_handler_errno "Signalhandler: errno im nicht gesichert"
 Im Signalhandler muss die errno(3) am Anfang gesichert und am Ende wiederhergestellt werden, wenn
 sie durch den Signalhandler veraendert werden kann. In diesem Fall kann die errno von waitpid(2)
 gesetzt werden. (-0.5)
 endsnippet
 
 context "c() and rush()"
-snippet rush_signal_handler_loop "keine Schleife im Signalhandler"
+snippet rush_sigint_background "SIGINT in Hintergrundprozessen deblockiert"
+Laut Aufgabenstellung soll SIGINT "von Hintergrundprozessen ignoriert und nur von
+Vordergrundprozessen behandelt werden". (-1.0)
+endsnippet
+
+context "c() and rush()"
+snippet rush_signal_handler_loop "Signalhandler: keine Schleife"
 Wenn sich mehrere Kindprozesse gleichzeitig beenden, wird zwar prinzipiell auch mehrmals das
 SIGCHLD zugestellt, aber es wird nur einmal zwischengespeichert - d.h. der Signalhandler wird auch
 nur einmal aufgerufen. Das liegt daran, dass die Signale gleichzeitig kommen koennen, und der
@@ -1655,23 +1692,17 @@ davon ausgehen, dass man nicht ein einzelnes Signal behandelt, sondern zwischen 
 endsnippet
 
 context "c() and rush()"
-snippet rush_signal_handler_stdio "Ausgaben im Signalhandler mit stdio"
+snippet rush_signal_handler_stdio "Signalhandler: Ausgaben mit stdio"
 In einem Signalhandler duerfen nur async-signal-safe Funktionen aufgerufen werden; siehe Manpage
 signal-safety(7). ${1:`!p snip.rv = var()`}(3) ist keine solche Funktion. (-1.0)
 endsnippet
 
 context "c() and rush()"
 snippet rush_sigsuspend_background "sigsuspend() wartet auf Hintergrundprozesse"
-Hier muss sichergestellt werden, dass sigsuspend(3) nicht durch das Beenden eines
+Hier muss sichergestellt werden, dass sigsuspend(2) nicht durch das Beenden eines
 Hintergrundprozesses zurueckkehrt: hier soll ja auf den eben gestarteten Vordergrundprozess
 gewartet werden. Um das zu realisieren, kann eine Variable aehnlich wie im Foliensatz unter 3.2
 verwendet werden. (-2.0)
-endsnippet
-
-context "c() and rush()"
-snippet rush_sleep_signals_unblocked "Signale waehrend sleep() nicht blockiert"
-Waehrend sleep(3) ausgefuehrt wird, muss sichergestellt sein, dass "kein Signal dafuer sorgen kann,
-dass sleep(3) vorzeitig zurueckkehrt" (siehe Aufgabenstellung). (-1.0)
 endsnippet
 # }}}
 
