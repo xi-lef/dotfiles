@@ -17,9 +17,18 @@ endglobal
 # TODO Is there a better way to handle the '#' in the first line? :/
 # General {{{
 context "m()"
-snippet all "all nicht erstes Target"
+snippet all_first "all nicht erstes Target"
 "all" muss das erste Target im Makefile sein (mit Ausnahme von ".PHONY"), da ein Aufruf von
 # "make" in der Kommandozeile standardmaessig das erste Target erstellt. (-0.5)
+endsnippet
+
+context "m()"
+snippet clean_rm_binary "clean loescht nicht das eigentliche Programm"
+Das "clean"-Target muss auch das erzeugte ausfuehrbare Programm (hier: "${1:`!p
+fn = vim.current.window.buffer.name
+ma = re.search(r'aufgabe\d-T\d\d-(\w+)/', fn)
+snip.rv = ma[1] if ma else 'prog'
+`}") loeschen. (-0.5)
 endsnippet
 
 context "m()"
@@ -40,6 +49,19 @@ snippet dependency "Abhaengigkeit fehlt"
 "${1:`!p snip.rv = var_mk()`.h}" fehlt hier als Abhaengigkeit. Generell braucht man alle Dateien,
 # die per include-Direktive mit Anfuehrungszeichen (z.B. "#include "$1"") in einer .c-Datei
 # inkludiert werden, auch als Abhaengigkeit fuer die dazugehoerige .o-Datei im Makefile. (-0.5)
+endsnippet
+
+context "m()"
+snippet dependency_unneeded_pattern_rule "unnoetige Abhaengigkeit durch Pattern-Regel"
+Durch die Pattern-Regel "%.o: %.c" ist die .c-Datei hier schon als Abhaengigkeit enthalten. Die
+# Abhaengigkeiten von den beiden Regeln werden ja kombiniert, deswegen muss man das hier nicht
+# nochmal angeben. ;)
+endsnippet
+
+context "m()"
+snippet dollar< "$<"
+Hier kann man auch "$<" verwenden, was zur ersten Abhaengigkeit expandiert. Dann spart man sich
+# das Abtippen, und kann dort keine Leichtsinnsfehler mehr machen. ;)
 endsnippet
 
 context "m()"
@@ -75,7 +97,13 @@ Laut Aufgabenstellung soll stets auf Zwischenprodukte zurueckgegriffen werden. D
 endsnippet
 
 context "m()"
-snippet pattern "keine Pattern-Regeln"
+snippet makefile_name "Makefile falsch benannt"
+Diese Datei muss exakt "Makefile" heissen, mit grossem "M". Siehe Aufgabenstellung unter
+# "erforderliche Dateien". (-0.5)
+endsnippet
+
+context "m()"
+snippet pattern_rules "keine Pattern-Regeln"
 Hier sollten (so weit moeglich) Pattern-Regeln verwendet werden, z.B. fuer "%.o: %.c".${1: (-1.0)}
 endsnippet
 
@@ -91,6 +119,11 @@ snippet phony_spelling ".PHONY falsch geschrieben"
 Das muss exakt ".PHONY" geschrieben werden, sonst funktioniert das leider nicht. Testen kann man
 # das z.B., indem man die Datei "clean" anlegt ("touch clean"), und danach versucht, "make clean"
 # auszufuehren: "make: 'clean' is up to date.". (-0.5)
+endsnippet
+
+context "m()"
+snippet phony_variable ".PHONY als Variable deklariert"
+.PHONY ist ein Target, keine Variable; das hier muss also ein Doppelpunkt sein. :/ (-0.5)
 endsnippet
 
 context "m()"
