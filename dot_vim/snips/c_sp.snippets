@@ -1223,6 +1223,16 @@ endsnippet
 
 # snail {{{
 context "c() and snail()"
+snippet snail_address_check "Empfaengeradresse falsch geprueft"
+Zu pruefen, ob eine Emailadresse gueltig ist, ist alles andere als trivial. Deswegen sollte man das
+lieber gar nicht machen: wenn die Adresse ungueltig ist, wird sich der Mailserver schon beschweren.
+Und wenn faelschlicherweise gueltige Emailadressen abgelehnt werden, ist das sehr schlecht, weil
+die snail ja dann ihren Zweck nicht mehr erfuellen kann. ${1:Das ist hier leider der Fall. (-1.0)}
+Beispiele fuer unerwartet gueltige Emailadressen findet man z.B. auf
+https://en.wikipedia.org/wiki/Email_address#Valid_email_addresses
+endsnippet
+
+context "c() and snail()"
 snippet snail_ai_addrconfig "kein AI_ADDRCONFIG in Flags"
 Wenn in "ai_flags" das "AI_ADDRCONFIG" fehlt, kann es passieren, dass im spaeteren Verlauf eine
 Verbindungsart gewaehlt wird, die weder vom Kernel noch der Hardware unterstuetzt wird; der Fehler
@@ -1232,7 +1242,21 @@ zu filtern.
 endsnippet
 
 context "c() and snail()"
-snippet snail_dot_missing_CRLF "Zeilenumbruch vor '.' fehlt"
+snippet snail_dot_period_double "Punkt am Anfang einer Zeile nicht verdoppelt"
+Laut Aufgabenstellung (und SMTP-Spezifikation) muss ein Punkt am Anfang einer Zeile verdoppelt
+werden, d.h. dort muessen zwei Punkte uebertragen werden. (-1.0)
+endsnippet
+
+context "c() and snail()"
+snippet snail_dot_period_eof "Mail-Body durch '.' anstatt EOF beendet"
+Laut Aufgabenstellung soll die Textnachricht bis EOF gelesen werden. Danach muss noch ein Punkt in
+einer eigenen Zeile gesendet werden: das ist aber nur ein Detail von SMTP, das man in der snail
+logischerweise implementieren muss. Darum soll sich der Benutzer aber keine Gedanken machen
+muessen; der will ja schliesslich einfach nur eine Email schreiben. (-1.0)
+endsnippet
+
+context "c() and snail()"
+snippet snail_dot_period_missing_CRLF "Zeilenumbruch vor '.' fehlt"
 Die Benutzereingabe muss nicht zwingend mit '\n' (bzw. "\r\n") enden, d.h. hier fehlt eventuell ein
 Zeilenumbruch vor dem '.'. Sonst kann der Server nicht erkennen, dass die Mail vorbei ist. (-1.0)
 endsnippet
@@ -1245,10 +1269,17 @@ vermutlich nicht so beabsichtigt.
 endsnippet
 
 context "c() and snail()"
-snippet snail_expected_status_code "erwarteter Status-Code als int"
+snippet snail_expected_status_code_int "erwarteter Status-Code als int"
 Wenn man den erwarteten Status-Code direkt als String uebergibt, spart man sich die Umwandlung
 zwischen String und Zahl. Dann kann man den eingelesenen Status-Code direkt mittels strcmp(3)
 vergleichen. ;)
+endsnippet
+
+context "c() and snail()"
+snippet snail_fflush_missing "kein fflush() nach Senden einer Nachricht"
+Wenn man eine Nachricht (mit z.B. fprintf(3)) an den Server sendet, wird diese vielleicht erst noch
+lokal gepuffert. Damit diese garantiert beim Server ankommt, muss man fflush(3) verwenden. Erst
+danach kann man eine Antwort vom Server erwarten. (-1.5)
 endsnippet
 
 context "c() and snail()"
@@ -1265,9 +1296,23 @@ einem Hinweis in der Aufgabenstellung. (-3.0)
 endsnippet
 
 context "c() and snail()"
-snippet snail_from_full_name "voller Name im From-Feld fehlt"
+snippet snail_gecos_comma "pw_gecos nicht am Komma getrennt"
+Laut Aufgabenstellung findet sich der volle Name des Benutzers vor dem ersten Komma in "pw_gecos".
+Das muss also noch entsprechend abgeschnitten werden. (-1.5)
+endsnippet
+
+context "c() and snail()"
+snippet snail_gecos_from_full_name "voller Name im From-Feld fehlt"
 Hier soll noch der volle Name des Benutzers gesendet werden, welcher in der passwd-Struktur steht
 (siehe letzter Hinweis in der Aufgabenstellung). (-2.0)
+endsnippet
+
+context "c() and snail()"
+snippet snail_gecos_getpwuid_written "in Speicher von getpwuid() geschrieben"
+Es ist nicht erlaubt, in den von getpwuid(3) zurueckgegebenen Speicher zu schreiben. Stattdessen
+muss eine Kopie der Daten angelegt werden, wenn diese veraendert werden sollen.
+"The application shall not modify the structure to which the return value points, nor any storage
+areas pointed to by pointers within the structure." (Manpage getpwuid(3p)) (-1.0)
 endsnippet
 
 context "c() and snail()"
@@ -1277,16 +1322,16 @@ perror(3) sinnvoller.
 endsnippet
 
 context "c() and snail()"
-snippet snail_gethostname_length "namelen bei gethostname() anders als bei Definition"
-Hier muss der gleiche Wert verwendet werden wie oben bei der Definition von "${1:hostname}". (-0.5)
+snippet snail_getaddrinfo_gai_strerror "kein gai_strerror() benutzt"
+getaddrinfo(3) gibt in den meisten Fehlerfaellen nur einen Fehlercode zurueck, setzt aber die
+errno(3) nicht. Der Fehlercode soll mit gai_strerror(3) in eine schoene Nachricht umgewandelt und
+dann ausgegeben werden. (-0.5)
 endsnippet
 
 context "c() and snail()"
-snippet snail_getpwuid "in Speicher von getpwuid() geschrieben"
-Es ist nicht erlaubt, in den von getpwuid(3) zurueckgegebenen Speicher zu schreiben. Stattdessen
-muss eine Kopie der Daten angelegt werden, wenn diese veraendert werden sollen.
-"The application shall not modify the structure to which the return value points, nor any storage
-areas pointed to by pointers within the structure." (Manpage getpwuid(3p)) (-1.0)
+snippet snail_gethostname_length "namelen bei gethostname() anders als bei Definition"
+Hier muss der gleiche Wert verwendet werden wie oben bei der Definition von "${1:hostname}" (siehe
+Manpage gethostname(3)). (-0.5)
 endsnippet
 
 context "c() and snail()"
@@ -1329,10 +1374,10 @@ endsnippet
 context "c() and snail()"
 snippet snail_socket_exit "exit() bei socket()"
 In diesem Fall sollte das Programm nicht beendet werden. Der Punkt der for-Schleife ist ja, dass
-verschiedene Moeglichkeiten (d.h. verschiedene Arten von Sockets) ausprobiert werden; wenn also
-eine davon nicht funktioniert, soll hier einfach die naechste versucht werden. Nur wenn keine
-einzige Moeglichkeit geklappt hat, muss das Programm tatsaechlich beendet werden, weil natuerlich
-nicht sinnvoll weiter gemacht werden kann. (-1.0)
+verschiedene Verbindungsmoeglichkeiten ausprobiert werden; wenn also eine davon nicht funktioniert,
+soll hier einfach die naechste versucht werden. Nur wenn keine einzige Moeglichkeit geklappt hat,
+muss das Programm tatsaechlich beendet werden, weil natuerlich nicht sinnvoll weiter gemacht werden
+kann. (-1.0)
 endsnippet
 
 context "c() and snail()"
