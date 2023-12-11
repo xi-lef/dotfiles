@@ -1069,7 +1069,9 @@ endsnippet
 
 context "c() and clash()"
 snippet clash_wexitstatus_wifexited "WEXITSTATUS() ohne vorheriges WIFEXITED()"
-"WEXITSTATUS" darf laut der Manpage nur verwendet werden, wenn "WIFEXITED" true zurueckgibt. (-1.0)
+"WEXITSTATUS" darf laut der Manpage nur verwendet werden, wenn "WIFEXITED" true zurueckgibt. Ein
+Prozess kann sich naemlich nicht nur "normal" (d.h. mit exit(3)) beenden, sondern auch "abnormal"
+durch ein Signal, in welchem Falle "WEXITSTATUS" nicht definiert ist. (-0.5)
 endsnippet
 
 context "c() and clash()"
