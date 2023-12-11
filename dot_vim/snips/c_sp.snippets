@@ -90,7 +90,7 @@ snippet argc_check "argc nicht geprueft"
 Es muss noch geprueft werden, ob in "argc" der erwartete Wert steht. Sonst geht ein simpler Aufruf
 wie \`./`!v expand('%:r')`\` kaputt, da einfach auf argv-Eintraege zugegriffen wird, die NULL sind.
 Stattdessen soll in diesem Fall eine Fehlermeldung ausgegeben werden, die sagt, wie man das
-Programm korrekt aufruft (siehe auch Referenzimplementierung). (-0.5)
+Programm korrekt aufruft (siehe auch Referenzimplementierung). (-1.0)
 endsnippet
 
 context "c()"
@@ -102,7 +102,7 @@ endsnippet
 
 context "c()"
 snippet atoi_strtol "atoi() statt strtol()"
-atoi(3) darf nicht  verwendt werden, da man damit keine Fehler abfangen kann: es kann z.B. nicht
+atoi(3) darf nicht verwendet werden, da man damit keine Fehler abfangen kann: es kann z.B. nicht
 unterschieden werden, ob die Eingabe eine 0 war, oder ein Fehler aufgetreten ist. Stattdessen muss
 strtol(3) verwendet werden (siehe auch Korrekturhinweise auf der Webseite). (-2.0)
 endsnippet
@@ -121,9 +121,22 @@ endsnippet
 
 context "c()"
 snippet char_array_sizeof "kein sizeof() fuer char-Array"
-Da "${1:arr}" als "char"-Array definiert ist, kann man hier "sizeof($1)" verwenden. Dadurch muss
-die Groesse nicht explizit doppelt angegeben werden, und es koennen nicht versehentlich
-unterschiedliche Werte genutzt werden. ;)
+Da "${1:`!p snip.rv = var(-3)`}" als "char"-Array definiert ist, kann man hier "sizeof($1)"
+verwenden. Dadurch muss die Groesse nicht explizit doppelt angegeben werden, und es koennen nicht
+versehentlich unterschiedliche Werte genutzt werden. ;)
+endsnippet
+
+context "c()"
+snippet character_wise "nicht zeichenweises Vorgehen"
+Hier waere ein zeichenweises Vorgehen (mit fgetc(3)) deutlich simpler und schoener gewesen. ;)
+endsnippet
+
+context "c()"
+snippet close_fclose_exit "exit() in Fehlerbehandlung von [f]close()"
+Ist es wirklich ein kritischer Fehler, wenn das hier fehlschlaegt? Ich denke naemlich nicht: man
+hat eventuell ein Speicherleck, weil die belegten Ressourcen vielleicht nicht korrekt freigegeben
+werden konnten. Das ist natuerlich nicht toll, aber hindert das Programm an sich auch nicht daran,
+weiterzulaufen. Hier koennte man also durchaus auch von einem exit(3) absehen.
 endsnippet
 
 context "c()"
@@ -148,7 +161,7 @@ snippet dup2_order "falsche Reihenfolge der Argumente fuer dup2()"
 Hier ist die Reihenfolge der Argumente falsch rum. Das zweite Argument ist der Dateideskriptor, der
 zuerst geschlossen wird (quasi mit close(2)), und dann wird der erste Dateideskriptor dupliziert
 (und verwendet den gerade geschlossenen Dateideskriptor wieder). Oder anders formuliert: der zweite
-Dateideskriptor wird auf den ersten Dateideskriptor "umgebogen" (siehe auch Manpage dup2(2)). (-0.5)
+Dateideskriptor wird auf den ersten Dateideskriptor "umgebogen" (siehe auch Manpage dup2(2)). (-1.0)
 endsnippet
 
 context "c()"
@@ -187,19 +200,32 @@ endsnippet
 
 context "c()"
 snippet error_handling_fgetc "Fehlerbehandlung fehlt fuer fgetc()"
-Fehlerbehandlung fgetc(3) fehlt: Pruefen des Rueckgabewerts (-0.5), zwischen feof(3)/ferror(3)
-unterscheiden (-0.5), Ausgabe und Behandlung (-1.0). Siehe auch Korrekturhinweise auf der Webseite.
+Fehlerbehandlung fgetc(3) fehlt:
+Pruefen des Rueckgabewerts (-0.5),
+zwischen feof(3)/ferror(3) unterscheiden (-0.5),
+Ausgabe und Behandlung (-1.0).
+Siehe auch Korrekturhinweise auf der Webseite.
 endsnippet
 
 context "c()"
 snippet error_handling_fgets "Fehlerbehandlung fehlt fuer fgets()"
-Fehlerbehandlung fgets(3) fehlt: Pruefen des Rueckgabewerts (-0.5), zwischen feof(3)/ferror(3)
-unterscheiden (-0.5), Ausgabe und Behandlung (-1.0). Siehe auch Korrekturhinweise auf der Webseite.
+Fehlerbehandlung fgets(3) fehlt:
+Pruefen des Rueckgabewerts (-0.5),
+zwischen feof(3)/ferror(3) unterscheiden (-0.5),
+Ausgabe und Behandlung (-1.0).
+Siehe auch Korrekturhinweise auf der Webseite.
 endsnippet
 
 context "c()"
 snippet error_handling_malloc "Fehlerbehandlung fehlt fuer malloc()"
 Fehlerbehandlung malloc(3) fehlt. (-0.5)
+endsnippet
+
+context "c()"
+snippet error_handling_nice "Fehlerbehandlung waere nett"
+Hier braucht man zwar nicht zwingend eine Fehlerbehandlung, da ein Fehler durch den nachfolgenden
+Code abgefangen werden wuerde. Allerdings waere hier eine Fehlerbehandlung trotzdem nett, damit die
+Fehlermeldung auch akkurat ist.
 endsnippet
 
 context "c()"
@@ -212,8 +238,11 @@ endsnippet
 
 context "c()"
 snippet error_handling_strtol "Fehlerbehandlung fehlt fuer strtol()"
-Fehlerbehandlung strtol(3) fehlt: errno(3) setzen und pruefen (-0.5), "endptr" verwenden und
-pruefen (-0.5), Ausgabe und Behandlung (-1.0). Siehe auch Korrekturhinweise auf der Webseite.
+Fehlerbehandlung strtol(3) fehlt:
+errno(3) setzen und pruefen (-0.5),
+"endptr" verwenden und pruefen (-0.5),
+Ausgabe und Behandlung (-1.0).
+Siehe auch Korrekturhinweise auf der Webseite.
 endsnippet
 
 context "c()"
@@ -300,9 +329,9 @@ context "c()"
 snippet fgetc_type "char als Rueckgabetyp bei [f]getc()"
 [f]getc(3) returnt einen "int", d.h. das muss auch in einem "int" gespeichert werden, damit die
 Fehlerbehandlung (konkret: der Vergleich mit "EOF") korrekt funktionieren kann. EOF ist
-ueblicherweise als -1 definiert; ein "char" ist z.B. ein unsigned 8-Bit Wert, d.h. hat einen
-Wertebereich von [0, 255]. Es ist also nicht moeglich, zwischen -1 und 255 zu unterscheiden,
-da - als 8-Bit Wert betrachtet - beides gleich ist: 0xff. (-1.0)
+ueblicherweise als -1 definiert; ein "char" kann ein unsigned 8-Bit Wert sein, welcher einen
+Wertebereich von [0, 255] hat. Es ist also nicht moeglich, zwischen -1 und 255 zu unterscheiden,
+da - als unsigned 8-Bit Wert betrachtet - beides gleich ist: 0xff. (-1.0)
 endsnippet
 
 context "c()"
@@ -313,11 +342,21 @@ beinhaltet also auch den Platz fuer das '\0'. (Wenn "$1" ein "char"-Array ist, k
 endsnippet
 
 context "c()"
+snippet file_pointer_read_and_write "FILE* zum Lesen und Schreiben benutzt"
+Es gibt durchaus einen Grund, warum in den Folien (1.4) steht, dass man zwei separate FILE*
+verwenden soll, und nicht nur einen: wenn man Lesen *und* Schreiben auf demselben FILE* will, ist
+das umstaendlicher, denn "Reads and writes may be intermixed on read/write streams in any order.
+Note that ANSI C requires that a file positioning function intervene between output and input,
+unless an input operation encounters end-of-file." (Manpage fopen(3)). Und die Funktion fseek(3),
+welche das macht, ist fuer Sockets undefiniert (siehe Manpage socket(7)). (-2.0)
+endsnippet
+
+context "c()"
 snippet format_string_attack "Format-String Angriff moeglich"
-Das ist problematisch, da "${1:`!p snip.rv = var()`}" ein String vom Benutzer ist, aber von printf
-als Format-String interpretiert wird. Wenn der Benutzer hier also z.B. ein "%d" reinschreibt, wird
-das, was als naechstes auf dem Stack liegt, als Dezimalzahl ausgegeben. In solchen Faellen muss
-deswegen immer "%s" als Format-String verwendet werden. (-1.0)
+Das ist problematisch, da "${1:`!p snip.rv = var()`}" ein String vom ${2:Benutzer} ist, aber von
+printf(3) als Format-String interpretiert wird. Wenn der $2 hier also z.B. ein "%d" reinschreibt,
+wird das, was als naechstes auf dem Stack liegt, als Dezimalzahl ausgegeben. In solchen Faellen
+muss deswegen immer "%s" als Format-String verwendet werden. (-1.0)
 endsnippet
 
 context "c()"
@@ -348,6 +387,13 @@ Das muss mit freeaddrinfo(3) wieder freigegeben werden. (-1.0)
 endsnippet
 
 context "c()"
+snippet frees_at_end "viele/alle Ressourcen ganz am Ende freigegeben"
+Grundsaetzlich ist es schoener, Ressourcen so frueh wie moeglich freizugeben, also (normalerweise)
+nach der letzten Benutzung. Dadurch stehen die Ressourcen theoretisch wieder frueher fuer andere
+Zwecke zur Verfuegung, und - viel wichtiger - das Programm wird deutlich uebersichtlicher.
+endsnippet
+
+context "c()"
 snippet global_init "unnoetige Initialisierung von globaler Variable"
 (Modul-)globale Variablen werden standardmaessig mit 0 (bzw. NULL fuer Pointer) initialisiert. Das
 muss man hier also nicht explizit machen. ;)
@@ -357,6 +403,20 @@ context "c()"
 snippet global_unneeded "unnoetig globale Variable"
 Diese Variable ist unnoetig global und koennte genauso gut eine lokale Variable in ${1:func}()
 sein. (-0.5)
+endsnippet
+
+context "c()"
+snippet header_implementation_include "eigener Header nicht in Implementierung inkludiert"
+Hier muss noch der Header "`!p
+fn = vim.current.window.buffer.name # absolute path
+# split at '-' for e.g. connection-fork.h; should be correct for everything in SP.
+snip.rv = fn.split('/')[-1].split('.')[0].split('-')[0] + '.h'
+`" inkludiert werden.
+Die dort spezifizierte Schnittstelle wird ja in diesem Modul implementiert, deswegen will man den
+Header auch inkludieren, um sicherzugehen, dass man sich an die Schnittstelle haelt (und nicht
+versehentlich z.B. bei einem Parameter den falschen Typen verwendet). Wenn die Schnittstelle (d.h.
+der Header) geaendert wird, bekommt man das dann naemlich auch gleich vom Compiler gesagt, und man
+kann seine Implementierung direkt entsprechend aktualisieren. (-0.5)
 endsnippet
 
 context "c()"
@@ -409,6 +469,13 @@ Tastenfolge "gg=G" (im "Normal mode") druecken, um die aktuelle Datei korrekt ei
 endsnippet
 
 context "c()"
+snippet length_arbitrary_restriction "willkuerliche Beschraenkung der Laenge eines Puffers"
+Hier kann nicht eine willkuerliche Annahme ueber die maximale Laenge ${1:einer Nachricht} getroffen
+werden. So was ist grundsaetzlich immer falsch, so lange es kein fest definiertes Limit gibt; das
+ist hier aber nicht der Fall. (-1.0)
+endsnippet
+
+context "c()"
 snippet library_errno_overwritten "errno in Bibliotheksfunktion unnoetig gesetzt"
 Wieso wird die errno hier nochmal explizit gesetzt? Das wird doch schon von ${1:malloc(3)} gemacht,
 wenn es fehlschlaegt, und die Funktion wird wohl besser wissen, was genau schief gegangen ist.
@@ -429,6 +496,12 @@ snippet linux_header "Inkludieren eines Linux-Headers"
 Einen Linux-Header zu inkludieren ist in SP quasi immer falsch, da man portabel zu der
 POSIX-Schnittstelle programmieren soll. Wenn man so einen Header braucht, sollte man (in SP) seinen
 Ansatz nochmal ueberdenken.
+endsnippet
+
+context "c()"
+snippet macro "Makro anstatt C"
+Warum ist das hier als Makro definiert? Das koennte man genauso gut in C umsetzen, was quasi immer
+zu bevorzugen ist gegenueber Makros, v.a. weil es in C schoener/lesbarer ist.
 endsnippet
 
 context "c()"
@@ -472,13 +545,14 @@ endsnippet
 
 context "c()"
 snippet pid_t_assumed_int "Annahme, dass ein pid_t ein int ist"
-Ein pid_t ist nicht unbedingt ein int. So weit ich das sehe, ist laut POSIX lediglich gegeben, dass
-ein pid_t signed und maximal ein long ist; siehe Manpage system_data_types(7).
-Ein Weg das hier zu pruefen, waere, den Wert von strtol(3) auf einen pid_t zu casten, und dann die
-beiden Werte (also den long und den pid_t) zu vergleichen. Wenn sie ungleich sind, wurde der Wert
-wohl abgeschnitten, und man sollte besser nicht weitermachen. Leider ist das Verhalten bei einem
-Cast in einen "kleineren" Datentypen aber Implementation-defined: es ist leider nicht garantiert,
-dass das so funktioniert.
+Ein "pid_t" ist nicht unbedingt ein "int". So weit ich das sehe, ist laut POSIX lediglich gegeben,
+dass ein "pid_t" signed und maximal ein "long" ist; siehe Manpage sys_types.h(7). Leider gibt es
+kein "PID_MIN"/"PID_MAX", mit dem man den Wertebereich direkt pruefen kann.
+Ein (nicht ganz perfekter) Weg das hier zu pruefen, waere, den Wert von strtol(3) auf einen "pid_t"
+zu casten, und dann die beiden Werte (also den "long" und den "pid_t") zu vergleichen. Wenn sie
+ungleich sind, wurde der Wert wohl abgeschnitten, und man sollte besser nicht weitermachen. Leider
+ist das Verhalten bei einem Cast in einen "kleineren" Datentypen aber Implementation-defined: es
+ist leider nicht garantiert, dass das so funktioniert.
 endsnippet
 
 context "c()"
