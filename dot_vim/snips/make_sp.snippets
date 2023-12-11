@@ -23,23 +23,16 @@ snippet all "all nicht erstes Target"
 endsnippet
 
 context "m()"
-snippet automatic_variables "automatische Variablen nicht genutzt"
-Hier waere es besser, automatische Variablen zu nutzen. Das beinhaltet "$@" fuer den Namen des
-# Targets, oder "$^" bzw. "$<" fuer alle bzw. die erste Abhaengigkeit. Dadurch tippt man das alles
-# nicht doppelt, was immer eine gute Idee ist. ;)
+snippet clean_rm_dependency "rm als Abhaengigkeit anstatt Befehlszeile"
+Hinter dem Doppelpunkt stehen die Abhaengigkeiten, aber der "rm"-Befehl soll ja die Befehlszeile
+# sein, die fuer das "clean"-Target ausgefuehrt wird. Dementsprechend muss das in der naechsten
+# Zeile stehen, und die Abhaengigkeiten muessen logischerweise leer sein. (-0.5)
 endsnippet
 
 context "m()"
 snippet clean_rm_intermediate_objects "clean loescht nicht alle Zwischenprodukte"
 Das "clean"-Target muss auch alle Zwischenprodukte (d.h. alle erzeugten .o-Dateien) loeschen.
 # (-0.5)
-endsnippet
-
-context "m()"
-snippet clean_rm_dependency "rm als Abhaengigkeit anstatt Befehlszeile"
-Hinter dem Doppelpunkt stehen die Abhaengigkeiten, aber der "rm"-Befehl soll ja die Befehlszeile
-# sein, die fuer das "clean"-Target ausgefuehrt wird. Dementsprechend muss das in der naechsten
-# Zeile stehen, und die Abhaengigkeiten muessen logischerweise leer sein. (-0.5)
 endsnippet
 
 context "m()"
@@ -59,6 +52,13 @@ context "m()"
 snippet dollar@ "$@"
 Hier kann man auch "$@" verwenden, was zum Namen des Targets expandiert. Das spart ein bisschen
 # Tipparbeit. ;)
+endsnippet
+
+context "m()"
+snippet dollar_automatic_vars "automatische Variablen nicht genutzt"
+Hier waere es besser, automatische Variablen zu nutzen. Das beinhaltet "$@" fuer den Namen des
+# Targets, oder "$^" bzw. "$<" fuer alle bzw. die erste Abhaengigkeit. Dadurch tippt man das alles
+# nicht doppelt, was immer eine gute Idee ist. ;)
 endsnippet
 
 context "m()"
