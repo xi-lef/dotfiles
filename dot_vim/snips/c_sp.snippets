@@ -48,15 +48,22 @@ def var(x_offset = 0, re_start = re_start):
     line = w.buffer[y_arrow - 1]
     # Replace tabs with the appropriate amount of spaces so the x-position is correct.
     line = line.replace('\t', ' ' * vim.current.buffer.options['tabstop'])
-    # Search for the first invalid character to the left of the '^' to find the beginning of the
-    # variable name.
-    m = re.search(r'\W', line[x_arrow :: -1])
-    offset = 0 if not m else max(0, m.start(0) - 1)
 
-    m = re.search(r'\w+', line[x_arrow - offset :])
+    def search(pos):
+        # First, search for the first invalid character to the left of the '^' to find
+        # the beginning of the variable name. This is either a non-word character or the
+        # end of the string (i.e. line), in case there is a word at the start of a line
+        # without any whitespace.
+        m = re.search(r'\W|$', line[pos :: -1])
+        offset = 0 if not m else max(0, m.start(0) - 1)
+
+        # Then, search for valid characters to find the actual full word.
+        return re.search(r'\w+', line[pos - offset :]), offset
+
+    m, offset = search(x_arrow)
     if x_offset:
         # Search again, this time starting at the position of the match offset by "x_offset".
-        m = re.search(r'\w+', line[x_arrow - offset + m.start(0) + x_offset :])
+        m, _ = search(x_arrow - offset + m.start(0) + x_offset)
     return m[0] if m else 'var'
 endglobal
 # }}}
