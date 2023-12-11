@@ -213,11 +213,7 @@ endfunction
 " }}}
 
 " Mappings {{{
-" Set colors
-nnoremap <silent> <F2> :let &background = (&background == 'dark' ? 'light' : 'dark')<CR>
-tnoremap <silent> <F2> <C-W>:let &background = (&background == 'dark' ? 'light' : 'dark')<CR>
-
-" Miscellaneous
+" Miscellaneous {{{
 nnoremap <silent> <F5> :source $MYVIMRC<CR>:redraw!<CR>
 nnoremap <silent> <F7> :set spell!<CR>
 nnoremap <silent> <Space> :nohlsearch<CR>
@@ -228,30 +224,36 @@ nnoremap Y y$
 noremap ' `
 nnoremap p ]p
 nnoremap P [p
+inoremap <C-C> <Esc>
+
+" Open terminal in various ways
+nmap <silent> <C-W>t :vertical term<CR>
+tmap <silent> <C-W>t <C-W>:vertical term<CR>
+nmap <silent> <C-W><C-T> :term ++curwin<CR>
+
+" Set colors
+nnoremap <silent> <F2> :let &background = (&background == 'dark' ? 'light' : 'dark')<CR>
+tnoremap <silent> <F2> <C-W>:let &background = (&background == 'dark' ? 'light' : 'dark')<CR>
 
 " 'Competitive Programming'
 nnoremap <F9> :write <Bar> !g++ -O3 -o %:r %<CR>
+" }}}
 
 " Movements {{{
 " Use map instead of noremap for vim-smoothie
 map <C-S> <C-U>
 map <C-Q> <C-Y>
 
-imap <C-J> <C-O>j
-imap <C-K> <C-O>k
-inoremap <C-L> <Right>
-inoremap <C-C> <Esc>
+inoremap <C-J> <C-O>j
+inoremap <C-K> <C-O>k
+noremap! <A-F> <C-O>w
+noremap! <A-B> <C-O>b
 
 noremap j gj
 ounmap j
 noremap k gk
 ounmap k
 " }}}
-
-" Open terminal in various ways
-nmap <silent> <C-W>t :vertical term<CR>
-tmap <silent> <C-W>t <C-W>:vertical term<CR>
-nmap <silent> <C-W><C-T> :term ++curwin<CR>
 
 " Tabs {{{
 " Open new, empty tab
