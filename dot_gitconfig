@@ -30,3 +30,5 @@
     ri = rebase --interactive
     rc = rebase --continue
     st = stash
+[push]
+    autoSetupRemote = true
