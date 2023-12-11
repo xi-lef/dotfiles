@@ -1391,6 +1391,11 @@ endsnippet
 # sister {{{
 # sister.c {{{
 context "c() and sister('sister.c')"
+snippet sister_accept_continue "kein continue bei accept-Fehler"
+Hier fehlt noch ein "continue", damit "handleConnection" nicht aufgerufen wird. (-0.5)
+endsnippet
+
+context "c() and sister('sister.c')"
 snippet sister_accept_exit "exit() bei accept"
 In diesem Fall sollte das Programm nicht beendet werden, nur weil die Verbindung nicht hergestellt
 werden konnte. Der Server kann in dieser Situation durchaus weiter laufen, denn mindestens die
@@ -1400,6 +1405,11 @@ after accept() and treat them like EAGAIN by retrying. In the case of TCP/IP, th
 EPROTO, ENOPROTOOPT, EHOSTDOWN, ENONET, EHOSTUNREACH, EOPNOTSUPP, and ENETUNREACH." (Manpage
 accept(2))
 Die Fehlermeldung kann ja trotzdem mit perror() ausgeben werden. (-0.5)
+endsnippet
+
+context "c() and sister('sister.c')"
+snippet sister_close_client_socket "close(client_socket)"
+Das ist die Verantwortung von handleConnection(), siehe connection.h. (-0.5)
 endsnippet
 
 context "c() and sister('sister.c')"
@@ -1437,6 +1447,26 @@ Prozesse, die auf dem gleichen Socket auf Anfragen warten. (-1.0)
 endsnippet
 
 context "c() and sister('connection-fork.c')"
+snippet sister_close_clientSock "kein close() auf clientSock im Elternprozess"
+Im Elternprozess muss noch "clientSock" geschlossen werden, da dieser beim fork(2) auch dupliziert
+wurde (siehe auch Foliensatz zur rush, 3.5). Damit am Ende keine Ressourcen geleakt werden, muss er
+hier geschlossen werden, sobald er nicht mehr gebraucht wird (was eigentlich sofort ist). Das steht
+auch indirekt in connection.h. (-0.5)
+endsnippet
+
+context "c() and sister('connection-fork.c')"
+snippet sister_close_clientSock_fork "kein close() auf clientSock im fork()-Fehlerfall"
+Auch hier muss noch "clientSock" geschlossen werden, sonst passiert das ja nie. (-0.5)
+endsnippet
+
+context "c() and sister('connection-fork.c')"
+snippet sister_close_listenSock "kein close() auf listenSock im Kindprozess"
+Im Kind muss noch "listenSock" geschlossen werden, da dieser beim fork(2) auch dupliziert wurde
+(siehe auch Foliensatz zur rush, 3.5). Das steht uebrigens auch in connection.h explizit drin. ;)
+(-0.5)
+endsnippet
+
+context "c() and sister('connection-fork.c')"
 snippet sister_fork_exit "exit() bei fork()"
 fork(2) kann auch aufgrund von Ressourcen-Knappheit scheitern, was im spaeteren Verlauf wieder
 gelingen kann. Zum Beispiel kann es sein, dass gerade sehr viele Kinder existieren, und erst
@@ -1445,18 +1475,10 @@ Deshalb sollte hier im Fehlerfall das Programm nicht beendet werden. (-0.5)
 endsnippet
 
 context "c() and sister('connection-fork.c')"
-snippet sister_clientSock_close "kein close() auf clientSock im Elternprozess"
-Im Elternprozess muss noch "clientSock" geschlossen werden, da dieser beim fork(2) auch dupliziert
-wurde (siehe auch Foliensatz zur rush, 3.5). Damit am Ende keine Ressourcen geleakt werden, muss er
-hier geschlossen werden, sobald er nicht mehr gebraucht wird (was eigentlich sofort ist). Das steht
-auch indirekt in connection.h. (-0.5)
-endsnippet
-
-context "c() and sister('connection-fork.c')"
-snippet sister_listenSock_close "kein close() auf listenSock im Kindprozess"
-Im Kind muss noch "listenSock" geschlossen werden, da dieser beim fork(2) auch dupliziert wurde
-(siehe auch Foliensatz zur rush, 3.5). Das steht uebrigens auch in connection.h explizit drin. ;)
-(-0.5)
+snippet sister_signal_init_handleConnection "Signal-Behandlung in handleConnection() eingerichtet"
+Die Signal-Behandlung mittels sigaction(2) einzurichten muss man nur einmal machen, da sie sich
+danach ja nicht wieder von selbst aendert. Genau dafuer ist initConnectionHandler() gedacht, das
+sollte man also dort machen. ;)
 endsnippet
 # }}}
 
@@ -1465,7 +1487,7 @@ context "c() and sister('request-http.c')"
 snippet sister_exit "exit() statt return"
 Hier exit(3) aufzurufen ist keine gute Idee, da sich dadurch (wenn das connection-Modul ohne die
 Erzeugung von Kindprozessen implementiert ist) womoeglich der ganze Server beendet. Und die Module
-sollen ja unabhaengig voneinander korrekt sein. (-1.0)
+sollen ja unabhaengig voneinander korrekt sein. (-0.5)
 endsnippet
 
 context "c() and (sister('request-http.c') or mother('request-httpx.c'))"
@@ -1491,9 +1513,9 @@ endsnippet
 
 context "c() and (sister('request-http.c') or mother('request-httpx.c'))"
 snippet sister_mother_multiple_answers "mehrere http*()-Aufrufe"
-Es wurde bereits eine Antwort mit "${2:httpOk}" gesendet. Hier nochmal eine (andere) Antwort zu
+Es wurde bereits eine Antwort mit "${2:httpOK}" gesendet. Hier nochmal eine (andere) Antwort zu
 schicken ist schlecht, da der Browser das nicht erwartet und dementsprechend kaputt anzeigt.
-${1:(-0.5)}
+${1:Hier waere das sogar leicht vermeidbar, indem man das "httpOK" erst spaeter sendet. (-0.5)}
 endsnippet
 
 context "c() and (sister('request-http.c') or mother('request-httpx.c'))"
@@ -1513,7 +1535,7 @@ endsnippet
 context "c() and (sister('request-http.c') or mother('request-httpx.c'))"
 snippet sister_mother_token_null_check "Token nicht auf NULL geprueft vor Verwendung"
 Die Tokens muessen noch auf NULL geprueft werden, bevor sie (z.B. mit strcmp(3)) verwendet werden.
-Sonst kann das schnell zu einem Segmentation Fault fuehren. (-0.5)
+Sonst kann das schnell zu einem Segmentation Fault fuehren. (-${1|0.5,1.0|})
 endsnippet
 
 context "c() and sister('request-http.c')"
