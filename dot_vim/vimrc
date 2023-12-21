@@ -227,9 +227,9 @@ nnoremap P [p
 inoremap <C-C> <Esc>
 
 " Open terminal in various ways
-nmap <silent> <C-W>t :vertical term<CR>
-tmap <silent> <C-W>t <C-W>:vertical term<CR>
-nmap <silent> <C-W><C-T> :term ++curwin<CR>
+nmap <silent> <C-W>t :vertical terminal<CR>
+tmap <silent> <C-W>t <C-W>:vertical terminal<CR>
+nmap <silent> <C-W><C-T> :terminal ++curwin<CR>
 
 " Set colors
 nnoremap <silent> <F2> :let &background = (&background == 'dark' ? 'light' : 'dark')<CR>
@@ -246,8 +246,8 @@ map <C-Q> <C-Y>
 
 inoremap <C-J> <C-O>j
 inoremap <C-K> <C-O>k
-noremap! <A-F> <C-O>w
-noremap! <A-B> <C-O>b
+noremap! <A-f> <C-O>w
+noremap! <A-b> <C-O>b
 
 noremap j gj
 ounmap j
