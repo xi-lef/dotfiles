@@ -176,7 +176,16 @@ context "c()"
 snippet errno_overwritten "errno durch Funktionsaufruf ueberschrieben"
 Durch diesen Funktionsaufruf wird potentiell die errno ueberschrieben, wodurch perror(3) danach
 eine falsche Fehlermeldung ausgeben koennte. Korrekt waere hier, die errno zu sichern, und nach dem
-Funktionsaufruf wiederherzustellen.${1: (-0.5)}
+Funktionsaufruf wiederherzustellen.
+endsnippet
+
+context "c()"
+snippet errno_overwritten_intentionally_library "errno in Bibliotheksfunktion unnoetig gesetzt"
+Wieso wird die errno hier nochmal explizit gesetzt? Das wird doch schon von ${1:malloc(3)} gemacht,
+wenn es fehlschlaegt, und die Funktion wird wohl besser wissen, was genau schief gegangen ist.
+Stattdessen wird der Wert ueberschrieben, wodurch die Information, was wirklich schief gegangen
+ist, verloren geht (bzw. verloren gehen kann, falls es ein anderer Fehler war).
+${2:Hier wird die errno sogar auf einen sinnlosen Wert gesetzt, was sehr schlecht ist. (-0.5)}
 endsnippet
 
 context "c()"
@@ -191,6 +200,14 @@ snippet errno_undefined "errno im (potentiellen) Erfolgsfall verwendet"
 Wenn eine Bibliotheksfunktion erfolgreich war, ist der Wert der errno undefiniert (siehe auch
 Manpage errno(3)). Hier darf also nicht der Wert der errno zur Fehlerbehandlung verwendet werden;
 stattdessen muss der Rueckgabewert von "${1:func(3)}" genutzt werden. (-0.5)
+endsnippet
+
+context "c()"
+snippet errno_saved_unnecessarily "errno unnoetigerweise gesichert und wiederhergestellt"
+"The value in errno is significant only when the return value of the call indicated an error (i.e.,
+-1 from most system calls; -1 or NULL from most  library  functions); a function that succeeds is
+allowed to change errno." (Manpage errno(3)) Deswegen ist es hier nicht notwendig, die errno zu
+sichern.
 endsnippet
 
 context "c()"
@@ -476,15 +493,6 @@ ist hier aber nicht der Fall. (-1.0)
 endsnippet
 
 context "c()"
-snippet library_errno_overwritten "errno in Bibliotheksfunktion unnoetig gesetzt"
-Wieso wird die errno hier nochmal explizit gesetzt? Das wird doch schon von ${1:malloc(3)} gemacht,
-wenn es fehlschlaegt, und die Funktion wird wohl besser wissen, was genau schief gegangen ist.
-Stattdessen wird der Wert ueberschrieben, wodurch die Information, was wirklich schief gegangen
-ist, verloren geht (bzw. gehen kann, falls es ein anderer Fehler war).
-${2:Hier wird die errno sogar auf einen sinnlosen Wert gesetzt, was sehr schlecht ist. (-0.5)}
-endsnippet
-
-context "c()"
 snippet library_perror_exit "perror() oder exit() in Bibliotheksfunktion"
 Diese Funktion ist als Bibliotheksfunktion zu betrachten, deswegen duerfen hier weder Ausgaben
 gemacht noch exit(3) verwendet werden. Die Ausgabe einer Fehlermeldung bzw. das Beenden des
@@ -705,6 +713,11 @@ sollte man eher Fehlerfaelle explizit abfangen, und dort dann ein fruehzeitiges 
 "continue", "break", oder exit(3) (je nachdem, was zutrifft) machen. Dann braucht man naemlich den
 darauf folgenden Erfolgsfall nicht in ein "else" zu stecken, und hat nicht so tiefe
 Verschachtelung, was alles uebersichtlicher macht.
+endsnippet
+
+context "c()"
+snippet unsigned_less_than_zero "unsigned Wert auf kleiner 0 geprueft"
+Ein "${1:size_t}" ist unsigned (d.h. vorzeichenlos), und kann damit niemals kleiner als 0 sein. ;)
 endsnippet
 
 context "c()"
@@ -1723,6 +1736,8 @@ snippet rush_redirection_parent "Ein-/Ausgabeumleitung im Elternprozess"
 Die Umleitung der Ein-/Ausgabe im Elternprozess zu machen ergibt keinen Sinn. Warum nicht einfach
 im Kindprozess machen, wo es relevant ist (weil dort der Befehl tatsaechlich ausgefuehrt wird)?
 (-1.0)
+Da hier in den Fehlerfaellen exit(3) benutzt wird, ist das leider sehr schlecht, weil sich dann die
+ganze Shell beendet, und nicht nur der Kindprozess. Das darf natuerlich nicht sein. (-1.0)
 endsnippet
 
 context "c() and rush()"
@@ -1792,9 +1807,18 @@ passieren, wenn die aufgerufene Funktion erfolgreich war.
 endsnippet
 
 context "c() and jbuffer()"
-snippet jbuffer_NULL_check "Vergleich mit NULL fehlt fuer Argument"
+snippet jbuffer_null_check "Vergleich mit NULL fehlt fuer Argument"
 "`!p snip.rv = var()`" muss hier noch auf NULL geprueft werden, in welchem Fall die Funktion
 gar nichts machen soll. (-0.5)
+endsnippet
+
+context "c() and jbuffer()"
+snippet jbuffer_null_return "return bei NULL-Argument"
+Das ist nicht so spezifiziert, und hier ist ein Segmentation Fault eigentlich immer sinnvoller:
+dadurch merkt der Benutzer immerhin, dass er etwas falsch macht. So ein stilles Fehlschlagen bzw.
+Nichtstun ist nicht so schlau, da ${1:bbPut}() ja erwartungsgemaess auch blockieren kann. Und der
+Benutzer wuerde wahrscheinlich eh einfach davon ausgehen, dass $1() erfolgreich war, da ja kein
+Fehler ueber den Rueckgabewert mitgeteilt werden kann.
 endsnippet
 
 # jbuffer.c {{{
@@ -1830,6 +1854,15 @@ der Besprechungsuebung gezeigt wird (Kapitel 7.1). (-1.0)
 endsnippet
 
 context "c() and jbuffer('jbuffer.c')"
+snippet jbuffer_CAS_local_variable "CAS auf lokaler Variable"
+Was soll der Sinn von einem CAS auf einer lokalen Variable sein? Kein anderer Thread hat Zugriff
+auf diese lokale Variable (offensichtlich), deswegen wird auch das CAS nie fehlschlagen. Dadurch
+gibt es hier dann auch keine Synchronisation: auf den eigentlichen Leseindex wird dann ja trotzdem
+einfach unsynchronisiert nach der while-Schleife zugegriffen, was nicht der Sinn der Sache ist.
+(-2.0)
+endsnippet
+
+context "c() and jbuffer('jbuffer.c')"
 snippet jbuffer_fam "kein FAM verwendet"
 Hier kann man auch einen Flexible Array Member (siehe halde) verwenden. ;)
 endsnippet
@@ -1841,12 +1874,9 @@ allocated by then." (-1.0)
 endsnippet
 
 context "c() and jbuffer('jbuffer.c')"
-snippet jbuffer_int "int statt size_t fuer Leseindex (und Kopie davon)"
-"`!p snip.rv = var()`" und der Leseindex ("bb->${1:read}") sind "int"s. Das ist problematisch, da
-"`!p snip.rv = var()` + 1" bereits ausserhalb des gueltigen Wertebereichs (d.h. groesser als
-"INT_MAX") sein kann - naemlich genau dann, wenn "bb->${2:size}" exakt "INT_MAX" betraegt. Um
-dieses Problem zu loesen, muessen sowohl "`!p snip.rv = var()`" als auch "bb->$1" vom Typ "size_t"
-sein. (-1.0)
+snippet jbuffer_put_sync_producer "bbPut() unnoetigerweise synchronisiert"
+Laut Aufgabenstellung gibt es nur einen einzelnen Produzenten-Thread, weswegen bbPut() nicht extra
+synchronisiert werden muss.
 endsnippet
 
 context "c() and jbuffer('jbuffer.c')"
@@ -1856,27 +1886,34 @@ der Wert abgeschnitten, da "semCreate" ja nur einen "int" als Parameter nimmt. E
 diesbezueglich sollte immer dann erfolgen, wenn man in einen kleineren Datentypen umwandelt, was
 hier implizit passiert. (-0.5)
 endsnippet
+
+context "c() and jbuffer('jbuffer.c')"
+snippet jbuffer_size_errno "errno nicht gesetzt bei Pruefung auf size > INT_MAX"
+Hier waere es nett, noch die errno zu setzen, damit der Aufrufer genauer weiss, was schief gegangen
+ist. Dafuer bietet sich hier "EINVAL" an. ;)
+endsnippet
 # }}}
 
 # sem.c {{{
 context "c() and jbuffer('sem.c')"
+snippet jbuffer_counter_decrement_early "Zaehlervariable vor der Schleife dekrementiert"
+Hier schon die Zaehlervariable runterzuzaehlen funktioniert nicht: wenn eine Semaphore mit 0
+initialisiert wurde und dann drei Threads P() aufrufen, wird der Zaehler bei -3 sein. Wenn dann ein
+Thread V() aufruft, wird keiner dieser wartenden Threads weitermachen, da der Zaehler ja immer noch
+kleiner als 0 ist. Aber es sollte ja genau ein Thread weitermachen, da einmal V() aufgerufen wurde.
+(-1.0)
+endsnippet
+
+context "c() and jbuffer('sem.c')"
+snippet jbuffer_counter_negative "Negative Zaehlervariable nicht beruecksichtigt"
+Eine Semaphore kann auch mit einem negativen Wert initialisiert werden, je nach Anwendungsfall.
+Das wird hier nicht beruecksichtigt. (-1.0)
+endsnippet
+
+context "c() and jbuffer('sem.c')"
 snippet jbuffer_free "Belegte Ressourcen im Fehlerfall nicht freigegeben"
 "If an error occurs during the initialization, the implementation frees all resources already
 allocated by then and sets @c errno to an appropriate value." (-1.0)
-endsnippet
-
-context "c() and jbuffer('sem.c')"
-snippet jbuffer_negative_counter "Negativer Counter nicht beruecksichtigt"
-Eine Semaphore kann auch mit einem negativen Wert initialisiert werden, um Signalisierung zu
-implementieren. Das wird hier nicht beruecksichtigt. (-1.0)
-endsnippet
-
-context "c() and jbuffer('sem.c')"
-snippet jbuffer_p_null_return "return bei NULL-Argument in P() bzw. V()"
-Das ist nicht so spezifiziert, und in vielen Faellen ist hier ein Segmentation Fault wahrscheinlich
-wirklich sinnvoller: dadurch merkt der Benutzer immerhin, dass er etwas falsch macht. So ein
-stilles Fehlschlagen bzw. Nichtstun ist nicht so schlau, da ${1:P}() ja erwartungsgemaess auch
-blockieren kann.
 endsnippet
 
 context "c() and jbuffer('sem.c')"
@@ -1889,11 +1926,23 @@ endsnippet
 
 context "c() and jbuffer('sem.c')"
 snippet jbuffer_signal_after_unlock "signal()/broadcast() ausserhalb des kritischen Abschnitts"
-Das `!p snip.rv = var()`(3) muss noch innerhalb des kritischen Abschnitts erfolgen, da man sonst
-Probleme bzgl. Race Conditions bekommen kann. "Thus, if all threads always acquire the mutex before
-signaling the condition, this guarantees that the condition cannot be signaled (and thus ignored)
-between the time a thread locks the mutex and the time it waits on the condition variable."
-(Manpage `!p snip.rv = var()`(3)) (-1.0)
+Grundsaetzlich kann es ein Problem darstellen, falls das `!p snip.rv = var()`(3) ausserhalb des
+kritischen Abschnitts erfolgt: "Thus, if all threads always acquire the mutex before signaling the
+condition, this guarantees that the condition cannot be signaled (and thus ignored) between the
+time a thread locks the mutex and the time it waits on the condition variable." (Manpage `!p
+snip.rv = var()`(3)) Das ist hier zwar aufgrund der Zaehlervariable kein Problem, aber sollte man
+im Allgemeinen im Hinterkopf behalten.
+endsnippet
+
+context "c() and jbuffer('sem.c')"
+snippet jbuffer_signal_edge_case "signal() statt broadcast() und nur bei counter == 0"
+In dieser Konstellation ist pthread_cond_signal(3) leider nicht korrekt/ausreichend. Falls mehrere
+Threads gerade in P() beim pthread_cond_wait(3) blockiert sind, und jetzt mehrere Male V()
+aufgerufen wird - ohne, dass einer der in P() blockierten Threads weitermacht -, wird trotzdem nur
+einmal pthread_cond_signal(3) ausgefuehrt, wodurch auch (womoeglich) nur ein einzelner Thread
+aufgeweckt wird. Die anderen blockierten Threads werden dann nie aufgeweckt, obwohl die
+Zaehlervariable ja einen positiven Wert hat (d.h. noch mehr Threads in P() koennten weitermachen).
+(-1.0)
 endsnippet
 # }}}
 # }}}

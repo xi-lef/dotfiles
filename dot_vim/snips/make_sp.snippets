@@ -53,9 +53,9 @@ endsnippet
 
 context "m()"
 snippet dependency_unneeded_pattern_rule "unnoetige Abhaengigkeit durch Pattern-Regel"
-Durch die Pattern-Regel "%.o: %.c" ist die .c-Datei hier schon als Abhaengigkeit enthalten. Die
-# Abhaengigkeiten von den beiden Regeln werden ja kombiniert, deswegen muss man das hier nicht
-# nochmal angeben. ;)
+Durch die Pattern-Regel "%.o: %.c" ist "`!p snip.rv = var_mk()`.c" hier sowieso schon als
+# Abhaengigkeit enthalten. Die Abhaengigkeiten von den beiden Regeln werden ja kombiniert, deswegen
+# muss man das hier nicht nochmal angeben. ;)
 endsnippet
 
 context "m()"
@@ -92,7 +92,7 @@ endsnippet
 context "m()"
 snippet intermediate_object_targets "keine Zwischenprodukte verwendet"
 Laut Aufgabenstellung soll stets auf Zwischenprodukte zurueckgegriffen werden. Das bedeutet, dass
-# eine .c-Datei zuerst in eine .o-Datei (Objektdatei) uebersetzt werden muss, bevor die Letztere
+# eine .c-Datei zuerst in eine .o-Datei (Objekt-Datei) uebersetzt werden muss, bevor die Letztere
 # dann zu dem ausfuehrbaren Programm gebunden wird. Siehe auch Foliensatz zur clash, 5.5. (-1.0)
 endsnippet
 
@@ -211,9 +211,25 @@ Hier muss noch angegeben werden, in welchem Pfad nach der Library (die mit "-l${
 endsnippet
 
 context "m() and jbuffer()"
+snippet jbuffer_library_order "Reihenfolge bezueglich Bibliotheken falsch"
+Die Reihenfolge der Objekt-Datei zur Bibliothek (also dem "-l") ist relevant, und hier ist das
+# leider falsch: wenn eine Bibliothek mit "-l" angegeben wird, werden alle Symbolreferenzen, die
+# *bis dahin* unaufgeloest sind, in der angegeben Bibliothek gesucht. Wenn die Objekt-Datei also
+# erst nach dem "-l" erscheint, gibt es zu dem Zeitpunkt des "-l" ja noch keine unaufgeloesten
+# Referenzen, und damit wird auch nichts aus der Bibliothek genommen. Deswegen beschwert sich hier
+# dann auch der Linker ueber fehlende Funktionen. (-1.0)
+endsnippet
+
+context "m() and jbuffer()"
 snippet jbuffer_object_dep_for_test "Objekt-Datei ist Abhaengigkeit fuer Test"
 Die Objekt-Dateien braucht man hier nicht als Abhaengigkeiten, da die Informationen ja schon in
-# der Bilbiothek stecken; man braucht die Abhaengigkeiten also nur beim Erzeugen der Bibliothek.
+# der Bibliothek stecken; man braucht die Abhaengigkeiten also nur beim Erzeugen der Bibliothek.
+endsnippet
+
+context "m() and jbuffer()"
+snippet jbuffer_pic_dependencies "Header-Abhaengigkeiten fuer PIC-Targets fehlen"
+Fuer die fPIC-Targets muessen die Abhaengigkeiten natuerlich auch noch angegeben werden, sonst
+# haben sie ja gar keine Abhaengigkeiten. (-0.5)
 endsnippet
 
 context "m() and jbuffer()"
@@ -221,6 +237,12 @@ snippet jbuffer_pic_missing "dynamische Bibliothek nicht PIC"
 "Die beiden Module der dynamischen Bibliothek (und nur diese) sollen als Position-Independent
 # Code uebersetzt werden": man muss hier also noch extra .o-Dateien erzeugen, welche mit "-fPIC"
 # kompiliert wurden. (-1.0)
+endsnippet
+
+context "m() and jbuffer()"
+snippet jbuffer_pic_pattern "keine Pattern-Regel fuer PIC-Targets"
+Fuer die beiden fPIC-Targets haette man auch eine Pattern-Regel verwenden koennen:
+# "%-${1:dynamic}.o: %.c". ;)
 endsnippet
 
 context "m() and jbuffer()"
