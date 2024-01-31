@@ -140,7 +140,7 @@ Plug 'bronson/vim-visual-star-search'
 
 Plug 'ntpeters/vim-better-whitespace'
 let g:show_spaces_that_precede_tabs = 1
-Plug 'xi-lef/vim-sleuth'
+Plug 'tpope/vim-sleuth'
 Plug 'Yggdroot/indentLine'
 let g:indentLine_enabled = 0 " Use :IndentLines{Enable,Disable,Toggle}
 
