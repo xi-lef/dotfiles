@@ -106,6 +106,7 @@ let g:polyglot_disabled = ['autoindent', 'latex'] " conflict with vimtex
 Plug 'jackguo380/vim-lsp-cxx-highlight'
 Plug 'mogelbrod/vim-jsonpath'
 
+Plug 'vim-autoformat/vim-autoformat'
 Plug 'xi-lef/vim-clang-format'
 let g:clang_format#code_style = 'google'
 let g:clang_format#style_options = {
@@ -179,12 +180,6 @@ call plug#end()
 " }}}
 
 " Functions {{{
-" For insert-mode-abbreviations
-function Eatchar(pat)
-    let c = nr2char(getchar(0))
-    return (c =~ a:pat) ? '' : c
-endfunction
-
 " Inserts an SP-grading comment, with the arrow pointing to the position of the
 " cursor
 function SPComment(print_arrow = 1)
