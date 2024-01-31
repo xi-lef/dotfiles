@@ -9,6 +9,7 @@
         "line-length": false
     },
     "pyright.inlayHints.variableTypes": false,
+    "snippets.execContext": true,
     "snippets.ultisnips.directories": [
         "snips"
     ]

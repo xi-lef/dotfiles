@@ -14,7 +14,8 @@ command PC PlugClean
 command PU PlugUpgrade | PlugUpdate
 
 " CoC {{{
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'neoclide/coc.nvim', {'branch': 'fix/vim-onTextChange', 'do': 'npm ci'}
+Plug 'xi-lef/coc-snippets', {'do': 'yarn install'}
 cnoreabbrev CI CocInstall
 cnoreabbrev CU CocUninstall
 cnoreabbrev CC CocCommand
@@ -30,7 +31,6 @@ let g:coc_global_extensions = [
             \ 'coc-markdownlint',
             \ 'coc-pyright',
             \ 'coc-sh',
-            \ 'coc-snippets@3.0.5',
             \ 'coc-tsserver',
             \ 'coc-vimlsp',
             \ 'coc-vimtex'
