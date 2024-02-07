@@ -161,7 +161,8 @@ snippet dup2_order "falsche Reihenfolge der Argumente fuer dup2()"
 Hier ist die Reihenfolge der Argumente falsch rum. Das zweite Argument ist der Dateideskriptor, der
 zuerst geschlossen wird (quasi mit close(2)), und dann wird der erste Dateideskriptor dupliziert
 (und verwendet den gerade geschlossenen Dateideskriptor wieder). Oder anders formuliert: der zweite
-Dateideskriptor wird auf den ersten Dateideskriptor "umgebogen" (siehe auch Manpage dup2(2)). (-1.0)
+Dateideskriptor wird auf den ersten Dateideskriptor "umgebogen" (siehe auch Manpage dup2(2)).
+(-1.0)
 endsnippet
 
 context "c()"
@@ -1948,6 +1949,15 @@ endsnippet
 # }}}
 
 # mother {{{
+context "c() and mother()"
+snippet mother_exit "unnoetiges exit()"
+Nur weil das fehlschlaegt, soll sich nicht gleich das ganze Programm (oder auch nur ein Thread)
+beenden: das hier ist ein Server, d.h. man will nur im absoluten Ausnahmefall das Programm beenden.
+In diesem Fall aber gab es nur ein Problem bei der aktuellen Anfrage, der Server kann jedoch noch
+weiterlaufen. Deswegen sollte man hier lediglich eine Fehlermeldung ausgeben und gegebenenfalls
+bereits belegte Ressourcen wieder freigeben. (-1.0)
+endsnippet
+
 # connection-mt.c {{{
 context "c() and mother('connection-mt.c')"
 snippet mother_cloexec_clientSock "clientSock FD_CLOEXEC nicht gesetzt"
@@ -1956,20 +1966,18 @@ aufgerufene Perl-Skripte vererbt werden. Das geht mittels fcntl(2). (-1.0)
 endsnippet
 
 context "c() and mother('connection-mt.c')"
+snippet mother_cloexec_listenSock "FD_CLOEXEC auf dem listenSock gesetzt"
+Siehe letzter Hinweis in der Aufgabenstellung: das Close-on-Exec-Flag ist fuer "listenSock" bereits
+gesetzt. Und warum sollte das auch fuer jede neue Verbindung nochmal gemacht werden muessen? Am
+"listenSock" aendert sich ja logischerweise nichts.
+endsnippet
+
+context "c() and mother('connection-mt.c')"
 snippet mother_dup_cloexec "Kein FD_CLOEXEC nach dup()"
 Unmittelbar nach dem dup(2) muss der neue Deskriptor ebenfalls mit dem Close-on-Exec-Flag versehen
 werden. Dies geschieht am besten, indem man anstelle von dup(2) einfach fcntl(2) mit dem Kommando
 "F_DUPFD_CLOEXEC" aufruft, um das Duplizieren und Setzen des FD_CLOEXEC-Bits in einem (fuer den
 Prozess) atomaren Schritt auszufuehren. (-1.0)
-endsnippet
-
-context "c() and mother('connection-mt.c')"
-snippet mother_exit "unnoetiges exit()"
-Nur weil das fehlschlaegt, soll sich nicht gleich das ganze Programm (oder auch nur ein Thread)
-beenden: das hier ist ein Server, d.h. man will nur im absoluten Ausnahmefall das Programm beenden.
-In diesem Fall aber gab es nur ein Problem bei der aktuellen Anfrage, der Server kann jedoch noch
-weiterlaufen. Deswegen sollte man hier lediglich eine Fehlermeldung ausgeben und bereits belegte
-Ressourcen wieder freigeben. (-1.0)
 endsnippet
 
 context "c() and mother('connection-mt.c')"
@@ -1985,6 +1993,13 @@ keine gute Idee. (-0.5)
 endsnippet
 
 context "c() and mother('connection-mt.c')"
+snippet mother_malloc_thread_ids "Thread-IDs in Array mit malloc() gespeichert"
+Warum werden hier die Thread-IDs gespeichert? Die werden doch nie eh wieder verwendet. Jetzt gibt
+es aber sogesehen ein Speicherleck, weil dieser Speicher nie freigegeben wird (weil es ja keine
+Deinit-Funktion gibt)...
+endsnippet
+
+context "c() and mother('connection-mt.c')"
 snippet mother_race_dup_cloexec "Race Condition durch dup() + fcntl()"
 Hier existiert eine kleine Race Condition: zwischen dem dup(2) und dem fcntl(2) ist das
 Close-on-Exec-Flag kurzzeitig nicht gesetzt. Wenn also genau hier ein fork(2) in einem anderen
@@ -1997,12 +2012,6 @@ endsnippet
 
 # request-httpx.c {{{
 context "c() and mother('request-httpx.c')"
-snippet mother_directory_dot "Verzeichniseintraege mit Punkt nicht gefiltert"
-Es sollen nur die Verzeichniseintraege ausgegeben werden, deren Name nicht mit einem '.' beginnt.
-(-1.0)
-endsnippet
-
-context "c() and mother('request-httpx.c')"
 snippet mother_file_cloexec "FD_CLOEXEC nicht bei geoeffneten Dateien gesetzt"
 Es waere schoen, wenn auch die geoeffneten Dateien das Close-on-Exec-Flag bekommen wuerden, selbst
 wenn es in der Aufgabenstellung nicht explizit gefordert ist. Damit dies ohne Wettlaufsituation
@@ -2012,10 +2021,28 @@ werden.
 endsnippet
 
 context "c() and mother('request-httpx.c')"
-snippet mother_index_html_file "kein Check ob index.html regulaere Datei ist"
-"index.html" soll nur ausgeliefert werden, wenn es eine Datei und kein Verzeichnis ist. Wenn
-es sich um ein Verzeichnis handelt, soll stattdessen einfach das angeforderte Verzeichnis gelistet
-werden. (-0.5)
+snippet mother_filter_dot "Verzeichniseintraege mit Punkt nicht gefiltert"
+Es sollen nur die Verzeichniseintraege ausgegeben werden, deren Name nicht mit einem '.' beginnt.
+(-1.0)
+endsnippet
+
+context "c() and mother('request-httpx.c')"
+snippet mother_index_html_regular_file "kein Check ob index.html regulaere Datei ist"
+"index.html" sollte nur ausgeliefert werden, wenn es eine Datei und kein Verzeichnis ist. Wenn es
+sich um ein Verzeichnis handelt, sollte stattdessen einfach das angeforderte Verzeichnis gelistet
+werden, weil es natuerlich nicht funktionieren wird, das Verzeichnis "index.html" auf diese Art zu
+senden.
+endsnippet
+
+context "c() and mother('request-httpx.c')"
+snippet mother_index_html_search "(komplizierte) Suche nach index.html"
+Anstatt hier irgendwie nach einer Datei namens "index.html" zu suchen, gibt es einen viel simpleren
+Weg: man oeffnet einfach (z.B. mit stat(2)) die Datei "index.html", und prueft den Rueckgabewert
+(und eventuell die errno). Dadurch kann man direkt herausfinden, ob die Datei existiert. ;)
+Und theoretisch gibt es auch einen Unterschied: je nach Berechtigungen ist ein scandir(3)-Aufruf
+vielleicht nicht erfolgreich (weil keine Leseberechtigung auf dem Verzeichnis gegeben ist), die
+"index.html"-Datei direkt zu oeffnen waere aber erfolgreich (weil Ausfuehrberechtigung auf dem
+Verzeichnis gegeben ist).
 endsnippet
 
 context "c() and mother('request-httpx.c')"
@@ -2032,6 +2059,12 @@ muss hier noch mit stat(2) geprueft werden. (-1.0)
 endsnippet
 
 context "c() and mother('request-httpx.c')"
+snippet mother_readdir "readdir() verwendet"
+readdir(3) ist MT-Unsafe und darf damit nicht verwendet werden, da es hier ja mehrere Threads gibt.
+In der Aufgabenstellung ist deswegen auch ein Hinweis auf scandir(3). (-0.5)
+endsnippet
+
+context "c() and mother('request-httpx.c')"
 snippet mother_readdir_overwrite "d_name direkt verwendet, ohne Kopieren"
 "The data returned by readdir() may be overwritten by subsequent calls to readdir() for the same
 directory stream." (Manpage readdir(3)) Der Name muss dementsprechend kopiert werden, z.B. mittels
@@ -2041,22 +2074,32 @@ endsnippet
 context "c() and mother('request-httpx.c')"
 snippet mother_readdir_r "readdir_r() verwendet"
 readdir_r(3) ist laut Manpage deprecated (dt. veraltet) und sollte deswegen nicht verwendet werden.
-readdir(3) muss zwar laut POSIX nicht thread-safe sein, aber "[...] in modern implementations
-(including the glibc implementation), concurrent calls to readdir() that specify different
-directory streams are thread-safe." (Manpage readdir(3)) Noch besser ist es, direkt scandir(3) zu
-verwenden: das ist naemlich garantiert thread-safe (und macht das alles sowieso viel leichter ;)).
+Stattdessen gibt es aber scandir(3): das ist nicht deprecated und auch MT-Safe (und macht das alles
+sowieso viel leichter ;)).
 endsnippet
 
 context "c() and mother('request-httpx.c')"
 snippet mother_scandir "scandir() nicht verwendet"
-Statt opendir(3) + readdir(3) sollte man lieber scandir(3) verwenden, da das den Code deutlich
-simpler macht. ;)
+Statt opendir(3) + readdir[_r](3) sollte man viel lieber scandir(3) verwenden, da das den Code
+deutlich simpler macht. ;)
+endsnippet
+
+context "c() and mother('request-httpx.c')"
+snippet mother_scandir_free "free()s fuer scandir()-Strukuren fehlen"
+Hier fehlt noch das ganze Freigeben von dem Speicher, der von scandir(3) reserviert wurde. (-1.0)
 endsnippet
 
 context "c() and mother('request-httpx.c')"
 snippet mother_sigchld "SIGCHLD nicht behandelt"
 Da fuer das Ausfuehren von Perl-Skripten fork(2) verwendet wird, muss sich hier um die anfallenden
 Kindprozesse gekuemmert werden. (-2.0)
+endsnippet
+
+context "c() and mother('request-httpx.c')"
+snippet mother_strtok "strtok() verwendet"
+strtok(3) ist MT-Unsafe und darf damit nicht verwendet werden, da es hier ja mehrere Threads gibt.
+In derselben Manpage ist allerdings auch strtok_r(3) zu finden, welche stattdessen verwendet werden
+muss. (-1.0)
 endsnippet
 # }}}
 # }}}
