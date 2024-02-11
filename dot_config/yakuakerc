@@ -23,6 +23,7 @@ toggle-window-state=Esc
 
 [Window]
 Height=32
+KeepOpen=false
 ShowOnAllDesktops=false
 ShowSystrayIcon=false
 Width=80
