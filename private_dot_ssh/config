@@ -7,32 +7,3 @@ Host fau
 Host irc
     Hostname ircbox.cs.fau.de
     User jo15xyfy
-
-Host man
-    Hostname faui49man3.cs.fau.de
-    User jo15xyfy
-
-Host cshpc
-    Hostname cshpc.rrze.fau.de
-    User hpcv416h
-    #User hpcv482h
-    ForwardX11 yes
-
-Host hpc
-    Hostname emmy
-    ProxyJump cshpc
-    User hpcv416h
-    #User hpcv482h
-    ForwardX11 yes
-    ControlPath ~/.ssh/cm-%r@%h:%p
-    ControlMaster auto
-    ControlPersist 15m
-
-Host cs6-jump
-    Hostname cs6-jump.cs.fau.de
-    User jo15xyfy
-
-Host dse
-    Hostname cs6-cascade-01.cs6.fau.de
-    Proxyjump cs6-jump
-    User jo15xyfy

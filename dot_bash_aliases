@@ -7,7 +7,6 @@ r() {
 alias l='ls'
 alias ll='ls -aFhl'
 alias la='ls -A'
-alias laa='ls -a'
 
 alias ..='cd ..'
 alias ...='cd ../..'
@@ -17,15 +16,12 @@ cdp() {
 alias cdd='cd ~/downloads/'
 alias bd='. bd -si' # si: case-insensitive, s: case-sensitive
 
-alias ev='evince'
 alias ok='okular'
 alias g='git'
 
 alias gdb='gdb -q'
-alias gdb32='gdb -ex 32bit'
 alias odi='objdump -M intel'
 alias fd='fd -HIL'
-alias df='df -h'
 
 alias c='xsel -b -i'
 alias v='xsel -b -o'
@@ -33,9 +29,6 @@ alias v='xsel -b -o'
 alias invert="printf '\e[?5h'"
 alias uninvert="printf '\e[?5l'"
 
-alias vio='vim -O'
-alias vip='vim -p'
-alias vir='vim --cmd "let g:coc_start_at_startup = 0"'
 # the session-name ($1) must be appended without a space, so alias does not work.
 vis() {
     vim -S "$HOME/.vim/sessions/$1"
@@ -53,7 +46,6 @@ swap() {
     mv "$1" "$tmpfile" && mv "$2" "$1" && mv "$tmpfile" "$2"
 }
 
-#alias ff="git --git-dir=$HOME/Dropbox/cfg/dotfiles/ --work-tree=$HOME"
 alias ff='git -C $(chezmoi source-path)'
 
 # ex - archive extractor
