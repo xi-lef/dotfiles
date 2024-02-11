@@ -4,18 +4,18 @@
 
 Add the below configuration to your `vimrc` to install
 [coc](https://github.com/neoclide/coc.nvim) and
-[coc-snippets](https://github.com/neoclide/coc-snippets). You need to have some
-plugin manager installed (e.g.,
-[vim-plug](https://github.com/junegunn/vim-plug)). Alternatively, you can also
-use the minimal `vimrc` provided in `vimrc_minimal` (it works in the CIP-pool).
+[coc-snippets](https://github.com/neoclide/coc-snippets) (or rather, my fork of
+it, see [below](#known-issues)). You need to have some plugin manager installed
+(e.g., [vim-plug](https://github.com/junegunn/vim-plug)).  
+Alternatively, you can also use the minimal `vimrc` provided in `vimrc_minimal`
+(it works in the CIP-pool).
 
 Then, copy the `*_sp.snippet`-files to `~/.vim/UltiSnips`.
 
 ```vim
 " only these two lines are strictly required
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-" version 3.0.5 is required so the context is considered for auto-completion suggestions
-let g:coc_global_extensions = ['coc-snippets@3.0.5']
+Plug 'neoclide/coc.nvim', {'branch': 'fix/vim-onTextChange', 'do': 'npm ci'}
+Plug 'xi-lef/coc-snippets', {'branch': 'sp', 'do': 'yarn install'}
 
 " use (shift +) tab to go through CoC's suggestions, and enter to confirm one
 inoremap <silent><expr> <Tab> coc#pum#visible() ? coc#pum#next(1) : '<Tab>'
@@ -51,7 +51,6 @@ endfunction
 " \c inserts a comment with an arrow, \C without an arrow
 nnoremap <silent> <Leader>c :call SPComment()<CR>
 nnoremap <silent> <Leader>C :call SPComment(0)<CR>
-" 
 ```
 
 ## Usage
@@ -73,19 +72,19 @@ nnoremap <silent> <Leader>C :call SPComment(0)<CR>
 Of course, not every possible mistake is covered by a snippet; do not become
 lazy. :)
 
-## Known (Technical) Issues
+## Known Issues
 
-- you need to open a .c-file before grading Makefiles so the snippets work
+- You need to open a .c-file before grading Makefiles so the snippets work
     properly. This is because of Python-code in the C-snippets-file that needs
-    to be loaded, and i couldn't figure out how to share it properly (e.g. in
+    to be loaded, and I couldn't figure out how to share it properly (e.g. in
     `~/.vim/pythonx`).
 - Makefile-snippets are not pretty, because the first line mustn't contain a '#'
     at the start, but following lines need to have it. I think this is
-    unavoidable, as Make doesn't have real multineline-comments.
-- `coc-snippets` is supposed to be locked to version 3.0.5 so the `context` of
-    snippets is evaluated for auto-completion. This was removed in later
-    versions, resulting in none of the snippets showing up in the
-    auto-completion. This version-lock sometimes doesn't work: the extension may
-    auto-update itself, and thus needs to be downgraded again (e.g. using
-    `:CocUninstall coc-snippets` and restarting vim to auto-install the correct
-    version)
+    unavoidable, as Make doesn't have real multiline-comments.
+- Until [this pull request](https://github.com/neoclide/coc.nvim/pull/4875) is
+    merged, you need to use `coc`'s `fix/vim-onTextChange`-branch to avoid the
+    specific problem described in the referenced issue. With neovim, this isn't
+    a problem and you can just use the `release`- or `master`-branch.
+- Until [my pull request](https://github.com/neoclide/coc-snippets/pull/349) is
+    (maybe) merged, you need to use my fork of `coc-snippets` in order to
+    actually use my snippets.

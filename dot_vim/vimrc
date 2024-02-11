@@ -196,7 +196,7 @@ function SPComment(print_arrow = 1)
         return
     endif
 
-    " the correct amount of spaces (depending on the cursor ) follow by '^'
+    " the correct amount of spaces (depending on the cursor) follow by '^'
     let arrow = !a:print_arrow ? '' : repeat(' ', virtcol('.') - 4) . '^'
     " helper-'function' to clear a line
     let clear = "\<Esc>0\"_Di"

@@ -7,13 +7,13 @@ endif
 
 call plug#begin()
 Plug 'junegunn/vim-plug'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+"Plug 'neoclide/coc.nvim', {'branch': 'release'} " fine for neovim, but not vim
+Plug 'neoclide/coc.nvim', {'branch': 'fix/vim-onTextChange', 'do': 'npm ci'}
+Plug 'xi-lef/coc-snippets', {'branch': 'sp', 'do': 'yarn install'}
 call plug#end()
 
-" version 3.0.5 is required so the context is considered for auto-completion suggestions
-let g:coc_global_extensions = ['coc-snippets@3.0.5']
-
 " not required but nice
+" use (shift +) tab to go through CoC's suggestions, and enter to confirm one
 inoremap <silent><expr> <Tab> coc#pum#visible() ? coc#pum#next(1) : '<Tab>'
 inoremap <silent><expr> <S-Tab> coc#pum#visible() ? coc#pum#prev(1) : ''
 inoremap <silent><expr> <CR> coc#pum#visible() ? coc#_select_confirm() : '<CR>'
@@ -34,10 +34,10 @@ function SPComment(print_arrow = 1)
         return
     endif
 
-    " 'sp-comments' is bugged (or 'featured'?), so we have to limit the column for '^'
-    let target = min([79, virtcol('.')])
-    let arrow = !a:print_arrow ? '' : repeat(' ', target - 4) . '^'
-    let clear = "\<Esc>0\"_Di" " helper-'function' to clear a line
+    " the correct amount of spaces (depending on the cursor) follow by '^'
+    let arrow = !a:print_arrow ? '' : repeat(' ', virtcol('.') - 4) . '^'
+    " helper-'function' to clear a line
+    let clear = "\<Esc>0\"_Di"
 
     execute 'normal! o' . clear . start . 'K' . arrow . "\<CR>"
                 \ . clear . end . "\<Esc>O" . clear . middle
@@ -48,16 +48,6 @@ endfunction
 nnoremap <silent> <Leader>c :call SPComment()<CR>
 nnoremap <silent> <Leader>C :call SPComment(0)<CR>
 
-" some general settings (subjective)
+" some general settings
 syntax enable               " enable syntax highlighting
 set number                  " show line numbers
-set background=dark         " dark mode
-set termguicolors           " true colors in modern terminals
-
-set autoindent              " copy indent from adjacent line
-set smartindent             " smart, language-based indenting
-
-set hlsearch                " highlight search results after hitting enter
-set incsearch               " highlight search results while typing
-set ignorecase              " ignore case when searching
-set smartcase               " override ignorecase when searching for upper case pattern
