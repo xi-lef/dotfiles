@@ -14,7 +14,7 @@ Then, copy the `*_sp.snippet`-files to `~/.vim/UltiSnips`.
 
 ```vim
 " only these two lines are strictly required
-Plug 'neoclide/coc.nvim', {'branch': 'fix/vim-onTextChange', 'do': 'npm ci'}
+Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'npm ci'}
 Plug 'xi-lef/coc-snippets', {'branch': 'sp', 'do': 'yarn install'}
 
 " use (shift +) tab to go through CoC's suggestions, and enter to confirm one
@@ -81,10 +81,6 @@ lazy. :)
 - Makefile-snippets are not pretty, because the first line mustn't contain a '#'
     at the start, but following lines need to have it. I think this is
     unavoidable, as Make doesn't have real multiline-comments.
-- Until [this pull request](https://github.com/neoclide/coc.nvim/pull/4875) is
-    merged, you need to use `coc`'s `fix/vim-onTextChange`-branch to avoid the
-    specific problem described in the referenced issue. With neovim, this isn't
-    a problem and you can just use the `release`- or `master`-branch.
 - Until [my pull request](https://github.com/neoclide/coc-snippets/pull/349) is
     (maybe) merged, you need to use my fork of `coc-snippets` in order to
     actually use my snippets.
