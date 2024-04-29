@@ -9,7 +9,7 @@ call plug#begin()
 Plug 'junegunn/vim-plug'
 "Plug 'neoclide/coc.nvim', {'branch': 'release'} " fine for neovim, but not vim
 Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'npm ci'}
-Plug 'xi-lef/coc-snippets', {'branch': 'sp', 'do': 'yarn install'}
+Plug 'xi-lef/coc-snippets', {'branch': 'sp', 'do': 'npx yarn install'}
 call plug#end()
 
 " not required but nice

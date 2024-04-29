@@ -19,7 +19,7 @@ def in_task(*names: str):
     return all(name in snip.buffer.name for name in names)
 
 # Tasks with more than one .c-file have a "file"-parameter; a default value is given if the task
-# focuses on one specific file, while other files have a minor role.
+# focuses on one specific file with other file(s) having only a minor role.
 def lilo(): return in_task('lilo')
 def wsort(): return in_task('wsort')
 def halde(file = 'halde.c'): return in_task('halde', file)

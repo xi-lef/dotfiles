@@ -1,5 +1,15 @@
 # SP Snippets
 
+These are snippets used for grading submissions of the SP assignments,
+collected/developed over multiple years of me grading submissions. The goal is
+to significantly lower the time it takes to grade submissions by making it
+trivial to "copy and paste" grading comments.  
+Generally, the snippets are either directly from the musterloesungen (with
+adapted explanations) or for a mistake that I came across more than once. So in
+theory, these snippets should cover the majority of mistakes that you encounter.
+Of course, students always come up with new ways to be wrong, so you still need
+to manually write comments for some more nuanced mistakes.
+
 ## Installation
 
 Add the below configuration to your `vimrc` to install
@@ -8,14 +18,16 @@ Add the below configuration to your `vimrc` to install
 it, see [below](#known-issues)). You need to have some plugin manager installed
 (e.g., [vim-plug](https://github.com/junegunn/vim-plug)).  
 Alternatively, you can also use the minimal `vimrc` provided in `vimrc_minimal`
-(it works in the CIP-pool).
+(it works in the CIP-pool).  
+When first installing `coc-snippets`, you may need to confirm `npx` to install
+`yarn` (by typing `y`).
 
-Then, copy the `*_sp.snippet`-files to `~/.vim/UltiSnips`.
+Then, copy all `.snippet`-files to `~/.vim/UltiSnips` and you're ready to go.
 
 ```vim
 " only these two lines are strictly required
 Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'npm ci'}
-Plug 'xi-lef/coc-snippets', {'branch': 'sp', 'do': 'yarn install'}
+Plug 'xi-lef/coc-snippets', {'branch': 'sp', 'do': 'npx yarn install'}
 
 " use (shift +) tab to go through CoC's suggestions, and enter to confirm one
 inoremap <silent><expr> <Tab> coc#pum#visible() ? coc#pum#next(1) : '<Tab>'
@@ -59,13 +71,15 @@ nnoremap <silent> <Leader>C :call SPComment(0)<CR>
 2. With your cursor, go to the position the arrow is supposed to point to and
    hit `\c` (or `<Leader>c`, depending on your `mapleader`).
 3. Start typing and use `coc`'s auto-completion to find a suitable snippet.
-    1. All task-specific snippets start with the task name, so you can, for
-       example, type `lilo` and see all snippets applicable to `lilo`.
-         1. For this to work, the folder containing the submissions must contain
-            the exercise name; for example, you need to rename 'aufgabe1-T01' to
-            'aufgabe1-T01-lilo'.
+    1. Task-specific snippets start with the task name, so you can, for example,
+       type `sister` and see all snippets applicable to `sister`.
+         1. For this to fully work, the folder containing the submissions must
+            contain the exercise name; for example, you need to rename
+            'aufgabe2-T01' to 'aufgabe2-T01-sister'. (If the filename contains
+            the exercise name, that also suffices. But that's not the case for,
+            e.g., `sister`'s `request-http.c`.)
     2. General snippets try to use descriptive names. Take a look at the
-       available snippets beforehand to get an idea of the names.
+       available snippets beforehand to get an idea of the naming scheme.
 4. Depending on the snippet, it might prompt you to enter/adjust some custom
    text. Just look out for a word being selected after inserting a snippet.
 
@@ -76,7 +90,7 @@ lazy. :)
 
 - You need to open a .c-file before grading Makefiles so the snippets work
     properly. This is because of Python-code in the C-snippets-file that needs
-    to be loaded, and I couldn't figure out how to share it properly (e.g. in
+    to be loaded, and I couldn't figure out how to share it properly (e.g., in
     `~/.vim/pythonx`).
 - Makefile-snippets are not pretty, because the first line mustn't contain a '#'
     at the start, but following lines need to have it. I think this is
