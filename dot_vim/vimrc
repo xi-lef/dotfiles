@@ -15,7 +15,7 @@ command PU PlugUpgrade | PlugUpdate
 
 " CoC {{{
 Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'npm ci'}
-Plug 'xi-lef/coc-snippets', {'do': 'yarn install'}
+Plug 'xi-lef/coc-snippets', {'do': 'npx yarn install'}
 cnoreabbrev CI CocInstall
 cnoreabbrev CU CocUninstall
 cnoreabbrev CC CocCommand
@@ -95,7 +95,7 @@ endif
 " }}}
 
 " Filetype-specific plugins {{{
-Plug 'iamcco/markdown-preview.nvim', {'do': 'cd app && yarn install'}
+Plug 'iamcco/markdown-preview.nvim', {'do': 'cd app && npx yarn install'}
 let g:mkdp_auto_close = 0
 nmap <C-P> <Plug>MarkdownPreviewToggle
 
