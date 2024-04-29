@@ -86,6 +86,10 @@ nnoremap <silent> <Leader>C :call SPComment(0)<CR>
 Of course, not every possible mistake is covered by a snippet; do not become
 lazy. :)
 
+New snippets can easily by added by using the `snip`-snippet: just go to the
+appropriate position in, for example, `c_sp.snippets`, type `snip`, and use
+that snippet. Then fill in the relevant fields (name, description, content).
+
 ## Known Issues
 
 - You need to open a .c-file before grading Makefiles so the snippets work
