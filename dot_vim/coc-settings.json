@@ -5,6 +5,7 @@
     ],
     "git.removedSign.text": "–",
     "git.topRemovedSign.text": "–",
+    "inlayHint.display": false,
     "markdownlint.config": {
         "line-length": false
     },
