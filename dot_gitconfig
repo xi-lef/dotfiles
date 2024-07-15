@@ -8,6 +8,7 @@
     c = commit --message
     ca = commit --all
     cam = commit --all --message
+    cfu = !echo git commit --fixup=$1 && git rebase --autosquash
     ame = commit --amend --no-edit
     amee = commit --amend
     p = push
@@ -26,6 +27,7 @@
     br = branch
     co = checkout
     un = reset HEAD --
+    unp = reset HEAD --patch --
     ri = rebase --interactive
     rc = rebase --continue
     st = stash
