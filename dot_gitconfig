@@ -8,7 +8,13 @@
     c = commit --message
     ca = commit --all
     cam = commit --all --message
-    cfu = !echo git commit --fixup=$1 && git rebase --autosquash
+    cfu = "!c() { \
+        git stash push --keep-index \
+        && git commit --fixup=$1 \
+        && git rebase --autosquash \
+        && git stash pop; \
+    }; \
+    c"
     ame = commit --amend --no-edit
     amee = commit --amend
     p = push
