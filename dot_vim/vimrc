@@ -99,23 +99,14 @@ Plug 'iamcco/markdown-preview.nvim', {'do': 'cd app && npx yarn install'}
 let g:mkdp_auto_close = 0
 nmap <C-P> <Plug>MarkdownPreviewToggle
 
-Plug 'tikhomirov/vim-glsl'
 Plug 'sheerun/vim-polyglot'
 let g:polyglot_disabled = ['autoindent', 'latex'] " conflict with vimtex
 
-Plug 'jackguo380/vim-lsp-cxx-highlight'
 Plug 'mogelbrod/vim-jsonpath'
 
 Plug 'vim-autoformat/vim-autoformat'
 Plug 'xi-lef/vim-clang-format'
 let g:clang_format#code_style = 'google'
-let g:clang_format#style_options = {
-            \ 'AccessModifierOffset': -4,
-            \ 'BreakBeforeBinaryOperators': 'All',
-            \ 'DerivePointerAlignment': 'false',
-            \ 'IndentWidth': 4,
-            \ 'PointerAlignment': 'Right'
-            \ }
 nmap <silent> <Leader>f <Plug>(operator-clang-format)
 vnoremap <silent> <Leader>f :ClangFormat<CR>
 
@@ -141,15 +132,13 @@ Plug 'bronson/vim-visual-star-search'
 
 Plug 'ntpeters/vim-better-whitespace'
 let g:show_spaces_that_precede_tabs = 1
-Plug 'tpope/vim-sleuth'
+"Plug 'tpope/vim-sleuth'
 Plug 'Yggdroot/indentLine'
 let g:indentLine_enabled = 0 " Use :IndentLines{Enable,Disable,Toggle}
 
 Plug 'machakann/vim-highlightedyank'
 let g:highlightedyank_highlight_duration = 500
 Plug 'gcavallanti/vim-noscrollbar'
-Plug 'matze/vim-move'
-let g:move_key_modifier = 'C'
 Plug 'farmergreg/vim-lastplace'
 
 Plug 'kana/vim-operator-user' " For vim-clang-format
@@ -217,8 +206,6 @@ nnoremap <silent> <Leader>C :call SPComment(0)<CR>
 nnoremap <silent> <Leader>S :call SPComment(0) <Bar> :normal! aSchoen. :)<C-O>0<CR>
 nnoremap Y y$
 noremap ' `
-nnoremap p ]p
-nnoremap P [p
 inoremap <C-C> <Esc>
 
 " Open terminal in various ways
@@ -235,9 +222,8 @@ nnoremap <F9> :write <Bar> !g++ -O3 -o %:r %<CR>
 " }}}
 
 " Movements {{{
-" Use map instead of noremap for vim-smoothie
-map <C-S> <C-U>
-map <C-Q> <C-Y>
+noremap <C-S> <C-U>
+noremap <C-Q> <C-Y>
 
 inoremap <C-J> <C-O>j
 inoremap <C-K> <C-O>k
@@ -352,11 +338,6 @@ augroup END
 augroup filetype_vim
     autocmd!
     autocmd FileType vim setlocal foldmethod=marker
-augroup END
-
-augroup filetype_vsfs
-    autocmd!
-    autocmd BufNewFile,BufRead *.vs,*.fs set filetype=glsl
 augroup END
 " }}}
 
