@@ -160,6 +160,7 @@ let g:lightline = {
     \             ['percent'],
     \             ['fileformat', 'fileencoding', 'filetype']]
     \ },
+    \ 'component': { 'lineinfo': '%3l:%-3v' },
     \ 'component_function': {
     \     'cocstatus': 'coc#status',
     \     'scrollbar': 'noscrollbar#statusline'
