@@ -1,7 +1,10 @@
 {
-    "coc.preferences.extensionUpdateCheck": "daily",
+    "extensions.updateCheck": "daily",
     "clangd.fallbackFlags": [
         "-Wall, -Wextra"
+    ],
+    "clangd.arguments": [
+        "--clang-tidy"
     ],
     "git.removedSign.text": "–",
     "git.topRemovedSign.text": "–",
@@ -13,5 +16,6 @@
     "snippets.execContext": true,
     "snippets.ultisnips.directories": [
         "snips"
-    ]
+    ],
+    "git.enableGutters": true,
 }
