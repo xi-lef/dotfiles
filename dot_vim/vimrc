@@ -87,7 +87,7 @@ let g:tex_flavor = 'latex'
 let g:vimtex_view_method = 'zathura'
 let g:vimtex_quickfix_autoclose_after_keystrokes = 1
 " Map ctrl+space to forward search
-nmap <silent> <C-@> <Plug>(vimtex-view)
+nmap <silent> <C-Space> <Plug>(vimtex-view)
 nmap <F8> <Plug>(vimtex-compile)
 if empty(v:servername) && exists('*remote_startserver')
     silent! call remote_startserver('VIM') " necessary for backward search
@@ -99,8 +99,13 @@ Plug 'iamcco/markdown-preview.nvim', {'do': 'cd app && npx yarn install'}
 let g:mkdp_auto_close = 0
 nmap <C-P> <Plug>MarkdownPreviewToggle
 
+" needs to come before plugin is loaded. 'latex" is because of a conflict with
+" vimtex.
+let g:polyglot_disabled = [
+            "\ 'autoindent',
+            \ 'latex'
+            \ ]
 Plug 'sheerun/vim-polyglot'
-let g:polyglot_disabled = ['autoindent', 'latex'] " conflict with vimtex
 
 Plug 'mogelbrod/vim-jsonpath'
 
@@ -259,18 +264,18 @@ nnoremap <silent> <C-PageUp> :silent! tabm -<CR>
 nnoremap <silent> <C-PageDown> :silent! tabm +<CR>
 
 " Same as above, but for terminal windows
-tnoremap <silent> <A-1> <C-W>:1tabnext<CR>
-tnoremap <silent> <A-2> <C-W>:2tabnext<CR>
-tnoremap <silent> <A-3> <C-W>:3tabnext<CR>
-tnoremap <silent> <A-4> <C-W>:4tabnext<CR>
-tnoremap <silent> <A-5> <C-W>:5tabnext<CR>
-tnoremap <silent> <A-6> <C-W>:6tabnext<CR>
-tnoremap <silent> <A-7> <C-W>:7tabnext<CR>
-tnoremap <silent> <A-8> <C-W>:8tabnext<CR>
-tnoremap <silent> <A-9> <C-W>:9tabnext<CR>
-tnoremap <silent> <A-0> <C-W>:10tabnext<CR>
-tnoremap <silent> <A--> <C-W>:11tabnext<CR>
-tnoremap <silent> <A-=> <C-W>:12tabnext<CR>
+tnoremap <silent> <A-1> <C-W>:silent! 1tabnext<CR>
+tnoremap <silent> <A-2> <C-W>:silent! 2tabnext<CR>
+tnoremap <silent> <A-3> <C-W>:silent! 3tabnext<CR>
+tnoremap <silent> <A-4> <C-W>:silent! 4tabnext<CR>
+tnoremap <silent> <A-5> <C-W>:silent! 5tabnext<CR>
+tnoremap <silent> <A-6> <C-W>:silent! 6tabnext<CR>
+tnoremap <silent> <A-7> <C-W>:silent! 7tabnext<CR>
+tnoremap <silent> <A-8> <C-W>:silent! 8tabnext<CR>
+tnoremap <silent> <A-9> <C-W>:silent! 9tabnext<CR>
+tnoremap <silent> <A-0> <C-W>:silent! 10tabnext<CR>
+tnoremap <silent> <A--> <C-W>:silent! 11tabnext<CR>
+tnoremap <silent> <A-=> <C-W>:silent! 12tabnext<CR>
 tnoremap <silent> <C-PageUp> <C-W>:silent! tabm -<CR>
 tnoremap <silent> <C-PageDown> <C-W>:silent! tabm +<CR>
 " }}}
