@@ -332,6 +332,11 @@ augroup filetype_json
     autocmd FileType json,jsonc nnoremap <silent> <buffer> <localleader>j :call jsonpath#echo()<CR>
 augroup END
 
+augroup filetype_md
+    autocmd!
+    autocmd FileType markdown setlocal tabstop=2 shiftwidth=0
+augroup END
+
 augroup filetype_python
     autocmd!
     autocmd FileType python IndentLinesEnable
