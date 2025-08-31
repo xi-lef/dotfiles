@@ -11,12 +11,12 @@
     cfu = "!c() { \
         git stash push --keep-index \
         && git commit --fixup=$1 \
-        && git rebase --autosquash \
+        && git rebase --autosquash $1~ \
         && git stash pop; \
     }; \
     c"
     ame = commit --amend --no-edit
-    amee = commit --amend
+    amee = commit --amend --verbose
     p = push
     pl = pull
     cl = clone
